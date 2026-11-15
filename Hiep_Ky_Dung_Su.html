@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tra Cứu Niên Biểu - Trung Dụng Sự (Chuẩn Hóa)</title>
+<title>Tra Cứu Niên Biểu - Trung Dụng Sự (60 Hoa Giáp)</title>
 <style>
   :root {
     --cat: #1a7f37;
@@ -28,8 +28,6 @@
   .tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; margin: 2px; }
   .tag-cat { background: #d1e7dd; color: var(--cat); }
   .tag-hung { background: #f8d7da; color: var(--hung); }
-  .tag-month { border: 1px dashed currentColor; }
-  .section-title { font-weight: 700; margin: 8px 0 4px; font-size: 0.92rem; }
   table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px; }
   th, td { border: 1px solid var(--border); padding: 5px 6px; text-align: center; }
   th { background: #e9ecef; font-weight: 600; }
@@ -39,21 +37,19 @@
   .good { color: var(--cat); font-weight: 700; }
   .note { font-size: 0.85rem; color: #6c757d; margin-bottom: 12px; }
   .son-card { margin: 10px 0; padding: 12px; border: 1px solid #ced4da; border-radius: 6px; background: #fcfcfc; }
+  .empty-notice { background: #fff3cd; color: #664d03; border: 1px solid #ffecb5; padding: 12px; border-radius: 6px; font-weight: 500; }
 </style>
 </head>
 <body>
 
-<h1>Tra Cứu Niên Biểu – Trung Dụng Sự</h1>
+<h1>Tra Cứu Niên Biểu – Trung Dụng Sự (60 Hoa Giáp)</h1>
 <p class="note">Công cụ tra cứu cá nhân: Khai Sơn / Lập Hướng / Tu Phương (Tự động quy đổi Cung ↔ Sơn & Gộp Cát/Hung Năm + Tháng).</p>
 
 <div class="card">
   <div class="row">
     <div class="form-group">
-      <label for="yearSelect">1. Chọn Năm (Can Chi):</label>
-      <select id="yearSelect" onchange="renderYearData(this.value)">
-        <option value="BinhNgo" selected>Bính Ngọ</option>
-        <option value="DinhMui">Đinh Mùi (Template mẫu)</option>
-      </select>
+      <label for="yearSelect">1. Chọn Năm (60 Hoa Giáp):</label>
+      <select id="yearSelect" onchange="renderYearData(this.value)"></select>
     </div>
 
     <div class="form-group">
@@ -126,7 +122,6 @@ const phuongToSon = {
   "Tây Bắc": ["Tuất", "Càn", "Hợi"]
 };
 
-// Cung (Bát Quái) tương ứng 3 Sơn (Lưu ý: Cấn & Tốn vừa là tên Quái vừa là tên Sơn ở giữa)
 const quaiToSon = {
   "Khảm": ["Nhâm", "Tý", "Quý"],
   "Cấn": ["Sửu", "Cấn", "Dần"],
@@ -136,18 +131,17 @@ const quaiToSon = {
   "Khôn": ["Mùi", "Khôn", "Thân"],
   "Đoài": ["Canh", "Dậu", "Tân"],
   "Càn": ["Tuất", "Càn", "Hợi"],
-  // Ngũ hành sơn gia (dùng cho tháng 11 Thủy sơn & tháng 12 Thổ sơn)
   "Thủy": ["Nhâm", "Tý", "Quý", "Hợi", "Thân", "Thìn"],
   "Thổ": ["Sửu", "Cấn", "Thìn", "Mùi", "Khôn", "Tuất"]
 };
 
-// ====================== DỮ LIỆU NĂM (CHUẨN HÓA) ======================
+// ====================== DỮ LIỆU 60 NĂM HOA GIÁP ======================
+// Hướng dẫn dán: Bôi đen trọn vẹn khối { name: "...", status: "input here" } của năm tương ứng và dán đè dữ liệu mới vào.
 const yearData = {
+  // ---------------- 1. NĂM BÍNH NGỌ (ĐÃ NHẬP ĐỦ) ----------------
   BinhNgo: {
     name: "Bính Ngọ",
     meta: "Can: Hỏa - Chi: Hỏa - Nạp âm thuộc: Thủy",
-
-    // 1. CÁT THEO NĂM
     cat: {
       "Tuế đức": "Bính", "Tuế đức hợp": "Tân", "Tuế chi đức": "Hợi",
       "Dương quý nhân": "Dậu", "Âm quý nhân": "Hợi", "Tuế Lộc": "Tỵ",
@@ -169,8 +163,6 @@ const yearData = {
     tuLoiTamNguyen: {
       "Thái dương": "Mùi", "Thái âm": "Dậu", "Long đức": "Sửu", "Phúc đức": "Mão"
     },
-
-    // 2. HUNG THEO NĂM (Đã fix lỗi chữ Ngọc -> Ngọ & thêm Tam sát)
     hung: {
       chung: {
         "Thái tuế": "Ngọ", "Tuế phá": "Tý", "Tam sát": "Hợi Tý Sửu",
@@ -194,8 +186,6 @@ const yearData = {
         "Ngũ quỷ": "Tuất", "Phá bại ngũ quỷ": "Khôn"
       }
     },
-
-    // 3. BẢNG THÁNG CÁT (Giêng -> Chạp)
     thangCat: {
       "Thiên đạo": ["Nam","Tây nam","Bắc","Tây","Tây bắc","Đông","Bắc","Đông bắc","Nam","Đông","Đông nam","Tây"],
       "Thiên đức": ["Đinh","Khôn","Nhâm","Tân","Càn","Giáp","Quý","Cấn","Bính","Ất","Tốn","Canh"],
@@ -212,8 +202,6 @@ const yearData = {
       "8 bạch": ["Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài"],
       "9 tử": ["Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn"]
     },
-
-    // 4. KHAI SƠN HUNG THEO THÁNG (ĐÃ FIX CHUẨN THEO BẠN CHỈ DẪN)
     khaiSonHungThang: {
       "Nguyệt kiến": ["Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi","Tý","Sửu"],
       "Nguyệt phá":  ["Thân","Dậu","Tuất","Hợi","Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi"],
@@ -221,8 +209,6 @@ const yearData = {
       "Âm phủ":      ["Càn","Khôn","Ly","Chấn","Cấn","Đoài","Khảm","Càn","Khôn","Tốn","Càn","Khôn"],
       "Thái tuế":    ["Đoài","Khảm","Càn","Khôn","Tốn","Càn","Khôn","Ly","Chấn","Cấn","Đoài","Khảm"]
     },
-
-    // 5. TU PHƯƠNG HUNG THEO THÁNG (Đầy đủ 15 hàng từ ảnh 2)
     tuPhuongHungThang: {
       "Thiên quan phù": ["Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh"],
       "Địa quan phù":   ["Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi","Trung"],
@@ -240,14 +226,10 @@ const yearData = {
     }
   },
 
-  // =========================================================================
-  // KHUNG MẪU ĐỂ BẠN PASTE THỦ CÔNG CÁC NĂM KHÁC (VÍ DỤ: ĐINH MÙI)
-  // =========================================================================
-    DinhMui: {
+  // ---------------- 2. NĂM ĐINH MÙI (ĐÃ NHẬP ĐỦ) ----------------
+  DinhMui: {
     name: "Đinh Mùi",
     meta: "Can: Hỏa - Chi: Thổ - Nạp âm thuộc: Thủy",
-
-    // 1. CÁT THEO NĂM
     cat: {
       "Tuế đức": "Nhâm", "Tuế đức hợp": "Đinh", "Tuế chi đức": "Tý",
       "Dương quý nhân": "Hợi", "Âm quý nhân": "Dậu", "Tuế Lộc": "Ngọ",
@@ -269,8 +251,6 @@ const yearData = {
     tuLoiTamNguyen: {
       "Thái dương": "Thân", "Thái âm": "Tuất", "Long đức": "Dần", "Phúc đức": "Thìn"
     },
-
-    // 2. HUNG THEO NĂM
     hung: {
       chung: {
         "Thái tuế": "Mùi", "Tuế phá": "Sửu", "Tam sát": "Thân Dậu Tuất",
@@ -294,8 +274,6 @@ const yearData = {
         "Ngũ quỷ": "Dậu", "Phá bại ngũ quỷ": "Chấn"
       }
     },
-
-    // 3. BẢNG THÁNG CÁT (Giêng -> Chạp)
     thangCat: {
       "Thiên đạo": ["Nam","Tây nam","Bắc","Tây","Tây bắc","Đông","Bắc","Đông bắc","Nam","Đông","Đông nam","Tây"],
       "Thiên đức": ["Đinh","Khôn","Nhâm","Tân","Càn","Giáp","Quý","Cấn","Bính","Ất","Tốn","Canh"],
@@ -312,8 +290,6 @@ const yearData = {
       "8 bạch": ["Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm"],
       "9 tử": ["Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn"]
     },
-
-    // 4. KHAI SƠN HUNG THEO THÁNG
     khaiSonHungThang: {
       "Nguyệt kiến": ["Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi","Tý","Sửu"],
       "Nguyệt phá":  ["Thân","Dậu","Tuất","Hợi","Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi"],
@@ -321,8 +297,6 @@ const yearData = {
       "Âm phủ":      ["Ly","Chấn","Cấn","Đoài","Khảm","Càn","Khôn","Tốn","Càn","Khôn","Ly","Chấn"],
       "Thái tuế":    ["Càn","Khôn","Tốn","Càn","Khôn","Ly","Chấn","Cấn","Đoài","Khảm","Càn","Khôn"]
     },
-
-    // 5. TU PHƯƠNG HUNG THEO THÁNG
     tuPhuongHungThang: {
       "Thiên quan phù": ["Trung","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi"],
       "Địa quan phù":   ["Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi"],
@@ -337,20 +311,92 @@ const yearData = {
       "Nguyệt hình":     ["Tỵ","Tý","Thìn","Thân","Ngọ","Sửu","Dần","Dậu","Mùi","Hợi","Mão","Tuất"],
       "Nguyệt hại":      ["Tỵ","Thìn","Mão","Dần","Sửu","Tý","Hợi","Tuất","Dậu","Thân","Mùi","Ngọ"],
       "Nguyệt yếm":      ["Tuất","Dậu","Thân","Mùi","Ngọ","Tỵ","Thìn","Mão","Dần","Sửu","Tý","Hợi"]
-  }
+    }
+  },
+
+  // ---------------- KHAY CÁC NĂM TIẾP THEO (BÔI ĐEN KHỐI {...} ĐỂ DÁN ĐÈ) ----------------
+  // Vòng thuận từ Mậu Thân -> Quý Hợi
+  MauThan:   { name: "Mậu Thân",   status: "input here" },
+  KyDau:     { name: "Kỷ Dậu",     status: "input here" },
+  CanhTuat:  { name: "Canh Tuất",  status: "input here" },
+  TanHoi:    { name: "Tân Hợi",    status: "input here" },
+  NhamTy:    { name: "Nhâm Tý",    status: "input here" },
+  QuySuu:    { name: "Quý Sửu",    status: "input here" },
+  GiapDan:   { name: "Giáp Dần",   status: "input here" },
+  AtMao:     { name: "Ất Mão",     status: "input here" },
+  BinhThin:  { name: "Bính Thìn",  status: "input here" },
+  DinhTy:    { name: "Đinh Tỵ",    status: "input here" },
+  MauNgo:    { name: "Mậu Ngọ",    status: "input here" },
+  KyMui:     { name: "Kỷ Mùi",     status: "input here" },
+  CanhThan:  { name: "Canh Thân",  status: "input here" },
+  TanDau:    { name: "Tân Dậu",    status: "input here" },
+  NhamTuat:  { name: "Nhâm Tuất",  status: "input here" },
+  QuyHoi:    { name: "Quý Hợi",    status: "input here" },
+
+  // Vòng tiếp từ Giáp Tý -> Ất Tỵ
+  GiapTy:    { name: "Giáp Tý",    status: "input here" },
+  AtSuu:     { name: "Ất Sửu",     status: "input here" },
+  BinhDan:   { name: "Bính Dần",   status: "input here" },
+  DinhMao:   { name: "Đinh Mão",   status: "input here" },
+  MauThin:   { name: "Mậu Thìn",   status: "input here" },
+  KyTy:      { name: "Kỷ Tỵ",      status: "input here" },
+  CanhNgo:   { name: "Canh Ngọ",   status: "input here" },
+  TanMui:    { name: "Tân Mùi",    status: "input here" },
+  NhamThan:  { name: "Nhâm Thân",  status: "input here" },
+  QuyDau:    { name: "Quý Dậu",    status: "input here" },
+  GiapTuat:  { name: "Giáp Tuất",  status: "input here" },
+  AtHoi:     { name: "Ất Hợi",     status: "input here" },
+  BinhTy:    { name: "Bính Tý",    status: "input here" },
+  DinhSuu:   { name: "Đinh Sửu",   status: "input here" },
+  MauDan:    { name: "Mậu Dần",    status: "input here" },
+  KyMao:     { name: "Kỷ Mão",     status: "input here" },
+  CanhThin:  { name: "Canh Thìn",  status: "input here" },
+  TanTy:     { name: "Tân Tỵ",     status: "input here" },
+  NhamNgo:   { name: "Nhâm Ngọ",   status: "input here" },
+  QuyMui:    { name: "Quý Mùi",    status: "input here" },
+  GiapThan:  { name: "Giáp Thân",  status: "input here" },
+  AtDau:     { name: "Ất Dậu",     status: "input here" },
+  BinhTuat:  { name: "Bính Tuất",  status: "input here" },
+  DinhHoi:   { name: "Đinh Hợi",   status: "input here" },
+  MauTy:     { name: "Mậu Tý",     status: "input here" },
+  KySuu:     { name: "Kỷ Sửu",     status: "input here" },
+  CanhDan:   { name: "Canh Dần",   status: "input here" },
+  TanMao:    { name: "Tân Mão",    status: "input here" },
+  NhamThin:  { name: "Nhâm Thìn",  status: "input here" },
+  QuyTy:     { name: "Quý Tỵ",     status: "input here" },
+  GiapNgo:   { name: "Giáp Ngọ",   status: "input here" },
+  AtMui:     { name: "Ất Mùi",     status: "input here" },
+  BinhThan:  { name: "Bính Thân",  status: "input here" },
+  DinhDau:   { name: "Đinh Dậu",   status: "input here" },
+  MauTuat:   { name: "Mậu Tuất",   status: "input here" },
+  KyHoi:     { name: "Kỷ Hợi",     status: "input here" },
+  CanhTy:    { name: "Canh Tý",    status: "input here" },
+  TanSuu:    { name: "Tân Sửu",    status: "input here" },
+  NhamDan:   { name: "Nhâm Dần",   status: "input here" },
+  QuyMao:    { name: "Quý Mão",    status: "input here" },
+  GiapThin:  { name: "Giáp Thìn",  status: "input here" },
+  AtTy:      { name: "Ất Tỵ",      status: "input here" }
 };
+
+// ====================== TỰ ĐỘNG TẠO DANH SÁCH NĂM TRONG DROPDOWN ======================
+function initYearDropdown() {
+  const select = document.getElementById("yearSelect");
+  select.innerHTML = "";
+  for (const [key, val] of Object.entries(yearData)) {
+    const opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = val.status === "input here" ? `${val.name} (Chưa nhập data)` : `${val.name} ✓`;
+    select.appendChild(opt);
+  }
+}
 
 // ====================== HÀM KIỂM TRA SƠN THUỘC CUNG / SƠN TRONG CHUỖI ======================
 function matchSon(dataStr, targetSon) {
   if (!dataStr) return false;
   const tokens = dataStr.split(/[\s,]+/).map(t => t.trim()).filter(Boolean);
   for (let token of tokens) {
-    // 1. Khớp trực tiếp tên Sơn (VD: Tý, Ngọ, Canh...)
     if (token === targetSon) return true;
-    // 2. Nếu token là tên Cung (Đoài, Càn, Khảm...) hoặc Ngũ hành (Thủy, Thổ) -> mở rộng ra các sơn thuộc nó
-    if (quaiToSon[token] && quaiToSon[token].includes(targetSon)) {
-      return true;
-    }
+    if (quaiToSon[token] && quaiToSon[token].includes(targetSon)) return true;
   }
   return false;
 }
@@ -358,12 +404,17 @@ function matchSon(dataStr, targetSon) {
 // ====================== HÀM PHÂN TÍCH TRA CỨU ======================
 function traCuu() {
   const yearKey = document.getElementById("yearSelect").value;
+  const d = yearData[yearKey];
+
+  if (!d || d.status === "input here") {
+    alert(`Năm ${d ? d.name : ""} hiện chưa có dữ liệu (đang để trống "input here"). Vui lòng dán dữ liệu của năm này vào code trước!`);
+    return;
+  }
+
   const huong = document.getElementById("huongSelect").value;
   const thang = parseInt(document.getElementById("thangSelect").value);
-
   if (!huong) { alert("Vui lòng chọn Phương hoặc Sơn!"); return; }
 
-  const d = yearData[yearKey];
   const thangNames = ["","Giêng","Hai","Ba","Tư","Năm","Sáu","Bảy","Tám","Chín","Mười","Một (11)","Chạp (12)"];
   let sonsToCheck = phuongToSon[huong] ? phuongToSon[huong] : [huong];
 
@@ -387,7 +438,7 @@ function traCuu() {
     for (const [k, v] of Object.entries(d.hung.lapHuongHung)) if (matchSon(v, son)) hungs.push(`⛔ [Lập Hướng] ${k}`);
     for (const [k, v] of Object.entries(d.hung.tuPhuongHung)) if (matchSon(v, son)) hungs.push(`[Tu Phương] ${k}`);
 
-    // 3. Nếu có chọn THÁNG -> Quét thêm CÁT & HUNG CỦA THÁNG (index = thang - 1)
+    // 3. Nếu có chọn THÁNG -> Quét thêm CÁT & HUNG CỦA THÁNG
     if (thang >= 1 && thang <= 12) {
       const idx = thang - 1;
       if (d.thangCat) {
@@ -433,8 +484,14 @@ function renderYearData(yearKey) {
   const d = yearData[yearKey];
   if (!d) return;
   document.getElementById("currentYearName").textContent = d.name;
-  document.getElementById("yearMeta").textContent = d.meta;
 
+  if (d.status === "input here") {
+    document.getElementById("yearMeta").textContent = "";
+    document.getElementById("detailDataContainer").innerHTML = `<div class="empty-notice">⏳ Năm <strong>${d.name}</strong> đang ở trạng thái chờ nhập liệu (<code>input here</code>). Khi nào có dữ liệu của năm này, bạn chỉ cần bôi đen dòng <code>${yearKey}: { name: "${d.name}", status: "input here" }</code> trong code và dán đè vào là xong!</div>`;
+    return;
+  }
+
+  document.getElementById("yearMeta").textContent = d.meta;
   const thangNames = ["Giêng","Hai","Ba","Tư","Năm","Sáu","Bảy","Tám","Chín","Mười","Một","Chạp"];
   const buildTable = (title, obj, colorClass = "") => {
     if (!obj) return "";
@@ -451,11 +508,13 @@ function renderYearData(yearKey) {
 
   let html = "";
   html += buildTable("1. Bảng Cát Tinh Theo Tháng", d.thangCat, "good");
-  html += buildTable("2. Bảng Khai Sơn Hung Theo Tháng (Đã chuẩn hóa)", d.khaiSonHungThang, "warning");
+  html += buildTable("2. Bảng Khai Sơn Hung Theo Tháng", d.khaiSonHungThang, "warning");
   html += buildTable("3. Bảng Tu Phương Hung Theo Tháng", d.tuPhuongHungThang, "warning");
   document.getElementById("detailDataContainer").innerHTML = html;
 }
 
+// Khởi chạy ban đầu
+initYearDropdown();
 renderYearData("BinhNgo");
 </script>
 </body>
