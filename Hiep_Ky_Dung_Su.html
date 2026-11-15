@@ -243,51 +243,102 @@ const yearData = {
   // =========================================================================
   // KHUNG MẪU ĐỂ BẠN PASTE THỦ CÔNG CÁC NĂM KHÁC (VÍ DỤ: ĐINH MÙI)
   // =========================================================================
-  DinhMui: {
-    name: "Đinh Mùi (Tuế Đinh Mùi input here)",
-    meta: "Can: Hỏa - Chi: Thổ - Nạp âm thuộc: Thủy (Input here)",
+    DinhMui: {
+    name: "Đinh Mùi",
+    meta: "Can: Hỏa - Chi: Thổ - Nạp âm thuộc: Thủy",
+
+    // 1. CÁT THEO NĂM
     cat: {
-      "Tuế đức": "Input here", "Tuế đức hợp": "Input here", "Tuế chi đức": "Input here",
-      "Dương quý nhân": "Input here", "Âm quý nhân": "Input here", "Tuế Lộc": "Input here",
-      "Tuế Mã": "Input here", "Tấu thư": "Input here", "Bác sĩ": "Input here"
+      "Tuế đức": "Nhâm", "Tuế đức hợp": "Đinh", "Tuế chi đức": "Tý",
+      "Dương quý nhân": "Hợi", "Âm quý nhân": "Dậu", "Tuế Lộc": "Ngọ",
+      "Tuế Mã": "Tỵ", "Tấu thư": "Tốn", "Bác sĩ": "Càn"
     },
     caiSonHoangDao: {
-      "Tham lang": "Input here", "Cự Môn": "Input here",
-      "Vũ khúc": "Input here", "Văn khúc": "Input here"
+      "Tham lang": "Khôn Ất", "Cự Môn": "Khảm Quý Thân Thìn",
+      "Vũ khúc": "Càn Giáp", "Văn khúc": "Chấn Canh Hợi Mùi"
     },
     thongThienKhieu: {
-      "Trước phương tam hợp": "Input here",
-      "Sau phương tam hợp": "Input here",
-      "12 cát sơn nên dùng": "Input here"
+      "Trước phương tam hợp": "Tốn Tỵ Bính Ngọ Đinh Mùi",
+      "Sau phương tam hợp": "Càn Hợi Nhâm Tý Quý Sửu",
+      "12 cát sơn nên dùng": "Hợi Mão Mùi Tỵ Dậu Sửu"
     },
     tauMaLucNham: {
-      "Thần hậu": "Input here", "Công tào": "Input here", "Thiên cương": "Input here",
-      "Thắng quang": "Input here", "Truyền tổng": "Input here", "Hà khôi": "Input here"
+      "Thần hậu": "Tốn Tỵ", "Công tào": "Đinh Mùi", "Thiên cương": "Canh Dậu",
+      "Thắng quang": "Càn Hợi", "Truyền tổng": "Quý Sửu", "Hà khôi": "Giáp Mão"
     },
     tuLoiTamNguyen: {
-      "Thái dương": "Input here", "Thái âm": "Input here", "Long đức": "Input here", "Phúc đức": "Input here"
+      "Thái dương": "Thân", "Thái âm": "Tuất", "Long đức": "Dần", "Phúc đức": "Thìn"
     },
+
+    // 2. HUNG THEO NĂM
     hung: {
-      chung: { "Thái tuế": "Mùi", "Tuế phá": "Sửu", "Tam sát": "Input here", "Tọa sát hướng sát": "Input here", "Không vong": "Input here" },
-      khaiSonHung: { "Niên khắc sơn gia": "Input here", "Âm phủ Thái tuế": "Input here", "Lục hại": "Input here", "Tử phủ": "Input here", "Cửu thoái": "Input here" },
-      lapHuongHung: { "Tuần sơn La hầu": "Input here", "Bệnh phủ": "Input here" },
-      tuPhuongHung: { "Thiên quan phù": "Input here", "Địa quan phù": "Input here", "Đại sát": "Input here" }
+      chung: {
+        "Thái tuế": "Mùi", "Tuế phá": "Sửu", "Tam sát": "Thân Dậu Tuất",
+        "Tọa sát hướng sát": "Canh Tân Giáp Ất", "Phù thiên không vong": "Chấn Canh"
+      },
+      khaiSonHung: {
+        "Niên khắc sơn gia": "Giáp Dần Thìn Tốn Tuất Khảm Tân Thân Sửu Quý Khôn Canh Mùi",
+        "Âm phủ Thái tuế": "Càn Ly",
+        "Lục hại": "Tý", "Tử phủ": "Tý", "Cửu thoái": "Ngọ"
+      },
+      lapHuongHung: {
+        "Tuần sơn La hầu": "Khôn", "Bệnh phủ": "Ngọ"
+      },
+      tuPhuongHung: {
+        "Thiên quan phù": "Dần", "Địa quan phù": "Hợi", "Đại sát": "Mão",
+        "Đại tướng quân": "Mão", "Lực sĩ": "Khôn", "Tàm Thất": "Cấn",
+        "Tàm quan": "Sửu", "Tàm mệnh": "Dần", "Tuế hình": "Sửu",
+        "Hoàng phan": "Mùi", "Cẩu vĩ": "Sửu", "Phi liêm": "Mão",
+        "Tang môn": "Dậu", "Điếu khách": "Tỵ", "Bạch hổ": "Mão",
+        "Kim thần": "Dần Mão Tuất Hợi", "Độc hỏa": "Ly",
+        "Ngũ quỷ": "Dậu", "Phá bại ngũ quỷ": "Chấn"
+      }
     },
+
+    // 3. BẢNG THÁNG CÁT (Giêng -> Chạp)
     thangCat: {
-      "Thiên đạo": ["","","","","","","","","","","",""],
-      "Thiên đức": ["","","","","","","","","","","",""]
-      // Copy thêm các dòng khác từ Bính Ngọ xuống nếu cần
+      "Thiên đạo": ["Nam","Tây nam","Bắc","Tây","Tây bắc","Đông","Bắc","Đông bắc","Nam","Đông","Đông nam","Tây"],
+      "Thiên đức": ["Đinh","Khôn","Nhâm","Tân","Càn","Giáp","Quý","Cấn","Bính","Ất","Tốn","Canh"],
+      "Thiên đức hợp": ["Nhâm","","Đinh","Bính","","Kỷ","Mậu","","Tân","Canh","","Ất"],
+      "Nguyệt đức": ["Bính","Giáp","Nhâm","Canh","Bính","Giáp","Nhâm","Canh","Bính","Giáp","Nhâm","Canh"],
+      "Nguyệt đức hợp": ["Tân","Kỷ","Đinh","Ất","Tân","Kỷ","Đinh","Ất","Tân","Kỷ","Đinh","Ất"],
+      "Nguyệt không": ["Nhâm","Canh","Bính","Giáp","Nhâm","Canh","Bính","Giáp","Nhâm","Canh","Bính","Ất"],
+      "Dương quý nhân": ["Trung","Tốn","Chấn","Khôn","Khảm","Ly","Cấn","Đoài","Càn","Trung","Khảm","Ly"],
+      "Âm quý nhân": ["Chấn","Khôn","Khảm","Ly","Cấn","Đoài","Càn","Trung","Khảm","Ly","Cấn","Đoài"],
+      "Phi thiên Lộc": ["Ly","Cấn","Đoài","Càn","Trung","Khảm","Ly","Cấn","Đoài","Càn","Trung","Tốn"],
+      "Phi thiên Mã": ["Cấn","Đoài","Càn","Trung","Khảm","Ly","Cấn","Đoài","Càn","Trung","Tốn","Chấn"],
+      "1 bạch": ["Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn"],
+      "6 bạch": ["Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn"],
+      "8 bạch": ["Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm"],
+      "9 tử": ["Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn"]
     },
+
+    // 4. KHAI SƠN HUNG THEO THÁNG
     khaiSonHungThang: {
       "Nguyệt kiến": ["Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi","Tý","Sửu"],
       "Nguyệt phá":  ["Thân","Dậu","Tuất","Hợi","Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi"],
-      "Nguyệt khắc sơn gia": ["","","","","","","","","","","",""],
-      "Âm phủ": ["","","","","","","","","","","",""],
-      "Thái tuế": ["","","","","","","","","","","",""]
+      "Nguyệt khắc sơn gia": ["", "", "Ly Bính", "Nhâm Ất", "Thủy", "Thổ", "Chấn Tỵ", "Cấn Tỵ", "", "", "", ""],
+      "Âm phủ":      ["Ly","Chấn","Cấn","Đoài","Khảm","Càn","Khôn","Tốn","Càn","Khôn","Ly","Chấn"],
+      "Thái tuế":    ["Càn","Khôn","Tốn","Càn","Khôn","Ly","Chấn","Cấn","Đoài","Khảm","Càn","Khôn"]
     },
+
+    // 5. TU PHƯƠNG HUNG THEO THÁNG
     tuPhuongHungThang: {
-      "Thiên quan phù": ["","","","","","","","","","","",""]
+      "Thiên quan phù": ["Trung","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi"],
+      "Địa quan phù":   ["Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi"],
+      "Tiểu Nguyệt kiến":["Bính Ly Đinh","Nhâm Khảm Quý","Mùi Khôn Thân","Giáp Chấn Ất","Thìn Tốn Tỵ","Trung","Tuất Càn Hợi","Canh Đoài Tân","Sửu Cấn Dần","Bính Ly Đinh","Nhâm Khảm Quý","Mùi Khôn Thân"],
+      "Đại Nguyệt kiến": ["Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất"],
+      "Phi đại sát":     ["Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân"],
+      "Bình Định độc hỏa":["Ly Khảm","Cấn Ly","Đoài Cấn","Càn Đoài","Trung Càn","Trung","Tốn Trung","Chấn Tốn","Khôn Chấn","Khảm Khôn","Ly Khảm","Cấn Ly"],
+      "Nguyệt du hỏa":   ["Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn"],
+      "Kiếp sát":        ["Hợi","Thân","Tỵ","Dần","Hợi","Thân","Tỵ","Dần","Hợi","Thân","Tỵ","Dần"],
+      "Tai sát":         ["Tý","Dậu","Ngọ","Mão","Tý","Dậu","Ngọ","Mão","Tý","Dậu","Ngọ","Mão"],
+      "Nguyệt sát":      ["Sửu","Tuất","Mùi","Thìn","Sửu","Tuất","Mùi","Thìn","Sửu","Tuất","Mùi","Thìn"],
+      "Nguyệt hình":     ["Tỵ","Tý","Thìn","Thân","Ngọ","Sửu","Dần","Dậu","Mùi","Hợi","Mão","Tuất"],
+      "Nguyệt hại":      ["Tỵ","Thìn","Mão","Dần","Sửu","Tý","Hợi","Tuất","Dậu","Thân","Mùi","Ngọ"],
+      "Nguyệt yếm":      ["Tuất","Dậu","Thân","Mùi","Ngọ","Tỵ","Thìn","Mão","Dần","Sửu","Tý","Hợi"]
     }
+  }
   }
 };
 
