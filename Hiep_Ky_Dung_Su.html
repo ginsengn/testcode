@@ -367,7 +367,7 @@ const yearData = {
       }
     },
 
-    // BẢNG THÁNG (ảnh 3) - index 0 = Giêng ... 11 = Chạp
+    // BẢNG THÁNG CÁT (ảnh 3) - index 0 = Giêng ... 11 = Chạp
     thangCat: {
       thienDao: ["Nam","Tây nam","Bắc","Tây","Tây bắc","Đông","Bắc","Đông bắc","Nam","Đông","Đông nam","Tây"],
       thienDuc: ["Đinh","Khôn","Nhâm","Tân","Càn","Giáp","Quý","Cấn","Bính","Ất","Tốn","Canh"],
@@ -383,6 +383,35 @@ const yearData = {
       bach6: ["Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung"],
       bach8: ["Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài"],
       tu9: ["Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn"]
+    },
+
+    // === BỔ SUNG: KHAI SƠN HUNG theo tháng (trang mới) ===
+    // index 0 = Giêng ... 11 = Chạp
+    khaiSonHungThang: {
+      nguyetKien: ["Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi","Tý","Sửu"],
+      nguyetPha:  ["Thân","Dậu","Tuất","Hợi","Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi"],
+      nguyetKhac: ["","Càn","Hợi","Ly","Nhâm","Chấn","Cấn","","","Thủy","Thổ",""],
+      sonGia:     ["","Đoài","Đinh","Bính","Ất","","Tỵ","","","sơn","",""],
+      amPhu:      ["Càn","Khôn","Ly","Chấn","Cấn","Đoài","Khảm","Càn","Khôn","Tốn","Càn","Khôn"],
+      thaiTue:    ["Đoài","Khảm","Càn","Khôn","Tốn","Càn","Khôn","Ly","Chấn","Cấn","Đoài","Khảm"]
+    },
+
+    // === BỔ SUNG: TU PHƯƠNG HUNG theo tháng (trang mới) ===
+    // Rút gọn các hàng quan trọng nhất, index 0=Giêng
+    tuPhuongHungThang: {
+      thienQuanPhu: ["Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh"],
+      diaQuanPhu:   ["Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi","Trung"],
+      tieuNguyetKien:["Trung","Tuất Hợi","Canh Đoài Tân","Sửu Dần","Bính Đinh","Nhâm Quý","Mùi Thân","Giáp Ất","Thìn Tỵ","Trung","Tuất Hợi","Canh Đoài"],
+      daiNguyetKien: ["Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi"],
+      // Các hung khác (rút gọn)
+      phiDaiSat:    ["Bính Đinh","Sửu Dần","Canh Tân","Tuất Hợi","Trung","Canh Tân","Tuất Hợi","Trung","Thìn Tỵ","Giáp Ất","Mùi Thân","Nhâm Quý"],
+      docHoa:       ["Khôn","Khảm","Ly","Cấn","Đoài","Càn","Trung","Trung","Tốn","Chấn","Khôn","Khảm"],
+      kiepSat:      ["Hợi","Thân","Tỵ","Dần","Hợi","Thân","Tỵ","Dần","Hợi","Thân","Tỵ","Dần"],
+      taiSat:       ["Tý","Dậu","Ngọ","Mão","Tý","Dậu","Ngọ","Mão","Tý","Dậu","Ngọ","Mão"],
+      nguyetSat:    ["Sửu","Tuất","Mùi","Thìn","Sửu","Tuất","Mùi","Thìn","Sửu","Tuất","Mùi","Thìn"],
+      nguyetHinh:   ["Tỵ","Tý","Thìn","Thân","Ngọ","Sửu","Dần","Dậu","Mùi","Hợi","Mão","Tuất"],
+      nguyetHai:    ["Tỵ","Thìn","Mão","Dần","Sửu","Tý","Hợi","Tuất","Dậu","Thân","Mùi","Ngọ"],
+      nguyetYem:    ["Tuất","Dậu","Thân","Mùi","Ngọ","Tỵ","Thìn","Mão","Dần","Sửu","Tý","Hợi"]
     },
 
     // Tam Kỳ theo tiết
@@ -565,6 +594,56 @@ function renderYearData(yearKey) {
     tableHtml += `</tr>`;
   });
   tableHtml += `</tbody></table></div>`;
+
+  // === BỔ SUNG BẢNG KHAI SƠN HUNG THEO THÁNG ===
+  if (d.khaiSonHungThang) {
+    tableHtml += `<h4 style="margin-top:16px;color:var(--hung)">Khai Sơn Hung theo Tháng</h4>`;
+    tableHtml += `<div style="overflow-x:auto"><table><thead><tr><th>Mục</th>`;
+    thangNames.forEach(t => tableHtml += `<th>${t}</th>`);
+    tableHtml += `</tr></thead><tbody>`;
+    const ksKeys = [
+      ["Nguyệt kiến", "nguyetKien"],
+      ["Nguyệt phá", "nguyetPha"],
+      ["Nguyệt khắc", "nguyetKhac"],
+      ["Sơn gia", "sonGia"],
+      ["Âm phủ", "amPhu"],
+      ["Thái tuế", "thaiTue"]
+    ];
+    ksKeys.forEach(([label, key]) => {
+      tableHtml += `<tr><td><strong>${label}</strong></td>`;
+      d.khaiSonHungThang[key].forEach(v => tableHtml += `<td>${v || "-"}</td>`);
+      tableHtml += `</tr>`;
+    });
+    tableHtml += `</tbody></table></div>`;
+  }
+
+  // === BỔ SUNG BẢNG TU PHƯƠNG HUNG THEO THÁNG ===
+  if (d.tuPhuongHungThang) {
+    tableHtml += `<h4 style="margin-top:16px;color:var(--hung)">Tu Phương Hung theo Tháng (rút gọn các mục chính)</h4>`;
+    tableHtml += `<div style="overflow-x:auto"><table><thead><tr><th>Mục</th>`;
+    thangNames.forEach(t => tableHtml += `<th>${t}</th>`);
+    tableHtml += `</tr></thead><tbody>`;
+    const tpKeys = [
+      ["Thiên quan phù", "thienQuanPhu"],
+      ["Địa quan phù", "diaQuanPhu"],
+      ["Tiểu Nguyệt kiến", "tieuNguyetKien"],
+      ["Đại Nguyệt kiến", "daiNguyetKien"],
+      ["Phi / Đại sát", "phiDaiSat"],
+      ["Độc hỏa", "docHoa"],
+      ["Kiếp sát", "kiepSat"],
+      ["Tai sát", "taiSat"],
+      ["Nguyệt sát", "nguyetSat"],
+      ["Nguyệt hình", "nguyetHinh"],
+      ["Nguyệt hại", "nguyetHai"],
+      ["Nguyệt yếm", "nguyetYem"]
+    ];
+    tpKeys.forEach(([label, key]) => {
+      tableHtml += `<tr><td><strong>${label}</strong></td>`;
+      d.tuPhuongHungThang[key].forEach(v => tableHtml += `<td style="font-size:0.75rem">${v || "-"}</td>`);
+      tableHtml += `</tr>`;
+    });
+    tableHtml += `</tbody></table></div>`;
+  }
 
   document.getElementById("thangTableSection").innerHTML = tableHtml;
 }
