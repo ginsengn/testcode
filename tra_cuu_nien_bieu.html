@@ -53,7 +53,7 @@ th { background: #e9ecef; font-weight: 600; }
 </head>
 <body>
 <h1>Tra Cứu Niên Biểu – Trung Dụng Sự (60 Hoa Giáp) – Phiên bản nâng cao</h1>
-<p class="note">Hỗ trợ Khai Sơn / Lập Hướng / Tu Phương + Tam Nguyên Tử Bạch + Thông Thiên Khiếu + Tẩu Mã Lục Nhâm + Tiết Khí (tietkhi_core.js)</p>
+<p class="note">Hỗ trợ Khai Sơn / Lập Hướng / Tu Phương + Tam Nguyên Tử Bạch + Thông Thiên Khiếu + Tẩu Mã Lục Nhâm + Tiết Khí (tietkhi_core.js) + Can Chi thời điểm + thần sát thay đổi theo Tiết Khí</p>
 <div class="card">
 <div class="row">
 <div class="form-group">
@@ -263,6 +263,9 @@ DinhMui: { name: "Đinh Mùi", status: "input here" },
 // ... bạn thêm dần các năm khác
 };
 // ====================== HÀM HỖ TRỢ ======================
+const CAN = ["Giáp","Ất","Bính","Đinh","Mậu","Kỷ","Canh","Tân","Nhâm","Quý"];
+const CHI = ["Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi"];
+
 function matchSon(dataStr, targetSon) {
   if (!dataStr || !targetSon) return false;
   var tokens = dataStr.toString().split(/[\s,]+/).map(function (t) { return t.trim(); }).filter(Boolean);
@@ -285,6 +288,94 @@ function tagsHtml(arr, cls, prefix) {
   }).join('');
 }
 
+// ===== Can Chi cơ bản (Năm / Giờ chính xác, Ngày xấp xỉ theo JD) =====
+function getYearCanChi(year) {
+  // Công thức phổ biến: năm 1984 = Giáp Tý
+  var idx = (year - 4) % 60;
+  if (idx < 0) idx += 60;
+  return CAN[idx % 10] + " " + CHI[idx % 12];
+}
+
+function getHourChi(date) {
+  // Giờ Việt Nam (UTC+7): 23-1 Tý, 1-3 Sửu, ...
+  var h = date.getHours();
+  var m = date.getMinutes();
+  var totalMin = h * 60 + m;
+  // 23:00 - 00:59 → Tý (index 0)
+  if (totalMin >= 23 * 60 || totalMin < 1 * 60) return CHI[0];
+  // 1-3 Sửu, 3-5 Dần, ...
+  var idx = Math.floor(((totalMin - 60) / 120) + 1) % 12;
+  return CHI[idx];
+}
+
+function getDayCanChiApprox(date) {
+  // Julian Day Number (xấp xỉ tốt cho mục đích tra cứu)
+  var y = date.getFullYear(), m = date.getMonth() + 1, d = date.getDate();
+  if (m <= 2) { y--; m += 12; }
+  var A = Math.floor(y / 100);
+  var B = 2 - A + Math.floor(A / 4);
+  var JD = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524.5;
+  // Công thức Can Chi ngày phổ biến
+  var canIdx = Math.floor(JD + 9.5) % 10;
+  var chiIdx = Math.floor(JD + 1.5) % 12;
+  if (canIdx < 0) canIdx += 10;
+  if (chiIdx < 0) chiIdx += 12;
+  return CAN[canIdx] + " " + CHI[chiIdx];
+}
+
+function getCanChiInfo(date) {
+  if (!date || isNaN(date.getTime())) return null;
+  var y = date.getFullYear();
+  return {
+    nam: getYearCanChi(y),
+    thang: "(cần tháng âm lịch để tính chính xác)",
+    ngay: getDayCanChiApprox(date),
+    gio: getHourChi(date),
+    gioFull: null // có thể mở rộng sau
+  };
+}
+
+// Kiểm tra hung có phụ thuộc Tiết Khí (ví dụ "Sau Đông chí khắc: Càn Hợi ...")
+function checkHungWithTietKhi(hungStr, son, currentTietKhiName) {
+  if (!hungStr) return { applies: false, reason: "" };
+
+  // Trường hợp thông thường (không có "Sau ... khắc")
+  if (matchSon(hungStr, son)) {
+    return { applies: true, reason: "Áp dụng theo dữ liệu năm" };
+  }
+
+  // Parse dạng: "... Sau [Tên Tiết Khí] khắc: [danh sách]"
+  // Ví dụ: "24 sơn đều không khắc. Sau Đông chí khắc: Càn Hợi Đoài Đinh"
+  var re = /Sau\s+([^\s:]+(?:\s+[^\s:]+)?)\s*khắc\s*:\s*([^.\n]+)/i;
+  var m = hungStr.match(re);
+  if (m) {
+    var tietTrigger = m[1].trim();          // "Đông chí"
+    var afterList = m[2].trim();            // "Càn Hợi Đoài Đinh"
+    var isAfter = false;
+
+    if (currentTietKhiName) {
+      // So khớp tên Tiết Khí (bỏ dấu / chữ hoa thường)
+      var norm = function (s) { return s.toLowerCase().replace(/\s+/g, ""); };
+      if (norm(currentTietKhiName).indexOf(norm(tietTrigger)) !== -1) {
+        isAfter = true;
+      }
+      // Hoặc nếu tên hiện tại là một Tiết Khí sau Đông chí trong năm (đơn giản: nếu đã qua Đông chí)
+      // (có thể mở rộng thêm danh sách thứ tự 24 tiết nếu cần chính xác hơn)
+    }
+
+    if (isAfter && matchSon(afterList, son)) {
+      return {
+        applies: true,
+        reason: "Đã vào tiết " + tietTrigger + " → áp dụng Niên khắc sơn gia cho sơn này"
+      };
+    }
+    // Nếu chưa vào tiết trigger thì không áp dụng phần "Sau ..."
+    return { applies: false, reason: "Chưa đến tiết " + tietTrigger + " nên chưa khắc" };
+  }
+
+  return { applies: false, reason: "" };
+}
+
 // ====================== TRA CỨU CHÍNH ======================
 function traCuu() {
   var yearKey = document.getElementById("yearSelect").value;
@@ -301,18 +392,35 @@ function traCuu() {
   var sons = getSons(huong);
   var thangNames = ["", "Giêng", "Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy", "Tám", "Chín", "Mười", "Một", "Chạp"];
 
-  // ===== Tiết Khí (tùy chọn, cần tietkhi_core.js) =====
+  // ===== Tiết Khí + Can Chi của thời điểm nhập liệu =====
   var dateInput = document.getElementById("dateInput").value;
   var tkBox = document.getElementById("tietKhiBox");
   tkBox.style.display = "none";
+  var currentTietKhiName = null;
+  var canChiInfo = null;
+
   if (dateInput && typeof getTietKhi === "function") {
     try {
-      var tk = getTietKhi(new Date(dateInput));
-      var tkName = (tk && tk.name) ? tk.name : tk;
-      tkBox.innerHTML = "<strong>Tiết Khí hiện tại:</strong> " + tkName +
-        ((tk && tk.start) ? " (từ " + tk.start + ")" : "");
+      var inputDate = new Date(dateInput);
+      var tk = getTietKhi(inputDate);
+      currentTietKhiName = (tk && tk.name) ? tk.name : (tk || null);
+      canChiInfo = getCanChiInfo(inputDate);
+
+      var htmlTk = "<strong>Tiết Khí hiện tại:</strong> " + (currentTietKhiName || "Không xác định");
+      if (tk && tk.start) htmlTk += " (bắt đầu từ " + tk.start + ")";
+      if (tk && tk.next) htmlTk += " &nbsp;|&nbsp; <strong>Tiết kế tiếp:</strong> " + tk.next.name;
+
+      if (canChiInfo) {
+        htmlTk += "<br><strong>Can Chi thời điểm nhập liệu:</strong> ";
+        htmlTk += "Năm <span class='tag tag-info'>" + canChiInfo.nam + "</span> ";
+        htmlTk += "Ngày <span class='tag tag-info'>" + canChiInfo.ngay + "</span> ";
+        htmlTk += "Giờ <span class='tag tag-info'>" + canChiInfo.gio + "</span> ";
+        htmlTk += "<span class='note'>(Tháng cần tháng âm lịch để tính chính xác)</span>";
+      }
+      tkBox.innerHTML = htmlTk;
       tkBox.style.display = "block";
     } catch (e) {
+      console.warn("Lỗi Tiết Khí / Can Chi:", e);
       tkBox.style.display = "none";
     }
   }
@@ -333,22 +441,30 @@ function traCuu() {
       tuPhuong: { cat: [], hung: [] },
       chung: { cat: [], hung: [], info: [] }
     };
-    var k, v, e;
+    var k, e;
 
     // --- CÁT NĂM ---
     for (k in (d.cat || {})) if (matchSon(d.cat[k], son)) r.chung.cat.push(k);
     for (k in (d.caiSonHoangDao || {})) if (matchSon(d.caiSonHoangDao[k], son)) r.chung.cat.push("[Hoàng Đạo] " + k);
 
+    // Thông Thiên Khiếu
     for (k in (d.thongThienKhieu || {})) {
       if (matchSon(d.thongThienKhieu[k], son)) {
         r.chung.cat.push("[Thông Thiên] " + k);
-        if (k.indexOf("12 cát sơn") !== -1) r.chung.info.push("✓ Sơn này nằm trong 12 cát sơn nên dùng (năm/tháng/ngày/giờ)");
+        if (k.indexOf("12 cát sơn") !== -1) {
+          var listCat = d.thongThienKhieu[k];
+          r.chung.info.push("✓ Sơn này thuộc 12 cát sơn Thông Thiên Khiếu → Nên dùng năm / tháng / ngày / giờ thuộc: <strong>" + listCat + "</strong>");
+        }
       }
     }
+    // Tẩu Mã Lục Nhâm
     for (k in (d.tauMaLucNham || {})) {
       if (matchSon(d.tauMaLucNham[k], son)) {
         r.chung.cat.push("[Tẩu Mã] " + k);
-        if (k.indexOf("12 cát sơn") !== -1) r.chung.info.push("✓ Sơn này nằm trong 12 cát sơn Tẩu Mã Lục Nhâm");
+        if (k.indexOf("12 cát sơn") !== -1) {
+          var listCat2 = d.tauMaLucNham[k];
+          r.chung.info.push("✓ Sơn này thuộc 12 cát sơn Tẩu Mã Lục Nhâm → Nên dùng năm / tháng / ngày / giờ thuộc: <strong>" + listCat2 + "</strong>");
+        }
       }
     }
     for (k in (d.tuLoiTamNguyen || {})) if (matchSon(d.tuLoiTamNguyen[k], son)) r.chung.cat.push("[Tứ Lợi] " + k);
@@ -358,10 +474,28 @@ function traCuu() {
       for (k in e) if (matchSon(e[k], son)) r.chung.cat.push("[Tử Bạch " + nguyen + "] " + k);
     }
 
-    // --- HUNG NĂM ---
+    // --- HUNG NĂM (có hỗ trợ Tiết Khí) ---
     var h = d.hung || {};
+
+    // Hung chung
     for (k in (h.chung || {})) if (matchSon(h.chung[k], son)) r.chung.hung.push(k);
-    for (k in (h.khaiSonHung || {})) if (matchSon(h.khaiSonHung[k], son)) r.khaiSon.hung.push(k);
+
+    // Khai Sơn Hung – đặc biệt xử lý Niên khắc sơn gia
+    for (k in (h.khaiSonHung || {})) {
+      var hungVal = h.khaiSonHung[k];
+      if (k === "Niên khắc sơn gia") {
+        var chk = checkHungWithTietKhi(hungVal, son, currentTietKhiName);
+        if (chk.applies) {
+          r.khaiSon.hung.push(k + (chk.reason ? " (" + chk.reason + ")" : ""));
+        } else if (chk.reason && currentTietKhiName) {
+          // Vẫn ghi chú nếu có lý do (chưa đến tiết)
+          r.chung.info.push("ℹ️ Niên khắc sơn gia: " + chk.reason);
+        }
+      } else {
+        if (matchSon(hungVal, son)) r.khaiSon.hung.push(k);
+      }
+    }
+
     for (k in (h.lapHuongHung || {})) if (matchSon(h.lapHuongHung[k], son)) r.lapHuong.hung.push(k);
     for (k in (h.tuPhuongHung || {})) if (matchSon(h.tuPhuongHung[k], son)) r.tuPhuong.hung.push(k);
 
