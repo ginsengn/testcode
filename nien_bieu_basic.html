@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tra Cứu Niên Biểu - Trung Dụng Sự (60 Hoa Giáp) - Nâng cao</title>
+<style>
+:root {
+--cat: #1a7f37;
+--hung: #c41e3a;
+--warn: #b45309;
+--bg: #f4f6f9;
+--card: #ffffff;
+--border: #dee2e6;
+--primary: #0d6efd;
+--info: #0369a1;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: "Segoe UI", system-ui, sans-serif; background: var(--bg); color: #212529; line-height: 1.5; padding: 16px; max-width: 1280px; margin: auto; }
+h1 { font-size: 1.45rem; margin-bottom: 6px; color: #111; }
+h2 { font-size: 1.2rem; margin: 18px 0 10px; color: #222; border-bottom: 2px solid var(--primary); padding-bottom: 5px; }
+h3 { font-size: 1.05rem; margin: 16px 0 8px; }
+h4 { font-size: 0.95rem; margin: 12px 0 6px; color: #333; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+.form-group { display: flex; flex-direction: column; min-width: 170px; }
+label { font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; color: #495057; }
+select, input, button { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
+button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: 600; height: 38px; }
+button:hover { background: #0b5ed7; }
+.tag { display: inline-block; padding: 3px 9px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; margin: 2px; }
+.tag-cat { background: #d1e7dd; color: var(--cat); }
+.tag-hung { background: #f8d7da; color: var(--hung); }
+.tag-warn { background: #fef3c7; color: var(--warn); border: 1px solid #f59e0b; }
+.tag-info { background: #e0f2fe; color: var(--info); }
+.tag-tamky { background: #dcfce7; color: #15803d; border: 1px solid #22c55e; }
+.tag-neutral { background: #e9ecef; color: #495057; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 8px; }
+th, td { border: 1px solid var(--border); padding: 5px 6px; text-align: center; }
+th { background: #e9ecef; font-weight: 600; }
+.result-box { border: 2px solid var(--primary); display: none; }
+.ratio { font-size: 1.15rem; font-weight: 700; margin: 12px 0; padding: 12px; background: #f8f9fa; border-radius: 6px; }
+.nien-khac-banner { background: #fff8eb; border-left: 4px solid #d97706; padding: 10px 12px; margin: 8px 0; border-radius: 4px; font-size: 0.9rem; color: #78350f; }
+.tamky-banner { background: #f0fdf4; border-left: 4px solid #16a34a; padding: 10px 12px; margin: 8px 0; border-radius: 4px; font-size: 0.92rem; color: #14532d; }
+.section-box { border: 1px solid #ced4da; border-radius: 6px; padding: 12px; margin: 12px 0; background: #fcfcfc; }
+.section-box.ks { border-left: 5px solid #0d6efd; }
+.section-box.lh { border-left: 5px solid #198754; }
+.section-box.tp { border-left: 5px solid #6f42c1; }
+.warning { color: var(--hung); font-weight: 700; }
+.good { color: var(--cat); font-weight: 700; }
+.note { font-size: 0.85rem; color: #6c757d; margin-bottom: 12px; }
+.empty-notice { background: #fff3cd; color: #664d03; border: 1px solid #ffecb5; padding: 12px; border-radius: 6px; font-weight: 500; }
+.tietkhi-info { background: #e7f1ff; border: 1px solid #b6d4fe; padding: 10px 14px; border-radius: 6px; margin: 10px 0; font-size: 0.92rem; }
+.section-box.ml { border-left: 5px solid #7c3aed; }
+</style>
+</head>
+<body>
+<h1>Tra Cứu Niên Biểu – Trung Dụng Sự (60 Hoa Giáp) – Phiên bản nâng cao</h1>
+<p class="note">Hỗ trợ Khai Sơn / Lập Hướng / Tu Phương + Tam Nguyên Tử Bạch + Thông Thiên Khiếu + Tẩu Mã Lục Nhâm + Tam Kỳ theo Tiết Khí (tietkhi_core.js) + Can Chi thời điểm</p>
+<div class="card">
+<div class="row">
+<div class="form-group">
+<label for="yearSelect">1. Chọn Năm (60 Hoa Giáp):</label>
+<select id="yearSelect" onchange="renderYearData(this.value)"></select>
+</div>
+<div class="form-group">
+<label for="huongSelect">2. Chọn Phương (8) hoặc Sơn (24):</label>
+<select id="huongSelect">
+<option value="">-- Chọn phương hoặc sơn --</option>
+<optgroup label="8 Phương (Bát Quái)">
+<option value="Bắc">Bắc (Khảm)</option>
+<option value="Đông Bắc">Đông Bắc (Cấn)</option>
+<option value="Đông">Đông (Chấn)</option>
+<option value="Đông Nam">Đông Nam (Tốn)</option>
+<option value="Nam">Nam (Ly)</option>
+<option value="Tây Nam">Tây Nam (Khôn)</option>
+<option value="Tây">Tây (Đoài)</option>
+<option value="Tây Bắc">Tây Bắc (Càn)</option>
+</optgroup>
+<optgroup label="24 Sơn Hướng">
+<option value="Nhâm">Nhâm</option><option value="Tý">Tý</option><option value="Quý">Quý</option>
+<option value="Sửu">Sửu</option><option value="Cấn">Cấn</option><option value="Dần">Dần</option>
+<option value="Giáp">Giáp</option><option value="Mão">Mão</option><option value="Ất">Ất</option>
+<option value="Thìn">Thìn</option><option value="Tốn">Tốn</option><option value="Tỵ">Tỵ</option>
+<option value="Bính">Bính</option><option value="Ngọ">Ngọ</option><option value="Đinh">Đinh</option>
+<option value="Mùi">Mùi</option><option value="Khôn">Khôn</option><option value="Thân">Thân</option>
+<option value="Canh">Canh</option><option value="Dậu">Dậu</option><option value="Tân">Tân</option>
+<option value="Tuất">Tuất</option><option value="Càn">Càn</option><option value="Hợi">Hợi</option>
+</optgroup>
+</select>
+</div>
+<div class="form-group">
+<label for="thangSelect">3. Tháng Âm (Tùy chọn):</label>
+<select id="thangSelect">
+<option value="0">-- Chỉ xem theo Năm --</option>
+<option value="1">Tháng Giêng</option><option value="2">Tháng Hai</option><option value="3">Tháng Ba</option><option value="4">Tháng Tư</option>
+<option value="5">Tháng Năm</option><option value="6">Tháng Sáu</option><option value="7">Tháng Bảy</option><option value="8">Tháng Tám</option>
+<option value="9">Tháng Chín</option><option value="10">Tháng Mười</option><option value="11">Tháng Một (11)</option><option value="12">Tháng Chạp (12)</option>
+</select>
+</div>
+<div class="form-group">
+<label for="nguyenSelect">4. Nguyên (Tam Nguyên Tử Bạch):</label>
+<select id="nguyenSelect">
+<option value="Thượng">Thượng Nguyên</option>
+<option value="Trung">Trung Nguyên</option>
+<option value="Hạ">Hạ Nguyên</option>
+</select>
+</div>
+</div>
+<div class="row" style="margin-top:14px;">
+<div class="form-group">
+<label for="dateInput">5. Ngày giờ (để lấy Tiết Khí & Tam Kỳ):</label>
+<input type="datetime-local" id="dateInput">
+</div>
+<button onclick="traCuu()">Phân Tích & Tra Cứu Chi Tiết</button>
+</div>
+</div>
+<div class="card">
+<h2>Phân tích nâng cao: Mộ – Long Biến Vận &amp; Tìm thời gian</h2>
+<p class="note">Các tùy chọn này áp dụng cho kết quả Mộ Long (nhập Ngày giờ ở mục 5) và cho nút tìm thời gian. Phương/Sơn lấy từ mục 2, Nguyên lấy từ mục 4.</p>
+<div class="row">
+<div class="form-group"><label for="loaiSelect">Loại dụng sự:</label>
+<select id="loaiSelect"><option value="all">Tất cả (Khai Sơn + Lập Hướng + Tu Phương)</option><option value="khaiSon">Khai Sơn</option><option value="lapHuong">Lập Hướng</option><option value="tuPhuong">Tu Phương</option></select></div>
+<div class="form-group"><label for="nguongInput">Ngưỡng bình hòa (% cát):</label><input type="number" id="nguongInput" value="60" min="0" max="100"></div>
+<div class="form-group"><label for="namTu">Từ năm Dương lịch:</label><input type="number" id="namTu"></div>
+<div class="form-group"><label for="namDen">Đến năm Dương lịch:</label><input type="number" id="namDen"></div>
+<button onclick="quetThoiGian()">🔎 Tìm thời gian thỏa mãn (1 &amp; 2)</button>
+</div>
+<div id="quetResult"></div>
+</div>
+<!-- KẾT QUẢ -->
+<div id="analysisResult" class="card result-box">
+<h2>Kết Quả Phân Tích Dụng Sự</h2>
+<div id="tietKhiBox" class="tietkhi-info" style="display:none;"></div>
+<div id="analysisContent"></div>
+</div>
+<!-- DỮ LIỆU GỐC -->
+<div class="card">
+<h2>Bảng Dữ Liệu Gốc Năm: <span id="currentYearName">—</span></h2>
+<p class="note" id="yearMeta"></p>
+<div id="detailDataContainer"></div>
+</div>
+<!-- Link file tiết khí -->
+<script src="tietkhi_core.js"></script>
+<script src="mtrachcat.js"></script>
+<script>
+// ====================== BẢNG QUY ĐỔI ======================
+const phuongToSon = {
+  "Bắc": ["Nhâm", "Tý", "Quý"],
+  "Đông Bắc": ["Sửu", "Cấn", "Dần"],
+  "Đông": ["Giáp", "Mão", "Ất"],
+  "Đông Nam": ["Thìn", "Tốn", "Tỵ"],
+  "Nam": ["Bính", "Ngọ", "Đinh"],
+  "Tây Nam": ["Mùi", "Khôn", "Thân"],
+  "Tây": ["Canh", "Dậu", "Tân"],
+  "Tây Bắc": ["Tuất", "Càn", "Hợi"]
+};
+const quaiToSon = {
+  "Khảm": ["Nhâm", "Tý", "Quý"],
+  "Cấn": ["Sửu", "Cấn", "Dần"],
+  "Chấn": ["Giáp", "Mão", "Ất"],
+  "Tốn": ["Thìn", "Tốn", "Tỵ"],
+  "Ly": ["Bính", "Ngọ", "Đinh"],
+  "Khôn": ["Mùi", "Khôn", "Thân"],
+  "Đoài": ["Canh", "Dậu", "Tân"],
+  "Càn": ["Tuất", "Càn", "Hợi"],
+  "Trung": ["Trung"]
+};
+// Quy đổi 24 tiết khí về 8 tiết gốc của bảng Tam Kỳ (Tứ Lập + Tứ Phân Nhị Chí)
+const tietKhiToTamKyKey = {
+  "lapxuan": "Lập Xuân", "vuthuy": "Lập Xuân", "kinhtrap": "Lập Xuân",
+  "xuanphan": "Xuân Phân", "thanhminh": "Xuân Phân", "cocvu": "Xuân Phân",
+  "lapha": "Lập Hạ", "tieuman": "Lập Hạ", "mangchung": "Lập Hạ",
+  "hachi": "Hạ Chí", "tieuthu": "Hạ Chí", "daithu": "Hạ Chí",
+  "lapthu": "Lập Thu", "xuthu": "Lập Thu", "bachlo": "Lập Thu",
+  "thuphan": "Thu Phân", "hanlo": "Thu Phân", "suonggiang": "Thu Phân",
+  "lapdong": "Lập Đông", "tieutuyet": "Lập Đông", "daituyet": "Lập Đông",
+  "dongchi": "Đông Chí", "tieuhan": "Đông Chí", "daihan": "Đông Chí"
+};
+// ====================== DỮ LIỆU NĂM (bạn nạp thủ công) ======================
+const yearData = {
+  BinhThan: {
+    name: "Bính Thân",
+    meta: "Can: Hỏa - Chi: Kim - Nạp âm thuộc: Hỏa",
+    cat: {
+      "Tuế đức": "Bính", "Tuế đức hợp": "Tân", "Tuế chi đức": "Sửu",
+      "Dương quý nhân": "Dậu", "Âm quý nhân": "Hợi", "Tuế Lộc": "Tỵ",
+      "Tuế Mã": "Dần", "Tấu thư": "Khôn", "Bác sĩ": "Cấn"
+    },
+    tamNguyenTuBach: {
+      "Thượng": { "1 bạch": "Khảm", "6 bạch": "Càn", "8 bạch": "Cấn", "9 tử": "Ly" },
+      "Trung": { "1 bạch": "Đoài", "6 bạch": "Chấn", "8 bạch": "Trung", "9 tử": "Càn" },
+      "Hạ": { "1 bạch": "Tốn", "6 bạch": "Ly", "8 bạch": "Khôn", "9 tử": "Chấn" }
+    },
+    caiSonHoangDao: {
+      "Tham lang": "Khôn Ất", "Cự Môn": "Khảm Quý Thân Thìn",
+      "Vũ khúc": "Càn Giáp", "Văn khúc": "Chấn Canh Hợi Mùi"
+    },
+    thongThienKhieu: {
+      "Trước phương tam hợp": "Cấn Dần Giáp Mão Ất Thìn",
+      "Sau phương tam hợp": "Khôn Thân Canh Dậu Tân Tuất",
+      "12 cát sơn nên dùng năm, tháng, ngày, giờ": "Thân Tý Thìn Dần Ngọ Tuất"
+    },
+    tauMaLucNham: {
+      "Thần hậu": "Ất Thìn", "Công tào": "Bính Ngọ", "Thiên cương": "Khôn Thân",
+      "Thắng quang": "Tân Tuất", "Truyền tổng": "Nhâm Tý", "Hà khôi": "Cấn Dần",
+      "12 cát sơn nên dùng năm, tháng, ngày, giờ": "Thân Tý Thìn Dần Ngọ Tuất"
+    },
+    tuLoiTamNguyen: {
+      "Thái dương": "Dậu", "Thái âm": "Hợi", "Long đức": "Mão", "Phúc đức": "Tỵ"
+    },
+    hung: {
+      chung: {
+        "Thái tuế": "Thân", "Tuế phá": "Dần", "Tam sát": "Tỵ Ngọ Mùi",
+        "Tọa sát hướng sát": "Bính Đinh Nhâm Quý", "Phù thiên không vong": "Tốn Tân"
+      },
+      khaiSonHung: {
+        "Niên khắc sơn gia": "Chấn Cấn Tỵ sơn",
+        "Âm phủ Thái tuế": "Khảm Khôn",
+        "Lục hại": "Hợi", "Tử phủ": "Sửu", "Cứu thoái": "Mão"
+      },
+      lapHuongHung: {
+        "Tuần sơn La hầu": "Canh Mùi", "Bệnh phủ": "Mùi"
+      },
+      tuPhuongHung: {
+        "Thiên quan phù": "Hợi", "Địa quan phù": "Tý", "Đại sát": "Tý",
+        "Đại tướng quân": "Ngọ", "Lực sĩ": "Càn", "Tàm Thất": "Tốn",
+        "Tàm quan": "Thìn", "Tàm mệnh": "Tỵ", "Tuế hình": "Dần",
+        "Hoàng phan": "Thìn", "Cẩu vĩ": "Tuất", "Phi liêm": "Thìn",
+        "Tang môn": "Tuất", "Điếu khách": "Ngọ", "Bạch hổ": "Thìn",
+        "Kim thần": "Dần Mão Ngọ Mùi Tý Sửu", "Độc hỏa": "Ly",
+        "Ngũ quỷ": "Thân", "Phá bại ngũ quỷ": "Khôn"
+      }
+    },
+    thangCat: {
+      "Thiên đạo": ["Nam","Tây Nam","Bắc","Tây","Tây Bắc","Đông","Bắc","Đông Bắc","Nam","Đông","Đông Nam","Tây"],
+      "Thiên đức": ["Đinh","Khôn","Nhâm","Tân","Càn","Giáp","Quý","Cấn","Bính","Ất","Tốn","Canh"],
+      "Thiên đức hợp": ["Nhâm","","Đinh","Bính","","Kỷ","Mậu","","Tân","Canh","","Ất"],
+      "Nguyệt đức": ["Bính","Giáp","Nhâm","Canh","Bính","Giáp","Nhâm","Canh","Bính","Giáp","Nhâm","Canh"],
+      "Nguyệt đức hợp": ["Tân","Kỷ","Đinh","Ất","Tân","Kỷ","Đinh","Ất","Tân","Kỷ","Đinh","Ất"],
+      "Nguyệt không": ["Nhâm","Canh","Bính","Giáp","Nhâm","Canh","Bính","Giáp","Nhâm","Canh","Bính","Giáp"],
+      "Dương quý nhân": ["Chấn","Khôn","Khảm","Ly","Cấn","Đoài","Càn","Trung","Khảm","Ly","Cấn","Đoài"],
+      "Âm quý nhân": ["Trung","Tốn","Chấn","Khôn","Khảm","Ly","Cấn","Đoài","Càn","Trung","Khảm","Ly"],
+      "Phi thiên Lộc": ["Cấn","Đoài","Càn","Trung","Khảm","Ly","Cấn","Đoài","Càn","Trung","Tốn","Chấn"],
+      "Phi thiên Mã": ["Trung","Khảm","Ly","Cấn","Đoài","Càn","Trung","Tốn","Chấn","Khôn","Khảm","Ly"],
+      "1 bạch": ["Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn"],
+      "6 bạch": ["Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn"],
+      "8 bạch": ["Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn"],
+      "9 tử": ["Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung"],
+      "Tam Kỳ": {
+        "Lập Xuân": { "Ất": "Ly", "Bính": "Khảm", "Đinh": "Khôn" },
+        "Xuân Phân": { "Ất": "Tốn", "Bính": "Trung", "Đinh": "Càn" },
+        "Lập Hạ": { "Ất": "Trung", "Bính": "Càn", "Đinh": "Đoài" },
+        "Hạ Chí": { "Ất": "Cấn", "Bính": "Đoài", "Đinh": "Càn" },
+        "Lập Thu": { "Ất": "Khảm", "Bính": "Ly", "Đinh": "Cấn" },
+        "Thu Phân": { "Ất": "Càn", "Bính": "Trung", "Đinh": "Tốn" },
+        "Lập Đông": { "Ất": "Trung", "Bính": "Tốn", "Đinh": "Chấn" },
+        "Đông Chí": { "Ất": "Khôn", "Bính": "Chấn", "Đinh": "Tốn" }
+      }
+    },
+    khaiSonHungThang: {
+      "Nguyệt kiến": ["Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi","Tý","Sửu"],
+      "Nguyệt phá": ["Thân","Dậu","Tuất","Hợi","Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi"],
+      "Nguyệt khắc sơn gia": ["", "", "Càn Đoài", "Hợi Đinh", "Ly Bính", "Nhâm Ất", "Chấn Tỵ", "Cấn Tỵ", "", "", "Thủy", "Thổ"],
+      "Âm phủ": ["Càn","Khôn","Ly","Chấn","Cấn","Đoài","Khảm","Càn","Khôn","Tốn","Càn","Khôn"],
+      "Thái tuế": ["Đoài","Khảm","Càn","Khôn","Tốn","Càn","Khôn","Ly","Chấn","Cấn","Đoài","Khảm"]
+    },
+    tuPhuongHungThang: {
+      "Thiên quan phù": ["Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi"],
+      "Địa quan phù": ["Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân"],
+      "Tiểu Nguyệt kiến": ["Trung","Tuất Càn Hợi","Canh Đoài Tân","Sửu Cấn Dần","Bính Ly Đinh","Nhâm Khảm Quý","Mùi Khôn Thân","Giáp Chấn Ất","Thìn Tốn Tỵ","Trung","Tuất Càn Hợi","Canh Đoài Tân"],
+      "Đại Nguyệt kiến": ["Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh"],
+      "Phi đại sát": ["Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân"],
+      "Bính Đinh độc hỏa": ["Khôn Chấn","Khảm Khôn","Ly Khảm","Cấn Ly","Đoài Cấn","Càn Đoài","Trung Càn","Trung","Tốn Trung","Chấn Tốn","Khôn Chấn","Khảm Khôn"],
+      "Nguyệt du hỏa": ["Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly"],
+      "Kiếp sát": ["Hợi","Thân","Tỵ","Dần","Hợi","Thân","Tỵ","Dần","Hợi","Thân","Tỵ","Dần"],
+      "Tai sát": ["Tý","Dậu","Ngọ","Mão","Tý","Dậu","Ngọ","Mão","Tý","Dậu","Ngọ","Mão"],
+      "Nguyệt sát": ["Sửu","Tuất","Mùi","Thìn","Sửu","Tuất","Mùi","Thìn","Sửu","Tuất","Mùi","Thìn"],
+      "Nguyệt hình": ["Tỵ","Tý","Thìn","Thân","Ngọ","Sửu","Dần","Dậu","Mùi","Hợi","Mão","Tuất"],
+      "Nguyệt hại": ["Tỵ","Thìn","Mão","Dần","Sửu","Tý","Hợi","Tuất","Dậu","Thân","Mùi","Ngọ"],
+      "Nguyệt yếm": ["Tuất","Dậu","Thân","Mùi","Ngọ","Tỵ","Thìn","Mão","Dần","Sửu","Tý","Hợi"]
+    }
+  },
+  // "***input các năm khác here***"
+  // "***input các năm khác here***"
+  KyDau: { name: "Kỷ Dậu", status: "input here" }
+};
+// ====================== HÀM HỖ TRỢ ======================
+const CAN = ["Giáp","Ất","Bính","Đinh","Mậu","Kỷ","Canh","Tân","Nhâm","Quý"];
+const CHI = ["Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi"];
+function normalizeText(str) {
+  if (!str) return "";
+  return str.toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/\s+/g, "");
+}
+function matchSon(dataStr, targetSon) {
+  if (!dataStr || !targetSon) return false;
+  var tokens = dataStr.toString().split(/[\s,]+/).map(function (t) { return t.trim(); }).filter(Boolean);
+  for (var i = 0; i < tokens.length; i++) {
+    var token = tokens[i];
+    if (token === targetSon) return true;
+    if (quaiToSon[token] && quaiToSon[token].indexOf(targetSon) !== -1) return true;
+  }
+  return false;
+}
+function getSons(huong) {
+  return phuongToSon[huong] ? phuongToSon[huong] : [huong];
+}
+function tagsHtml(arr, cls, prefix) {
+  return arr.map(function (x) {
+    return '<span class="tag ' + cls + '">' + (prefix || '') + x + '</span>';
+  }).join('');
+}
+function get12CatSonGuide(obj) {
+  if (!obj) return "";
+  for (var key in obj) {
+    if (key.toLowerCase().indexOf("12 cát sơn") !== -1) {
+      return obj[key];
+    }
+  }
+  return "";
+}
+// Giải mã Tam Kỳ theo Tiết Khí từ tietkhi_core.js
+function resolveTamKyInfo(d, currentTietKhiName) {
+  if (!currentTietKhiName || !d || !d.thangCat || !d.thangCat["Tam Kỳ"]) return null;
+  var normTk = normalizeText(currentTietKhiName);
+  var tamKyKey = tietKhiToTamKyKey[normTk] || null;
+  if (!tamKyKey) return null;
+  var tkTable = d.thangCat["Tam Kỳ"];
+  var mapObj = null;
+  for (var key in tkTable) {
+    if (normalizeText(key) === normalizeText(tamKyKey)) {
+      mapObj = tkTable[key];
+      break;
+    }
+  }
+  if (!mapObj) return null;
+  return {
+    tietGoc: tamKyKey,
+    tietThucTe: currentTietKhiName,
+    map: mapObj // Ví dụ: { "Ất": "Cấn", "Bính": "Ly", "Đinh": "Khảm" }
+  };
+}
+// ===== Can Chi cơ bản =====
+function getYearCanChi(year) {
+  var idx = (year - 4) % 60;
+  if (idx < 0) idx += 60;
+  return CAN[idx % 10] + " " + CHI[idx % 12];
+}
+function getHourChi(date) {
+  var h = date.getHours();
+  var m = date.getMinutes();
+  var totalMin = h * 60 + m;
+  if (totalMin >= 23 * 60 || totalMin < 1 * 60) return CHI[0];
+  var idx = Math.floor(((totalMin - 60) / 120) + 1) % 12;
+  return CHI[idx];
+}
+function getDayCanChiApprox(date) {
+  var y = date.getFullYear(), m = date.getMonth() + 1, d = date.getDate();
+  if (m <= 2) { y--; m += 12; }
+  var A = Math.floor(y / 100);
+  var B = 2 - A + Math.floor(A / 4);
+  var JD = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524.5;
+  var canIdx = Math.floor(JD + 9.5) % 10;
+  var chiIdx = Math.floor(JD + 1.5) % 12;
+  if (canIdx < 0) canIdx += 10;
+  if (chiIdx < 0) chiIdx += 12;
+  return CAN[canIdx] + " " + CHI[chiIdx];
+}
+function getCanChiInfo(date) {
+  if (!date || isNaN(date.getTime())) return null;
+  var y = date.getFullYear();
+  return {
+    nam: getYearCanChi(y),
+    thang: "(cần tháng âm lịch để tính chính xác)",
+    ngay: getDayCanChiApprox(date),
+    gio: getHourChi(date),
+    gioFull: null
+  };
+}
+// Kiểm tra hung có phụ thuộc Tiết Khí
+function checkHungWithTietKhi(hungStr, son, currentTietKhiName) {
+  if (!hungStr) return { applies: false, reason: "" };
+  if (matchSon(hungStr, son)) {
+    return { applies: true, reason: "Áp dụng theo dữ liệu năm" };
+  }
+  var re = /Sau\s+([^\s:]+(?:\s+[^\s:]+)?)\s*khắc\s*:\s*([^.\n]+)/i;
+  var m = hungStr.match(re);
+  if (m) {
+    var tietTrigger = m[1].trim();
+    var afterList = m[2].trim();
+    var isAfter = false;
+    if (currentTietKhiName) {
+      if (normalizeText(currentTietKhiName).indexOf(normalizeText(tietTrigger)) !== -1) {
+        isAfter = true;
+      }
+    }
+    if (isAfter && matchSon(afterList, son)) {
+      return {
+        applies: true,
+        reason: "Đã vào tiết " + tietTrigger + " → áp dụng Niên khắc sơn gia cho sơn này"
+      };
+    }
+    return { applies: false, reason: "Chưa đến tiết " + tietTrigger + " nên chưa khắc" };
+  }
+  return { applies: false, reason: "" };
+}
+// ===== PHÂN TÍCH THEO MỘT SƠN (dùng chung cho tra cứu & tìm thời gian) =====
+function analyzeSonCore(d, son, thang, nguyen, tamKyInfo, currentTietKhiName) {
+  var thangNames = ["", "Giêng", "Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy", "Tám", "Chín", "Mười", "Một", "Chạp"];
+    var r = {
+      khaiSon: { cat: [], hung: [] },
+      lapHuong: { cat: [], hung: [] },
+      tuPhuong: { cat: [], hung: [] },
+      chung: { cat: [], hung: [], info: [] }
+    };
+    var k, e;
+    // --- CÁT NĂM ---
+    for (k in (d.cat || {})) if (matchSon(d.cat[k], son)) r.chung.cat.push(k);
+    for (k in (d.caiSonHoangDao || {})) if (matchSon(d.caiSonHoangDao[k], son)) r.chung.cat.push("[Hoàng Đạo] " + k);
+    // --- TAM KỲ THEO TIẾT KHÍ ---
+    if (tamKyInfo) {
+      for (var kyCan in tamKyInfo.map) {
+        var kyQuai = tamKyInfo.map[kyCan];
+        if (matchSon(kyQuai, son)) {
+          r.chung.cat.push("[Tam Kỳ " + tamKyInfo.tietGoc + "] " + kyCan + " Kỳ (" + kyQuai + ")");
+          r.chung.info.push("✨ Sơn/Phương này đắc <strong>Tam Kỳ " + kyCan + "</strong> (phương " + kyQuai + ") trong tiết <strong>" + tamKyInfo.tietThucTe + "</strong>");
+        }
+      }
+    }
+    // --- THÔNG THIÊN KHIẾU ---
+    var hitThongThien = [];
+    for (k in (d.thongThienKhieu || {})) {
+      if (k.toLowerCase().indexOf("12 cát sơn") !== -1) continue;
+      if (matchSon(d.thongThienKhieu[k], son)) {
+        r.chung.cat.push("[Thông Thiên] " + k);
+        hitThongThien.push(k);
+      }
+    }
+    if (hitThongThien.length > 0) {
+      var listCatTT = get12CatSonGuide(d.thongThienKhieu);
+      if (listCatTT) {
+        r.chung.info.push("✓ Cát sơn <strong>" + son + "</strong> thuộc Thông Thiên Khiếu (" + hitThongThien.join(", ") + ") → Nên dùng năm / tháng / ngày / giờ thuộc: <strong>" + listCatTT + "</strong>");
+      }
+    }
+    // --- TẨU MÃ LỤC NHÂM ---
+    var hitTauMa = [];
+    for (k in (d.tauMaLucNham || {})) {
+      if (k.toLowerCase().indexOf("12 cát sơn") !== -1) continue;
+      if (matchSon(d.tauMaLucNham[k], son)) {
+        r.chung.cat.push("[Tẩu Mã] " + k);
+        hitTauMa.push(k);
+      }
+    }
+    if (hitTauMa.length > 0) {
+      var listCatTM = get12CatSonGuide(d.tauMaLucNham);
+      if (listCatTM) {
+        r.chung.info.push("✓ Cát sơn <strong>" + son + "</strong> thuộc Tẩu Mã Lục Nhâm (" + hitTauMa.join(", ") + ") → Nên dùng năm / tháng / ngày / giờ thuộc: <strong>" + listCatTM + "</strong>");
+      }
+    }
+    for (k in (d.tuLoiTamNguyen || {})) if (matchSon(d.tuLoiTamNguyen[k], son)) r.chung.cat.push("[Tứ Lợi] " + k);
+    if (d.tamNguyenTuBach && d.tamNguyenTuBach[nguyen]) {
+      e = d.tamNguyenTuBach[nguyen];
+      for (k in e) if (matchSon(e[k], son)) r.chung.cat.push("[Tử Bạch " + nguyen + "] " + k);
+    }
+    // --- HUNG NĂM ---
+    var h = d.hung || {};
+    for (k in (h.chung || {})) if (matchSon(h.chung[k], son)) r.chung.hung.push(k);
+    for (k in (h.khaiSonHung || {})) {
+      var hungVal = h.khaiSonHung[k];
+      if (k === "Niên khắc sơn gia") {
+        var chk = checkHungWithTietKhi(hungVal, son, currentTietKhiName);
+        if (chk.applies) {
+          r.khaiSon.hung.push(k + (chk.reason ? " (" + chk.reason + ")" : ""));
+        } else if (chk.reason && currentTietKhiName) {
+          r.chung.info.push("ℹ️ Niên khắc sơn gia: " + chk.reason);
+        }
+      } else {
+        if (matchSon(hungVal, son)) r.khaiSon.hung.push(k);
+      }
+    }
+    for (k in (h.lapHuongHung || {})) if (matchSon(h.lapHuongHung[k], son)) r.lapHuong.hung.push(k);
+    for (k in (h.tuPhuongHung || {})) if (matchSon(h.tuPhuongHung[k], son)) r.tuPhuong.hung.push(k);
+    // --- THÁNG ---
+    if (thang >= 1 && thang <= 12) {
+      var idx = thang - 1;
+      var suffix = " (T. " + thangNames[thang] + ")";
+      if (d.thangCat) {
+        for (k in d.thangCat) {
+          var arr = d.thangCat[k];
+          if (Array.isArray(arr) && arr[idx] && matchSon(arr[idx], son)) r.chung.cat.push(k + suffix);
+        }
+      }
+      if (d.khaiSonHungThang) {
+        for (k in d.khaiSonHungThang) {
+          var a1 = d.khaiSonHungThang[k];
+          if (Array.isArray(a1) && a1[idx] && matchSon(a1[idx], son)) r.khaiSon.hung.push(k + suffix);
+        }
+      }
+      if (d.tuPhuongHungThang) {
+        for (k in d.tuPhuongHungThang) {
+          var a2 = d.tuPhuongHungThang[k];
+          if (Array.isArray(a2) && a2[idx] && matchSon(a2[idx], son)) r.tuPhuong.hung.push(k + suffix);
+        }
+      }
+    }
+    return r;
+  }
+  
+// ====================== TRA CỨU CHÍNH ======================
+function traCuu() {
+  var yearKey = document.getElementById("yearSelect").value;
+  var d = yearData[yearKey];
+  if (!d || d.status === "input here") {
+    alert("Năm " + (d ? d.name : "") + " chưa có dữ liệu!");
+    return;
+  }
+  var huong = document.getElementById("huongSelect").value;
+  var thang = parseInt(document.getElementById("thangSelect").value, 10) || 0;
+  var nguyen = document.getElementById("nguyenSelect").value;
+  if (!huong) { alert("Vui lòng chọn Phương hoặc Sơn!"); return; }
+  var sons = getSons(huong);
+  var thangNames = ["", "Giêng", "Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy", "Tám", "Chín", "Mười", "Một", "Chạp"];
+  var dateInput = document.getElementById("dateInput").value;
+  var tkBox = document.getElementById("tietKhiBox");
+  tkBox.style.display = "none";
+  var currentTietKhiName = null;
+  var canChiInfo = null;
+  if (dateInput) {
+    if (typeof getTietKhi === "function") {
+      try {
+        var inputDate = new Date(dateInput);
+        var tk = getTietKhi(inputDate);
+        // Đọc linh hoạt các dạng object/string mà tietkhi_core.js có thể trả về
+        currentTietKhiName = typeof tk === "string" ? tk : (tk && (tk.name || tk.ten || tk.tietKhi)) || null;
+        canChiInfo = getCanChiInfo(inputDate);
+        var htmlTk = "<strong>Tiết Khí thời điểm nhập:</strong> " + (currentTietKhiName || "Không xác định");
+        if (tk && tk.start) htmlTk += " (bắt đầu từ " + tk.start + ")";
+        if (tk && tk.next) htmlTk += " &nbsp;|&nbsp; <strong>Tiết kế tiếp:</strong> " + (tk.next.name || tk.next);
+        if (canChiInfo) {
+          htmlTk += "<br><strong>Can Chi thời điểm nhập liệu:</strong> ";
+          htmlTk += "Năm <span class='tag tag-info'>" + canChiInfo.nam + "</span> ";
+          htmlTk += "Ngày <span class='tag tag-info'>" + canChiInfo.ngay + "</span> ";
+          htmlTk += "Giờ <span class='tag tag-info'>" + canChiInfo.gio + "</span> ";
+        }
+        tkBox.innerHTML = htmlTk;
+        tkBox.style.display = "block";
+      } catch (e) {
+        console.warn("Lỗi Tiết Khí / Can Chi:", e);
+      }
+    } else {
+      tkBox.innerHTML = "⚠️ Không tìm thấy hàm <code>getTietKhi()</code> — kiểm tra lại file <code>tietkhi_core.js</code> có nằm cùng thư mục với file HTML này không.";
+      tkBox.style.display = "block";
+    }
+  }
+  // Tra cứu Tam Kỳ theo Tiết Khí
+  var tamKyInfo = resolveTamKyInfo(d, currentTietKhiName);
+  var html = "<p><strong>Năm:</strong> " + d.name +
+    " &nbsp;|&nbsp; <strong>Đối tượng:</strong> " + huong + " (" + sons.join(" - ") + ")" +
+    (thang > 0 ? " &nbsp;|&nbsp; <strong>Tháng:</strong> " + thangNames[thang] : "") +
+    " &nbsp;|&nbsp; <strong>Nguyên:</strong> " + nguyen + "</p>";
+  var nk = (d.hung && d.hung.khaiSonHung && d.hung.khaiSonHung["Niên khắc sơn gia"]) || "Không có dữ liệu";
+  html += '<div class="nien-khac-banner"><strong>📌 Niên Khắc Sơn Gia năm ' + d.name + ':</strong> ' + nk + '</div>';
+  // Hiển thị Banner Tam Kỳ nếu có nhập ngày giờ
+  if (tamKyInfo) {
+    var matchedTamKy = [];
+    for (var kyCan in tamKyInfo.map) {
+      var kyQuai = tamKyInfo.map[kyCan]; // VD: "Ly"
+      var isHitHuong = sons.some(function (s) { return matchSon(kyQuai, s); });
+      if (isHitHuong) {
+        matchedTamKy.push("<strong>Tam Kỳ " + kyCan + "</strong> đóng tại phương <strong>" + kyQuai + "</strong>");
+      }
+    }
+    var allKyStr = Object.keys(tamKyInfo.map).map(function (c) {
+      return c + " Kỳ → " + tamKyInfo.map[c];
+    }).join(" | ");
+    if (matchedTamKy.length > 0) {
+      html += '<div class="tamky-banner"><strong>✨ ĐẮC TAM KỲ (Tiết ' + tamKyInfo.tietThucTe + ' — mốc ' + tamKyInfo.tietGoc + '):</strong> ' +
+        matchedTamKy.join("; ") + ' trùng với phương/sơn đang chọn! <br><span class="note">(Toàn cục tiết ' + tamKyInfo.tietGoc + ': ' + allKyStr + ')</span></div>';
+    } else {
+      html += '<div class="nien-khac-banner" style="background:#f8fafc;border-left-color:#64748b;color:#334155;"><strong>ℹ️ Tam Kỳ tiết ' + tamKyInfo.tietThucTe + ' (mốc ' + tamKyInfo.tietGoc + '):</strong> ' +
+        allKyStr + ' <em>(Không đóng tại phương/sơn đang chọn)</em></div>';
+    }
+  } else if (!dateInput) {
+    html += '<div class="nien-khac-banner" style="background:#f8fafc;border-left-color:#94a3b8;color:#475569;">ℹ️ Muốn xét <strong>Tam Kỳ</strong>, vui lòng nhập thêm <strong>Ngày giờ (mục 5)</strong> để đối chiếu Tiết Khí.</div>';
+  }
+  // ===== PHÂN TÍCH THEO MỘT SƠN =====
+  function analyzeSon(son) { return analyzeSonCore(d, son, thang, nguyen, tamKyInfo, currentTietKhiName); }
+  function block(cls, title, obj, hungLabel) {
+    return '<div class="section-box ' + cls + '"><h4>🔹 ' + title + '</h4>' +
+      '<div>' + (obj.cat.length ? tagsHtml(obj.cat, "tag-cat") : "<span class='note'>Không có cát đặc biệt</span>") + '</div>' +
+      '<div style="margin-top:6px">' + (obj.hung.length ? tagsHtml(obj.hung, "tag-hung", "⛔ ") : "<span class='good'>✓ Không phạm hung " + hungLabel + "</span>") + '</div></div>';
+  }
+  sons.forEach(function (son) {
+    var r = analyzeSon(son);
+    html += '<div class="section-box"><h3>Sơn / Phương: <strong>' + son + '</strong></h3>';
+    html += block("ks", "Khai Sơn", r.khaiSon, "Khai Sơn");
+    html += block("lh", "Lập Hướng", r.lapHuong, "Lập Hướng");
+    html += block("tp", "Tu Phương", r.tuPhuong, "Tu Phương");
+    html += '<div style="margin-top:10px"><strong>Cát chung / Tử Bạch / Hoàng Đạo / Thông Thiên / Tẩu Mã / Tam Kỳ / Tứ Lợi:</strong><br>' +
+      (r.chung.cat.length ? tagsHtml(r.chung.cat, "tag-cat") : "<span class='note'>Không có</span>") +
+      (r.chung.info.length ? "<br>" + tagsHtml(r.chung.info, "tag-info") : "") +
+      (r.chung.hung.length ? "<br><strong>Hung chung:</strong> " + tagsHtml(r.chung.hung, "tag-hung", "⛔ ") : "") +
+      '</div>' + mlBlock(son, r) + '</div>';
+  });
+  document.getElementById("analysisContent").innerHTML = html;
+  var box = document.getElementById("analysisResult");
+  box.style.display = "block";
+  box.scrollIntoView({ behavior: "smooth" });
+}
+// ====================== v4: MỘ LONG + CHẤM ĐIỂM + TÌM THỜI GIAN ======================
+// Hung "khủng khiếp" cần tránh tuyệt đối (sửa tại đây). Hung khác tính nhẹ (1 điểm), hung nặng 3 điểm.
+var HUNG_NANG = ["Thái tuế", "Tuế phá", "Tam sát", "Niên khắc sơn gia", "Nguyệt phá", "Tuần sơn La hầu"];
+var MUC_DIEM = { DAC_BIET_CAT: 3, DAI_CAT: 2, CAT: 1, TIEU_HUNG: -1, DAI_HUNG: -3 };
+function laHungNang(t) { return HUNG_NANG.some(function (h) { return t.indexOf(h) !== -1; }); }
+function diemFeature1(r, loai) {
+  var ds = r.chung.hung.slice(), hung = 0, nang = [];
+  ["khaiSon", "lapHuong", "tuPhuong"].forEach(function (k) { if (loai === "all" || loai === k) ds = ds.concat(r[k].hung); });
+  ds.forEach(function (t) { if (laHungNang(t)) { hung += 3; nang.push(t); } else hung += 1; });
+  return { cat: r.chung.cat.length, hung: hung, nang: nang };
+}
+function diemMoLong(trus) {
+  var cat = 0, hung = 0, nang = [];
+  trus.forEach(function (t) {
+    var p = MUC_DIEM[t.muc];
+    if (p > 0) cat += p; else { hung -= p; if (t.muc === "DAI_HUNG") nang.push("Khắc Mộ vận (trụ " + t.tru + ")"); }
+  });
+  return { cat: cat, hung: hung, nang: nang };
+}
+function gop(a, b) { return { cat: a.cat + b.cat, hung: a.hung + b.hung, nang: a.nang.concat(b.nang) }; }
+function ketLuan(x, nguong) {
+  var t = x.cat + x.hung, p = t === 0 ? 100 : Math.round(100 * x.cat / t);
+  if (x.nang.length) return { good: false, cls: "warning", p: p, txt: "⛔ Có hung sát nặng – nên tránh nếu có thể" };
+  if (p >= nguong) return { good: true, cls: "good", p: p, txt: "✅ Ổn thỏa – bình hòa" };
+  return { good: false, cls: "warning", p: p, txt: "⚠️ Hung nhiều hơn mức bình hòa" };
+}
+function boxKetLuan(tieuDe, x, nguong) {
+  var k = ketLuan(x, nguong);
+  return '<div class="ratio"><strong>' + tieuDe + '</strong><br><span class="' + k.cls + '">' + k.txt + '</span> — Cát ≈ ' + k.p + '% / Hung ≈ ' + (100 - k.p) + '%' +
+    (x.nang.length ? '<br>' + tagsHtml(x.nang, "tag-hung", "⛔ ") : '') + '</div>';
+}
+function mlBlock(son, r) {
+  var loai = document.getElementById("loaiSelect").value;
+  var nguong = parseInt(document.getElementById("nguongInput").value, 10) || 60;
+  var A = diemFeature1(r, loai);
+  var h = '<div class="section-box ml"><h4>🏔️ Tổng hợp: dụng sự phía trên vs. động nền (Mộ – Long Biến Vận)</h4>';
+  h += boxKetLuan("(1) Chỉ dụng sự phía trên – không động khí mạch nền đất", A, nguong);
+  var v = document.getElementById("dateInput").value;
+  if (!v) return h + '<div class="note">Nhập <strong>Ngày giờ (mục 5)</strong> để xét Mộ Long (trường hợp động nền).</div></div>';
+  var dt = new Date(v), ml = TrachCat.danhGiaThoiDiem(son, dt, getHourChi(dt));
+  if (ml.loi) return h + '<div class="empty-notice">' + ml.loi + '</div></div>';
+  var mo = ml.moLong, trus = [ml.nien, ml.thang, ml.ngay, ml.gio];
+  h += '<p>Sơn <strong>' + ml.son + '</strong> (chính vận ' + ml.hanhSon + ') → Biến vận Mộ khố: <strong>' + mo.canChi + ' – ' + mo.napAm + ' (' + mo.hanh + ')</strong>' +
+    (mo.daTrungBien ? ' <span class="tag tag-warn">Sau Đông Chí: Kim sơn trùng biến → can ' + mo.canDungTinh + '</span>' : '') +
+    '<br><span class="warning">Kỵ dùng năm/tháng/ngày/giờ hành ' + mo.hanhKy + '</span></p>';
+  h += '<table><tr><th>Trụ</th><th>Can Chi</th><th>Nạp âm</th><th>Quan hệ với Mộ Long</th><th>Mức</th></tr>' +
+    trus.map(function (t) { return '<tr><td>' + t.tru + '</td><td>' + t.canChi + '</td><td>' + t.napAm + '</td><td>' + t.quanHe + '</td><td>' + t.nhanMuc + '</td></tr>'; }).join('') + '</table>';
+  h += '<p>Xếp loại Mộ Long (Niên + "3 chọi 1"): <strong>' + ml.nhanLoai + '</strong></p>';
+  h += boxKetLuan("(2) Dụng sự phía dưới – có động nền/khí mạch (gộp (1) + Mộ Long)", gop(A, diemMoLong(trus)), nguong);
+  return h + '</div>';
+}
+function fmtNgay(t) { return ("0" + t.getDate()).slice(-2) + "/" + ("0" + (t.getMonth() + 1)).slice(-2) + "/" + t.getFullYear(); }
+function quetThoiGian() {
+  var out = document.getElementById("quetResult");
+  var huong = document.getElementById("huongSelect").value;
+  if (!huong) { alert("Vui lòng chọn Phương hoặc Sơn ở mục 2!"); return; }
+  var sons = getSons(huong), nguyen = document.getElementById("nguyenSelect").value;
+  var loai = document.getElementById("loaiSelect").value;
+  var nguong = parseInt(document.getElementById("nguongInput").value, 10) || 60;
+  var y0 = parseInt(document.getElementById("namTu").value, 10), y1 = parseInt(document.getElementById("namDen").value, 10);
+  if (isNaN(y0) || isNaN(y1) || y1 < y0) { out.innerHTML = '<div class="empty-notice">Khoảng năm không hợp lệ.</div>'; return; }
+  var rows = [], nData = 0, thieuTK = false;
+  Object.keys(yearData).forEach(function (key) {
+    var d = yearData[key];
+    if (!d || d.status === "input here") return;
+    nData++;
+    for (var Y = y0; Y <= y1; Y++) {
+      if (getYearCanChi(Y) !== d.name) continue;
+      var changs = TrachCat.changCuaNam(Y);
+      if (!changs.length) { thieuTK = true; continue; }
+      changs.forEach(function (ch) {
+        var tk = resolveTamKyInfo(d, ch.ten);
+        sons.forEach(function (son) {
+          var A = diemFeature1(analyzeSonCore(d, son, ch.thang, nguyen, tk, ch.ten), loai);
+          var m = TrachCat.danhGiaNienThang(son, d.name, ch.thang, ch.ten);
+          if (!m) return;
+          var B = gop(A, diemMoLong([m.nien, m.thang])), kA = ketLuan(A, nguong), kB = ketLuan(B, nguong);
+          if (kA.good && kB.good) rows.push({ Y: Y, nam: d.name, thang: ch.thang, tiet: ch.ten, tu: ch.tu, den: ch.den, son: son, pA: kA.p, pB: kB.p, mo: m.moLong });
+        });
+      });
+    }
+  });
+  var h = '<p class="note">Đã quét ' + nData + ' niên biểu có dữ liệu, năm ' + y0 + '–' + y1 + ', ngưỡng ' + nguong + '%. Kết quả ở cấp chặng Tiết Khí (Niên + Tháng); chọn ngày giờ cụ thể bằng mục 5 và tránh hành kỵ của Mộ Long.</p>';
+  if (thieuTK) h += '<div class="empty-notice">Một số năm nằm ngoài phạm vi dữ liệu của tietkhi_core.js nên không quét được.</div>';
+  if (!nData) h += '<div class="empty-notice">Chưa có niên biểu nào được nạp dữ liệu.</div>';
+  else if (!rows.length) h += '<div class="empty-notice">Không có chặng nào thỏa mãn cả (1) và (2). Có thể mở rộng khoảng năm, đổi loại dụng sự hoặc hạ ngưỡng.</div>';
+  else h += '<table><tr><th>Năm DL</th><th>Năm</th><th>Tháng</th><th>Tiết Khí (từ – đến)</th><th>Sơn</th><th>(1) cát</th><th>(2) cát</th><th>Mộ Long / hành kỵ</th></tr>' +
+    rows.slice(0, 300).map(function (r) {
+      return '<tr><td>' + r.Y + '</td><td>' + r.nam + '</td><td>' + r.thang + '</td><td>' + r.tiet + ' (' + fmtNgay(r.tu) + ' – ' + fmtNgay(r.den) + ')</td><td><strong>' + r.son + '</strong></td><td>' + r.pA + '%</td><td>' + r.pB + '%</td><td>' + r.mo.canChi + ' ' + r.mo.napAm + ' – kỵ ' + r.mo.hanhKy + '</td></tr>';
+    }).join('') + '</table>';
+  out.innerHTML = h;
+}
+(function () { var y = new Date().getFullYear(); document.getElementById("namTu").value = y; document.getElementById("namDen").value = y + 59; })();
+
+// ====================== RENDER DATA GỐC ======================
+function renderYearData(yearKey) {
+  var d = yearData[yearKey];
+  if (!d) return;
+  document.getElementById("currentYearName").textContent = d.name;
+  if (d.status === "input here") {
+    document.getElementById("yearMeta").textContent = "";
+    document.getElementById("detailDataContainer").innerHTML =
+      '<div class="empty-notice">⏳ Năm <strong>' + d.name + '</strong> đang chờ nhập liệu.</div>';
+    return;
+  }
+  document.getElementById("yearMeta").textContent = d.meta || "";
+  document.getElementById("detailDataContainer").innerHTML =
+    "<p class='note'>Dữ liệu chi tiết đã được load. Sử dụng form phía trên để phân tích.</p>";
+}
+// ====================== KHỞI TẠO ======================
+function initYearDropdown() {
+  var select = document.getElementById("yearSelect");
+  select.innerHTML = "";
+  var keys = Object.keys(yearData);
+  keys.forEach(function (key) {
+    var val = yearData[key];
+    var opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = val.status === "input here" ? val.name + " (Chưa có data)" : val.name + " ✓";
+    select.appendChild(opt);
+  });
+  var firstReady = keys.find(function (k) { return yearData[k].status !== "input here"; }) || keys[0];
+  if (firstReady) {
+    select.value = firstReady;
+    renderYearData(firstReady);
+  }
+}
+initYearDropdown();
+</script>
+</body>
+</html>
