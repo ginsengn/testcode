@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Karaoke TAP Timing v3</title>
+<title>Karaoke TAP Timing v4</title>
 <style>
   *{-webkit-tap-highlight-color:transparent}
   body{font-family:system-ui,sans-serif;background:#14161a;color:#e8e8e8;margin:0;padding:12px}
@@ -78,7 +78,7 @@
     </div>
     <div class="g">
       <div>
-        <label>Bước quét (giây)</label>
+        <label>Bước quét = tốc độ phát</label>
         <input type="number" id="step" value="0.1" min="0.03" max="0.25" step="0.01">
       </div>
       <div>
@@ -86,14 +86,14 @@
         <input type="number" id="lag" value="0" step="10">
       </div>
       <div>
-        <label>Tua nhanh</label>
+        <label>Tua ∓1 giây</label>
         <div class="row" style="margin-top:0">
           <button class="alt" id="back" disabled style="flex:1">−</button>
           <button class="alt" id="fwd" disabled style="flex:1">+</button>
         </div>
       </div>
     </div>
-    <div class="hint">Nút − / + tua video lùi/tới đúng một "Bước quét". Bù trễ: số ms trừ bớt khỏi mỗi lần TAP (tay thường bấm trễ hơn mắt thấy, khoảng 100–200ms). Để 0 nếu không cần.</div>
+    <div class="hint">Bước quét 0.25 = khi bấm Quét video phát ở 25% tốc độ gốc (có thể chỉnh lúc đang chạy). Bù trễ: tính theo thời gian thật của tay, app tự quy đổi theo tốc độ phát rồi trừ khỏi mỗi TAP. Để 0 nếu không cần. Nút − / + tua lùi/tới 1 giây.</div>
 
     <label>Lyric của phiên này (mỗi dòng đúng như trên video, theo thứ tự hát)</label>
     <textarea id="lyrics"></textarea>
@@ -111,20 +111,21 @@
     </select>
     <div class="tw"><table id="tbl"><thead><tr><th>#</th><th>Chữ</th><th>Bắt đầu</th><th>Kết thúc</th></tr></thead><tbody></tbody></table></div>
     <div class="row">
-      <button id="copy" disabled>Copy</button>
-      <button id="dl" disabled>Tải TXT</button>
+      <button id="dl" disabled>Tải TXT phiên cuối</button>
+      <button id="copy" class="alt" disabled>Copy phiên cuối</button>
+      <button id="dlAll" class="alt" disabled>Tải TXT tất cả</button>
       <button id="clear" class="alt" disabled>Xóa tất cả</button>
     </div>
-    <div class="hint">Dữ liệu các phiên được cộng dồn trong bảng này. Tải TXT khi xong (đừng tải lại trang trước khi lưu).</div>
+    <div class="hint">Mỗi phiên có số riêng; bảng hiện tất cả các phiên. "Phiên cuối" chỉ xuất phiên mới nhất để bạn lưu từng đoạn. Tải TXT trước khi đóng/tải lại trang.</div>
   </div>
 </div>
 
 <script>
 const $ = id => document.getElementById(id);
 const video = $('video');
-let all = [];          // mọi chữ đã TAP, qua nhiều phiên
-let sess = null;       // phiên hiện tại: {words, idx, paused, awaitEnd, n}
-let sessCount = 0, rafId = 0, lastTap = 0;
+let sessions = [];   // mỗi phiên: {n, words, taps:[giây], endT, paused, awaitEnd}
+let sess = null;     // phiên đang chạy
+let lastTap = 0;
 
 function log(m){ $('log').innerHTML += `<div>&gt; ${m}</div>`; $('log').scrollTop = 1e9; }
 function parseTime(s){
@@ -142,6 +143,21 @@ function fmt(sec){
   if (f === 'ms') return `${h * 60 + m}:${p2(s)}.${p2(c)}`;
   return `${h}:${m}${p2(s)}${p2(c)}`;
 }
+// tốc độ phát = Bước quét (trình duyệt hỗ trợ tối thiểu ~0.0625)
+function rate(){ const v = +$('step').value || 0.25; return Math.min(16, Math.max(0.0625, v)); }
+$('step').addEventListener('input', () => { if (sess && !sess.paused) video.playbackRate = rate(); });
+
+// ----- Dựng bảng từ taps: TAP thứ i = chữ thứ i của lyric nạp -----
+function rowsOf(s, live){
+  const out = [];
+  s.taps.forEach((t, i) => {
+    const w = s.words[i]; if (!w) return;
+    let en = s.taps[i + 1];
+    if (en == null && i === s.taps.length - 1) en = s.endT != null ? s.endT : (live ? null : t + 0.5);
+    out.push({ session: s.n, line: w.line, w: w.w, text: w.text, st: t, en });
+  });
+  return out;
+}
 
 // ----- Nạp video -----
 $('file').onchange = e => {
@@ -155,31 +171,29 @@ $('file').onchange = e => {
 };
 $('goto').onclick = () => { const t = parseTime($('from').value); if (!isNaN(t)) video.currentTime = Math.min(Math.max(0, t), video.duration); };
 $('useNow').onclick = () => { $('from').value = video.currentTime.toFixed(2); };
-const stepVal = () => +$('step').value || 0.1;
-$('back').onclick = () => { video.currentTime = Math.max(0, video.currentTime - stepVal()); };
-$('fwd').onclick = () => { video.currentTime = Math.min(video.duration, video.currentTime + stepVal()); };
+$('back').onclick = () => { video.currentTime = Math.max(0, video.currentTime - 1); };
+$('fwd').onclick = () => { video.currentTime = Math.min(video.duration, video.currentTime + 1); };
 
-// ----- Đồng hồ hiển thị -----
-function tick(){
-  $('clock').textContent = `Video: ${video.currentTime.toFixed(2)}s  (${fmt(video.currentTime)})`;
-  rafId = requestAnimationFrame(tick);
-}
-tick();
+// ----- Đồng hồ -----
+(function tick(){
+  $('clock').textContent = `Video: ${video.currentTime.toFixed(2)}s (${fmt(video.currentTime)}) · tốc độ ${Math.round(video.playbackRate * 100)}%`;
+  requestAnimationFrame(tick);
+})();
 
 // ----- Hiển thị chữ kế tiếp -----
 function showWords(){
   if (!sess){ $('cur').textContent = '—'; $('ctx').innerHTML = ''; return; }
-  const W = sess.words;
+  const W = sess.words, idx = sess.taps.length;
   if (sess.awaitEnd){
     $('cur').textContent = '✔ Hết chữ';
     $('ctx').textContent = 'TAP thêm 1 lần để chốt kết thúc chữ cuối (hoặc Kết thúc phiên).';
     return;
   }
-  const cw = W[sess.idx];
-  $('cur').textContent = `${sess.idx + 1}/${W.length}  ${cw.w}`;
+  const cw = W[idx];
+  $('cur').textContent = `${idx + 1}/${W.length}  ${cw.w}`;
   const same = W.map((x, i) => [x, i]).filter(([x]) => x.line === cw.line);
   $('ctx').innerHTML = same.map(([x, i]) =>
-    `<span class="${i < sess.idx ? 'd' : i === sess.idx ? 'c' : ''}">${x.w.replace(/</g, '&lt;')}</span>`).join(' ');
+    `<span class="${i < idx ? 'd' : i === idx ? 'c' : ''}">${x.w.replace(/</g, '&lt;')}</span>`).join(' ');
 }
 
 // ----- Bắt đầu phiên -----
@@ -189,9 +203,9 @@ $('start').onclick = async () => {
   let tA = parseTime($('from').value); if (isNaN(tA)) tA = 0;
   tA = Math.min(Math.max(0, tA), video.duration);
   const words = [];
-  lines.forEach((ln, k) => ln.split(/\s+/).forEach((w, i) => words.push({ line: k + 1, w, first: i === 0, text: ln })));
-  sessCount++;
-  sess = { words, idx: 0, paused: false, awaitEnd: false, n: sessCount };
+  lines.forEach((ln, k) => ln.split(/\s+/).forEach(w => words.push({ line: k + 1, w, text: ln })));
+  sess = { n: sessions.length + 1, words, taps: [], endT: null, paused: false, awaitEnd: false };
+  sessions.push(sess);
   video.pause(); video.controls = false;
   await new Promise(res => {
     if (Math.abs(video.currentTime - tA) < 0.001) return res();
@@ -199,10 +213,12 @@ $('start').onclick = async () => {
     video.currentTime = tA;
   });
   video.muted = false;
+  video.playbackRate = rate();
   try { await video.play(); } catch { log('Trình duyệt chặn tự phát, bấm play rồi TAP.'); video.controls = true; }
-  setUI(true);
-  showWords();
-  log(`Phiên ${sess.n}: ${words.length} chữ, bắt đầu từ ${tA.toFixed(2)}s. Chữ đầu chuyển màu thì bấm TAP.`);
+  video.playbackRate = rate();
+  setUI(true); showWords(); renderTable();
+  log(`Phiên ${sess.n}: ${words.length} chữ, từ ${tA.toFixed(2)}s, tốc độ ${Math.round(rate() * 100)}%. Chữ đầu chuyển màu thì bấm TAP.`);
+  if (+$('step').value < 0.0625) log('Trình duyệt không phát chậm dưới 6%, đã dùng 6%.');
 };
 
 function setUI(running){
@@ -216,22 +232,20 @@ function setUI(running){
 function doTap(){
   if (!sess || sess.paused) return;
   const now = performance.now(); if (now - lastTap < 60) return; lastTap = now;
-  const t = Math.max(0, video.currentTime - (+$('lag').value || 0) / 1000);
+  // bù trễ tính theo thời gian thật của tay -> quy ra thời gian video
+  const t = Math.max(0, video.currentTime - (+$('lag').value || 0) / 1000 * video.playbackRate);
   if (sess.awaitEnd){
-    const last = all[all.length - 1]; last.en = Math.max(last.st, t);
+    sess.endT = Math.max(sess.taps[sess.taps.length - 1], t);
     return finish('Đã chốt kết thúc chữ cuối.');
   }
-  const w = sess.words[sess.idx];
-  const prev = sess.idx > 0 ? all[all.length - 1] : null;
-  if (prev) prev.en = Math.max(prev.st, t);
-  all.push({ session: sess.n, line: w.line, w: w.w, first: w.first, text: w.text, st: t, en: null });
-  sess.idx++;
-  if (sess.idx >= sess.words.length) sess.awaitEnd = true;
+  sess.taps.push(t);
+  if (sess.taps.length >= sess.words.length) sess.awaitEnd = true;
   showWords(); renderTable();
 }
 $('tap').addEventListener('pointerdown', e => { e.preventDefault(); doTap(); });
 document.addEventListener('keydown', e => {
-  if (e.code === 'Space' && sess && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT'){ e.preventDefault(); doTap(); }
+  const tag = document.activeElement.tagName;
+  if (e.code === 'Space' && sess && tag !== 'TEXTAREA' && tag !== 'INPUT'){ e.preventDefault(); doTap(); }
 });
 
 // ----- Pause / tiếp tục -----
@@ -239,28 +253,23 @@ $('pause').onclick = () => {
   if (!sess) return;
   sess.paused = !sess.paused;
   if (sess.paused){ video.pause(); $('pause').textContent = 'Tiếp tục'; $('pause').classList.add('on'); log('Đã Pause. Dữ liệu vẫn được giữ.'); }
-  else { video.play(); $('pause').textContent = 'Pause'; $('pause').classList.remove('on'); log('Tiếp tục.'); }
+  else { video.playbackRate = rate(); video.play(); $('pause').textContent = 'Pause'; $('pause').classList.remove('on'); log('Tiếp tục.'); }
   $('tap').disabled = sess.paused;
 };
 
 // ----- Hủy TAP cuối -----
 $('undo').onclick = () => {
-  if (!sess || sess.idx === 0) return;
-  all.pop(); sess.idx--; sess.awaitEnd = false;
-  const prev = sess.idx > 0 ? all[all.length - 1] : null;
-  if (prev) prev.en = null;
-  log('Đã hủy TAP cuối. Tua video lùi (nút −) nếu cần rồi bấm lại.');
+  if (!sess || !sess.taps.length) return;
+  sess.taps.pop(); sess.awaitEnd = false; sess.endT = null;
+  log('Đã hủy TAP cuối. Tua lùi (nút −) nếu cần rồi bấm lại.');
   showWords(); renderTable();
 };
 
 // ----- Kết thúc phiên -----
 function finish(msg){
   if (!sess) return;
-  const mine = all.filter(r => r.session === sess.n);
-  const last = mine[mine.length - 1];
-  if (last && last.en == null) last.en = last.st + 0.5;
-  video.pause(); video.controls = true;
-  log(`${msg || 'Kết thúc phiên.'} Phiên ${sess.n}: ${mine.length}/${sess.words.length} chữ.`);
+  video.pause(); video.playbackRate = 1; video.controls = true;
+  log(`${msg || 'Kết thúc phiên.'} Phiên ${sess.n}: ${sess.taps.length}/${sess.words.length} chữ đã TAP. Bấm "Tải TXT phiên cuối" để lưu.`);
   sess = null; setUI(false); showWords(); renderTable();
 }
 $('finish').onclick = () => finish('Kết thúc phiên.');
@@ -268,38 +277,42 @@ $('finish').onclick = () => finish('Kết thúc phiên.');
 // ----- Bảng -----
 function renderTable(){
   const tb = $('tbl').tBodies[0]; tb.innerHTML = ''; let n = 0, lastKey = '';
-  all.forEach(r => {
+  sessions.forEach(s => rowsOf(s, s === sess).forEach(r => {
     const key = r.session + '-' + r.line;
     if (key !== lastKey){ lastKey = key; const tr = tb.insertRow(); tr.className = 'ln'; const td = tr.insertCell(); td.colSpan = 4; td.textContent = `Phiên ${r.session} · Dòng ${r.line}: ${r.text}`; }
     const tr = tb.insertRow();
     tr.insertCell().textContent = ++n; tr.insertCell().textContent = r.w;
     tr.insertCell().textContent = fmt(r.st); tr.cells[2].className = 't';
     tr.insertCell().textContent = r.en == null ? '…' : fmt(r.en); tr.cells[3].className = 't';
-  });
-  $('copy').disabled = $('dl').disabled = $('clear').disabled = !all.length;
+  }));
+  const has = sessions.some(s => s.taps.length);
+  $('dl').disabled = $('copy').disabled = $('dlAll').disabled = $('clear').disabled = !has;
   const w = $('tbl').parentElement; w.scrollTop = w.scrollHeight;
 }
 $('fmt').onchange = renderTable;
 
-function txt(){
+function txtOf(list){
   let out = '', lastKey = '';
-  all.forEach(r => {
+  list.forEach(s => rowsOf(s, false).forEach(r => {
     const key = r.session + '-' + r.line;
     if (lastKey && key !== lastKey) out += '\n';
     lastKey = key;
     out += `${r.w}\t${fmt(r.st)}\t${fmt(r.en == null ? r.st : r.en)}\n`;
-  });
+  }));
   return out;
 }
-$('copy').onclick = async () => { try { await navigator.clipboard.writeText(txt()); log('Đã copy.'); } catch { log('Không copy được, dùng nút Tải TXT.'); } };
-$('dl').onclick = () => {
+const lastSess = () => { for (let i = sessions.length - 1; i >= 0; i--) if (sessions[i].taps.length) return [sessions[i]]; return []; };
+function save(list, name){
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([txt()], { type: 'text/plain;charset=utf-8' }));
-  a.download = 'karaoke_timing.txt'; a.click();
-};
+  a.href = URL.createObjectURL(new Blob([txtOf(list)], { type: 'text/plain;charset=utf-8' }));
+  a.download = name; a.click();
+}
+$('dl').onclick = () => { const l = lastSess(); if (l.length) save(l, `karaoke_timing_phien${l[0].n}.txt`); };
+$('dlAll').onclick = () => save(sessions, 'karaoke_timing_tat_ca.txt');
+$('copy').onclick = async () => { try { await navigator.clipboard.writeText(txtOf(lastSess())); log('Đã copy phiên cuối.'); } catch { log('Không copy được, dùng nút Tải TXT.'); } };
 $('clear').onclick = () => {
   if (sess) return alert('Hãy kết thúc phiên trước.');
-  if (confirm('Xóa toàn bộ dữ liệu time đã ghi?')){ all = []; sessCount = 0; renderTable(); log('Đã xóa.'); }
+  if (confirm('Xóa toàn bộ dữ liệu time đã ghi?')){ sessions = []; renderTable(); log('Đã xóa.'); }
 };
 </script>
 </body>
