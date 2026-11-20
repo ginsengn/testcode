@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Karaoke TAP Timing v3</title>
+<style>
+  *{-webkit-tap-highlight-color:transparent}
+  body{font-family:system-ui,sans-serif;background:#14161a;color:#e8e8e8;margin:0;padding:12px}
+  .wrap{max-width:760px;margin:auto}
+  .card{background:#1d2026;border:1px solid #333a44;border-radius:8px;padding:12px;margin-bottom:12px}
+  h2{margin:0 0 8px;font-size:16px;color:#7dd3fc}
+  label{display:block;font-size:12px;color:#aab;margin:8px 0 3px}
+  input,select,textarea{width:100%;box-sizing:border-box;background:#14161a;color:#fff;border:1px solid #444c58;border-radius:5px;padding:8px;font:inherit}
+  textarea{height:130px;line-height:1.5;resize:vertical}
+  button{background:#2563eb;color:#fff;border:0;border-radius:5px;padding:10px 12px;font-weight:600;cursor:pointer;font:inherit;font-weight:600}
+  button.alt{background:#374151}
+  button.red{background:#dc2626}
+  button:disabled{background:#444;cursor:not-allowed;opacity:.5}
+  .row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
+  .g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  video{width:100%;max-height:42vh;display:block;background:#000;border-radius:6px}
+  .ctl{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;margin:10px 0}
+  .ctl .side{display:flex;flex-direction:column;gap:8px}
+  .ctl .side button{padding:14px 8px}
+  #tap{width:120px;height:120px;border-radius:50%;background:#16a34a;font-size:26px;letter-spacing:1px;box-shadow:0 0 0 6px #14532d;user-select:none;touch-action:manipulation}
+  #tap:active{background:#22c55e;transform:scale(.96)}
+  #tap:disabled{background:#444;box-shadow:0 0 0 6px #2a2d33}
+  #pause.on{background:#f59e0b;color:#000}
+  #panel{background:#0b0c0e;border-radius:6px;padding:10px;min-height:64px;text-align:center}
+  #cur{font-size:26px;font-weight:700;color:#fde047}
+  #ctx{font-size:15px;margin-top:6px;line-height:1.6;color:#e8e8e8}
+  #ctx .d{color:#60a5fa}#ctx .c{color:#fde047;text-decoration:underline}
+  #clock{font:13px monospace;color:#7dd3fc;margin-top:6px}
+  #log{background:#0b0c0e;color:#a3e635;font:12px monospace;height:80px;overflow:auto;padding:8px;border-radius:5px;margin-top:8px}
+  .tw{max-height:420px;overflow:auto;margin-top:8px}
+  table{border-collapse:collapse;width:100%;font-size:14px}
+  th,td{border-bottom:1px solid #333a44;padding:5px 8px;text-align:left}
+  th{position:sticky;top:0;background:#1d2026}
+  td.t{font-family:monospace;color:#7dd3fc}
+  tr.ln td{background:#262b33;color:#9ca3af;font-size:12px}
+  .hint{font-size:12px;color:#aab;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="card">
+    <input type="file" id="file" accept="video/*">
+    <div style="margin-top:10px"><video id="video" playsinline></video></div>
+
+    <div class="ctl">
+      <div class="side"><button class="alt" id="pause" disabled>Pause</button></div>
+      <button id="tap" disabled>TAP</button>
+      <div class="side"><button class="alt" id="undo" disabled>Hủy TAP cuối</button></div>
+    </div>
+
+    <div id="panel">
+      <div id="cur">—</div>
+      <div id="ctx"></div>
+      <div id="clock">Video: 0.00s</div>
+    </div>
+
+    <div class="row">
+      <button id="start" disabled style="flex:1">▶ Quét</button>
+      <button id="finish" class="red" disabled style="flex:1">■ Kết thúc phiên</button>
+    </div>
+    <div id="log">Chọn file video để bắt đầu.</div>
+  </div>
+
+  <div class="card">
+    <h2>Thiết lập phiên</h2>
+    <label>Điểm bắt đầu quét (giây hoặc m:ss, nên trước lúc chạy chữ khoảng 3s)</label>
+    <div class="row" style="margin-top:0">
+      <input id="from" value="0" style="flex:1;min-width:90px">
+      <button class="alt" id="goto" disabled>Tua tới</button>
+      <button class="alt" id="useNow" disabled>Lấy vị trí video</button>
+    </div>
+    <div class="g">
+      <div>
+        <label>Bước quét (giây)</label>
+        <input type="number" id="step" value="0.1" min="0.03" max="0.25" step="0.01">
+      </div>
+      <div>
+        <label>Bù trễ tay bấm (ms)</label>
+        <input type="number" id="lag" value="0" step="10">
+      </div>
+      <div>
+        <label>Tua nhanh</label>
+        <div class="row" style="margin-top:0">
+          <button class="alt" id="back" disabled style="flex:1">−</button>
+          <button class="alt" id="fwd" disabled style="flex:1">+</button>
+        </div>
+      </div>
+    </div>
+    <div class="hint">Nút − / + tua video lùi/tới đúng một "Bước quét". Bù trễ: số ms trừ bớt khỏi mỗi lần TAP (tay thường bấm trễ hơn mắt thấy, khoảng 100–200ms). Để 0 nếu không cần.</div>
+
+    <label>Lyric của phiên này (mỗi dòng đúng như trên video, theo thứ tự hát)</label>
+    <textarea id="lyrics"></textarea>
+    <div class="hint">TAP lần 1 = chữ đầu tiên của lyric nạp, TAP lần 2 = chữ thứ 2... Sau chữ cuối, bấm TAP thêm một lần để chốt thời điểm kết thúc chữ cuối (hoặc bấm Kết thúc phiên).</div>
+  </div>
+
+  <div class="card">
+    <h2>Bảng time từng chữ</h2>
+    <label>Định dạng time</label>
+    <select id="fmt">
+      <option value="yzztt">x:yzztt (giây 2 số + phần trăm giây) ví dụ 0:03445</option>
+      <option value="yzzt">x:yzzt (giây 2 số) ví dụ 0:3094</option>
+      <option value="yzt">x:yzt (giây 1 số) ví dụ 0:394</option>
+      <option value="ms">m:ss.tt ví dụ 3:09.45</option>
+    </select>
+    <div class="tw"><table id="tbl"><thead><tr><th>#</th><th>Chữ</th><th>Bắt đầu</th><th>Kết thúc</th></tr></thead><tbody></tbody></table></div>
+    <div class="row">
+      <button id="copy" disabled>Copy</button>
+      <button id="dl" disabled>Tải TXT</button>
+      <button id="clear" class="alt" disabled>Xóa tất cả</button>
+    </div>
+    <div class="hint">Dữ liệu các phiên được cộng dồn trong bảng này. Tải TXT khi xong (đừng tải lại trang trước khi lưu).</div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const video = $('video');
+let all = [];          // mọi chữ đã TAP, qua nhiều phiên
+let sess = null;       // phiên hiện tại: {words, idx, paused, awaitEnd, n}
+let sessCount = 0, rafId = 0, lastTap = 0;
+
+function log(m){ $('log').innerHTML += `<div>&gt; ${m}</div>`; $('log').scrollTop = 1e9; }
+function parseTime(s){
+  s = String(s).trim().replace(',', '.'); if (!s) return NaN;
+  if (s.includes(':')){ const p = s.split(':').map(Number); return p.length === 2 ? p[0] * 60 + p[1] : p[0] * 3600 + p[1] * 60 + p[2]; }
+  return parseFloat(s);
+}
+const p2 = n => String(n).padStart(2, '0');
+function fmt(sec){
+  const t = Math.max(0, Math.round(sec * 100));
+  const h = Math.floor(t / 360000), m = Math.floor(t / 6000) % 60, s = Math.floor(t / 100) % 60, c = t % 100, d = Math.floor(c / 10);
+  const f = $('fmt').value;
+  if (f === 'yzt') return `${h}:${m}${s % 10}${d}`;
+  if (f === 'yzzt') return `${h}:${m}${p2(s)}${d}`;
+  if (f === 'ms') return `${h * 60 + m}:${p2(s)}.${p2(c)}`;
+  return `${h}:${m}${p2(s)}${p2(c)}`;
+}
+
+// ----- Nạp video -----
+$('file').onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  video.src = URL.createObjectURL(f);
+  video.controls = true;
+  video.onloadedmetadata = () => {
+    ['start', 'goto', 'useNow', 'back', 'fwd'].forEach(id => $(id).disabled = false);
+    log(`Đã nạp ${f.name} (${video.duration.toFixed(1)}s)`);
+  };
+};
+$('goto').onclick = () => { const t = parseTime($('from').value); if (!isNaN(t)) video.currentTime = Math.min(Math.max(0, t), video.duration); };
+$('useNow').onclick = () => { $('from').value = video.currentTime.toFixed(2); };
+const stepVal = () => +$('step').value || 0.1;
+$('back').onclick = () => { video.currentTime = Math.max(0, video.currentTime - stepVal()); };
+$('fwd').onclick = () => { video.currentTime = Math.min(video.duration, video.currentTime + stepVal()); };
+
+// ----- Đồng hồ hiển thị -----
+function tick(){
+  $('clock').textContent = `Video: ${video.currentTime.toFixed(2)}s  (${fmt(video.currentTime)})`;
+  rafId = requestAnimationFrame(tick);
+}
+tick();
+
+// ----- Hiển thị chữ kế tiếp -----
+function showWords(){
+  if (!sess){ $('cur').textContent = '—'; $('ctx').innerHTML = ''; return; }
+  const W = sess.words;
+  if (sess.awaitEnd){
+    $('cur').textContent = '✔ Hết chữ';
+    $('ctx').textContent = 'TAP thêm 1 lần để chốt kết thúc chữ cuối (hoặc Kết thúc phiên).';
+    return;
+  }
+  const cw = W[sess.idx];
+  $('cur').textContent = `${sess.idx + 1}/${W.length}  ${cw.w}`;
+  const same = W.map((x, i) => [x, i]).filter(([x]) => x.line === cw.line);
+  $('ctx').innerHTML = same.map(([x, i]) =>
+    `<span class="${i < sess.idx ? 'd' : i === sess.idx ? 'c' : ''}">${x.w.replace(/</g, '&lt;')}</span>`).join(' ');
+}
+
+// ----- Bắt đầu phiên -----
+$('start').onclick = async () => {
+  const lines = $('lyrics').value.split('\n').map(s => s.trim()).filter(Boolean);
+  if (!lines.length) return alert('Hãy nhập lyric của phiên này trước.');
+  let tA = parseTime($('from').value); if (isNaN(tA)) tA = 0;
+  tA = Math.min(Math.max(0, tA), video.duration);
+  const words = [];
+  lines.forEach((ln, k) => ln.split(/\s+/).forEach((w, i) => words.push({ line: k + 1, w, first: i === 0, text: ln })));
+  sessCount++;
+  sess = { words, idx: 0, paused: false, awaitEnd: false, n: sessCount };
+  video.pause(); video.controls = false;
+  await new Promise(res => {
+    if (Math.abs(video.currentTime - tA) < 0.001) return res();
+    video.addEventListener('seeked', () => res(), { once: true });
+    video.currentTime = tA;
+  });
+  video.muted = false;
+  try { await video.play(); } catch { log('Trình duyệt chặn tự phát, bấm play rồi TAP.'); video.controls = true; }
+  setUI(true);
+  showWords();
+  log(`Phiên ${sess.n}: ${words.length} chữ, bắt đầu từ ${tA.toFixed(2)}s. Chữ đầu chuyển màu thì bấm TAP.`);
+};
+
+function setUI(running){
+  $('start').disabled = running;
+  ['tap', 'pause', 'undo', 'finish'].forEach(id => $(id).disabled = !running);
+  $('goto').disabled = running;
+  $('pause').textContent = 'Pause'; $('pause').classList.remove('on');
+}
+
+// ----- TAP -----
+function doTap(){
+  if (!sess || sess.paused) return;
+  const now = performance.now(); if (now - lastTap < 60) return; lastTap = now;
+  const t = Math.max(0, video.currentTime - (+$('lag').value || 0) / 1000);
+  if (sess.awaitEnd){
+    const last = all[all.length - 1]; last.en = Math.max(last.st, t);
+    return finish('Đã chốt kết thúc chữ cuối.');
+  }
+  const w = sess.words[sess.idx];
+  const prev = sess.idx > 0 ? all[all.length - 1] : null;
+  if (prev) prev.en = Math.max(prev.st, t);
+  all.push({ session: sess.n, line: w.line, w: w.w, first: w.first, text: w.text, st: t, en: null });
+  sess.idx++;
+  if (sess.idx >= sess.words.length) sess.awaitEnd = true;
+  showWords(); renderTable();
+}
+$('tap').addEventListener('pointerdown', e => { e.preventDefault(); doTap(); });
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && sess && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT'){ e.preventDefault(); doTap(); }
+});
+
+// ----- Pause / tiếp tục -----
+$('pause').onclick = () => {
+  if (!sess) return;
+  sess.paused = !sess.paused;
+  if (sess.paused){ video.pause(); $('pause').textContent = 'Tiếp tục'; $('pause').classList.add('on'); log('Đã Pause. Dữ liệu vẫn được giữ.'); }
+  else { video.play(); $('pause').textContent = 'Pause'; $('pause').classList.remove('on'); log('Tiếp tục.'); }
+  $('tap').disabled = sess.paused;
+};
+
+// ----- Hủy TAP cuối -----
+$('undo').onclick = () => {
+  if (!sess || sess.idx === 0) return;
+  all.pop(); sess.idx--; sess.awaitEnd = false;
+  const prev = sess.idx > 0 ? all[all.length - 1] : null;
+  if (prev) prev.en = null;
+  log('Đã hủy TAP cuối. Tua video lùi (nút −) nếu cần rồi bấm lại.');
+  showWords(); renderTable();
+};
+
+// ----- Kết thúc phiên -----
+function finish(msg){
+  if (!sess) return;
+  const mine = all.filter(r => r.session === sess.n);
+  const last = mine[mine.length - 1];
+  if (last && last.en == null) last.en = last.st + 0.5;
+  video.pause(); video.controls = true;
+  log(`${msg || 'Kết thúc phiên.'} Phiên ${sess.n}: ${mine.length}/${sess.words.length} chữ.`);
+  sess = null; setUI(false); showWords(); renderTable();
+}
+$('finish').onclick = () => finish('Kết thúc phiên.');
+
+// ----- Bảng -----
+function renderTable(){
+  const tb = $('tbl').tBodies[0]; tb.innerHTML = ''; let n = 0, lastKey = '';
+  all.forEach(r => {
+    const key = r.session + '-' + r.line;
+    if (key !== lastKey){ lastKey = key; const tr = tb.insertRow(); tr.className = 'ln'; const td = tr.insertCell(); td.colSpan = 4; td.textContent = `Phiên ${r.session} · Dòng ${r.line}: ${r.text}`; }
+    const tr = tb.insertRow();
+    tr.insertCell().textContent = ++n; tr.insertCell().textContent = r.w;
+    tr.insertCell().textContent = fmt(r.st); tr.cells[2].className = 't';
+    tr.insertCell().textContent = r.en == null ? '…' : fmt(r.en); tr.cells[3].className = 't';
+  });
+  $('copy').disabled = $('dl').disabled = $('clear').disabled = !all.length;
+  const w = $('tbl').parentElement; w.scrollTop = w.scrollHeight;
+}
+$('fmt').onchange = renderTable;
+
+function txt(){
+  let out = '', lastKey = '';
+  all.forEach(r => {
+    const key = r.session + '-' + r.line;
+    if (lastKey && key !== lastKey) out += '\n';
+    lastKey = key;
+    out += `${r.w}\t${fmt(r.st)}\t${fmt(r.en == null ? r.st : r.en)}\n`;
+  });
+  return out;
+}
+$('copy').onclick = async () => { try { await navigator.clipboard.writeText(txt()); log('Đã copy.'); } catch { log('Không copy được, dùng nút Tải TXT.'); } };
+$('dl').onclick = () => {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([txt()], { type: 'text/plain;charset=utf-8' }));
+  a.download = 'karaoke_timing.txt'; a.click();
+};
+$('clear').onclick = () => {
+  if (sess) return alert('Hãy kết thúc phiên trước.');
+  if (confirm('Xóa toàn bộ dữ liệu time đã ghi?')){ all = []; sessCount = 0; renderTable(); log('Đã xóa.'); }
+};
+</script>
+</body>
+</html>
