@@ -3,53 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Karaoke Word Timing Extractor</title>
+<title>Karaoke Word Timing Extractor v2</title>
 <style>
-  body{font-family:system-ui,sans-serif;background:#14161a;color:#e8e8e8;margin:0;padding:16px}
-  .wrap{max-width:1200px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+  body{font-family:system-ui,sans-serif;background:#14161a;color:#e8e8e8;margin:0;padding:14px}
+  .wrap{max-width:1200px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
   @media(max-width:900px){.wrap{grid-template-columns:1fr}}
   .card{background:#1d2026;border:1px solid #333a44;border-radius:8px;padding:14px}
   h2{margin:0 0 10px;font-size:17px;color:#7dd3fc}
   label{display:block;font-size:12px;color:#aab;margin:8px 0 3px}
-  input,select,textarea{width:100%;box-sizing:border-box;background:#14161a;color:#fff;border:1px solid #444c58;border-radius:5px;padding:7px;font:inherit}
-  input[type=color]{height:36px;padding:2px}
-  textarea{height:150px;line-height:1.5;resize:vertical}
-  button{background:#2563eb;color:#fff;border:0;border-radius:5px;padding:9px 13px;font-weight:600;cursor:pointer}
-  button:disabled{background:#444;cursor:not-allowed}
+  input,select,textarea{width:100%;box-sizing:border-box;background:#14161a;color:#fff;border:1px solid #444c58;border-radius:5px;padding:8px;font:inherit}
+  textarea{height:140px;line-height:1.5;resize:vertical}
+  button{background:#2563eb;color:#fff;border:0;border-radius:5px;padding:9px 12px;font-weight:600;cursor:pointer}
+  button.alt{background:#374151}
+  button:disabled{background:#444;cursor:not-allowed;opacity:.6}
   .g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
   .vbox{position:relative;background:#000;border-radius:6px;overflow:hidden;margin:10px 0}
   video{width:100%;display:block}
   #ov{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-  #log{background:#0b0c0e;color:#a3e635;font:12px monospace;height:90px;overflow:auto;padding:8px;border-radius:5px;margin-top:10px}
+  #sw{width:34px;height:34px;border-radius:6px;border:1px solid #666}
+  #log{background:#0b0c0e;color:#a3e635;font:12px monospace;height:100px;overflow:auto;padding:8px;border-radius:5px;margin-top:10px}
   .tw{max-height:560px;overflow:auto;margin-top:8px}
   table{border-collapse:collapse;width:100%;font-size:14px}
   th,td{border-bottom:1px solid #333a44;padding:5px 8px;text-align:left}
   th{position:sticky;top:0;background:#1d2026}
   td.t{font-family:monospace;color:#7dd3fc}
   tr.ln td{background:#262b33;color:#9ca3af;font-size:12px}
+  .hint{font-size:12px;color:#aab;margin-top:6px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="card">
-    <h2>1. Video beat &amp; lyric</h2>
+    <h2>1. Video beat</h2>
     <input type="file" id="file" accept="video/*">
-    <div class="vbox"><video id="video" controls muted></video><canvas id="ov"></canvas></div>
+    <div class="vbox"><video id="video" controls muted playsinline></video><canvas id="ov"></canvas></div>
+
+    <label>Điểm bắt đầu quét (giây hoặc m:ss, nên trước lúc chạy chữ khoảng 3s)</label>
     <div class="row" style="margin-top:0">
-      <button id="pick" disabled>Lấy màu từ video</button>
-      <span style="font-size:12px;color:#aab;align-self:center">Tua tới lúc chữ đã đổi màu, bấm nút rồi bấm vào chữ đó.</span>
+      <input id="from" value="0" style="flex:1;min-width:90px">
+      <button class="alt" id="goto" disabled>Tua tới</button>
+      <button class="alt" id="useNow" disabled>Lấy vị trí video</button>
+    </div>
+    <label>Quét đến (để trống = hết video)</label>
+    <input id="to" placeholder="vd 250 hoặc 4:10">
+
+    <h2 style="margin-top:16px">2. Màu chữ đã chạy</h2>
+    <div class="row" style="margin-top:0">
+      <button class="alt" data-hue="220">Xanh dương</button>
+      <button class="alt" data-hue="330">Hồng</button>
+      <button class="alt" data-hue="355">Đỏ</button>
+      <div id="sw"></div>
     </div>
     <div class="g">
-      <div><label>Màu chữ đã chạy</label><input type="color" id="color" value="#1e6bff"></div>
-      <div><label>Dung sai màu</label><input type="number" id="tol" value="80" min="20" max="200"></div>
-      <div><label>Bước quét (giây)</label><input type="number" id="step" value="0.05" min="0.03" max="0.25" step="0.01"></div>
-      <div><label>Vùng chữ: từ trên (%)</label><input type="number" id="roiTop" value="60" min="0" max="99"></div>
-      <div><label>Vùng chữ: đến (%)</label><input type="number" id="roiBot" value="95" min="1" max="100"></div>
-      <div><label>Số dòng hiện cùng lúc</label><select id="slots"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div>
+      <div><label>Sắc độ (0-360)</label><input type="number" id="hue" value="220" min="0" max="360"></div>
+      <div><label>Dung sai (độ)</label><input type="number" id="tol" value="30" min="5" max="90"></div>
+      <div><label>Độ đậm tối thiểu (%)</label><input type="number" id="smin" value="35" min="5" max="90"></div>
     </div>
-    <label>2. Lyric (mỗi dòng đúng như dòng trên video, theo thứ tự hát)</label>
-    <textarea id="lyrics" placeholder="Xuân đã đến rồi gieo rắc ngàn hồn hoa xuống đời&#10;Vui trong bình minh muôn loài chim hót vang mọi nơi"></textarea>
+    <div class="row">
+      <button class="alt" id="pick" disabled>Lấy màu từ video</button>
+      <button class="alt" id="mask" disabled>Xem thử nhận diện</button>
+    </div>
+    <div class="hint">Lấy màu: phát video tới lúc chữ đã đổi màu, tạm dừng, bấm nút rồi chạm vào nét chữ đó. "Xem thử" tô xanh lá các điểm được nhận là màu chạy; chỉ nên tô đúng chữ đã hát.</div>
+
+    <h2 style="margin-top:16px">3. Vùng chữ &amp; lyric</h2>
+    <div class="g">
+      <div><label>Vùng từ trên (%)</label><input type="number" id="roiTop" value="60" min="0" max="99"></div>
+      <div><label>Vùng đến (%)</label><input type="number" id="roiBot" value="95" min="1" max="100"></div>
+      <div><label>Số dòng cùng lúc</label><select id="slots"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select></div>
+    </div>
+    <label>Bước quét (giây)</label>
+    <input type="number" id="step" value="0.1" min="0.03" max="0.25" step="0.01">
+    <label>Lyric (mỗi dòng đúng như trên video, theo thứ tự hát)</label>
+    <textarea id="lyrics"></textarea>
     <div class="row">
       <button id="start" disabled>Quét và xuất time</button>
       <button id="stop" disabled style="background:#dc2626">Dừng</button>
@@ -58,12 +84,12 @@
   </div>
 
   <div class="card">
-    <h2>3. Bảng time từng chữ</h2>
+    <h2>Bảng time từng chữ</h2>
     <label>Định dạng time</label>
     <select id="fmt">
-      <option value="yzzt">x:yzzt (giờ : phút, giây 2 số, 1/10 giây) ví dụ 0:3094</option>
-      <option value="yzt">x:yzt (giây 1 số, chỉ đúng khi giây dưới 10) ví dụ 0:394</option>
-      <option value="ms">m:ss.t (dễ đọc) ví dụ 3:09.4</option>
+      <option value="yzzt">x:yzzt (giây 2 số) ví dụ 0:3094</option>
+      <option value="yzt">x:yzt (giây 1 số) ví dụ 0:394</option>
+      <option value="ms">m:ss.t ví dụ 3:09.4</option>
     </select>
     <div class="tw"><table id="tbl"><thead><tr><th>#</th><th>Chữ</th><th>Bắt đầu</th><th>Kết thúc</th></tr></thead><tbody></tbody></table></div>
     <div class="row">
@@ -78,11 +104,14 @@ const $ = id => document.getElementById(id);
 const video = $('video'), ov = $('ov');
 const work = document.createElement('canvas');
 const wctx = work.getContext('2d', { willReadFrequently: true });
-let stopFlag = false, rows = [];
+let stopFlag = false, scanning = false, rows = [], pickMode = false;
 
 function log(m){ $('log').innerHTML += `<div>&gt; ${m}</div>`; $('log').scrollTop = 1e9; }
-
-// Giây -> chuỗi time theo định dạng đã chọn (làm tròn 1/10 giây)
+function parseTime(s){
+  s = String(s).trim().replace(',', '.'); if (!s) return NaN;
+  if (s.includes(':')){ const p = s.split(':').map(Number); return p.length === 2 ? p[0] * 60 + p[1] : p[0] * 3600 + p[1] * 60 + p[2]; }
+  return parseFloat(s);
+}
 function fmt(sec){
   const t = Math.max(0, Math.round(sec * 10));
   const h = Math.floor(t / 36000), m = Math.floor(t / 600) % 60, s = Math.floor(t / 10) % 60, d = t % 10;
@@ -91,8 +120,6 @@ function fmt(sec){
   if (f === 'ms') return `${h * 60 + m}:${String(s).padStart(2, '0')}.${d}`;
   return `${h}:${m}${String(s).padStart(2, '0')}${d}`;
 }
-const hex2rgb = h => { const n = parseInt(h.slice(1), 16); return { r: n >> 16 & 255, g: n >> 8 & 255, b: n & 255 }; };
-
 function seekTo(t){
   return new Promise(res => {
     if (Math.abs(video.currentTime - t) < 0.001) return res();
@@ -101,17 +128,49 @@ function seekTo(t){
   });
 }
 
-// Vẽ khung vùng quét + vạch mép màu chạy (fr = mảng x theo từng dòng)
-function drawOv(fr){
+// ----- Nhận diện màu theo sắc độ (hue): bỏ qua chữ trắng/xám/đen vì độ đậm thấp -----
+function matcher(){
+  const hue = +$('hue').value, tol = +$('tol').value, smin = +$('smin').value / 100;
+  return (r, g, b) => {
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+    if (mx < 70 || d < smin * mx) return false;
+    let h = mx === r ? ((g - b) / d + 6) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+    h *= 60;
+    let diff = Math.abs(h - hue); if (diff > 180) diff = 360 - diff;
+    return diff <= tol;
+  };
+}
+function updSw(){ $('sw').style.background = `hsl(${$('hue').value},90%,55%)`; }
+$('hue').oninput = updSw; updSw();
+document.querySelectorAll('[data-hue]').forEach(b => b.onclick = () => { $('hue').value = b.dataset.hue; updSw(); });
+
+// ----- Vẽ khung vùng quét / vạch mép màu chạy / mask -----
+function drawOv(fr, maskImg){
   const W = ov.width, H = ov.height; if (!W) return;
   const c = ov.getContext('2d'); c.clearRect(0, 0, W, H);
-  const S = +$('slots').value, y0 = H * $('roiTop').value / 100, y1 = H * $('roiBot').value / 100, sh = (y1 - y0) / S;
-  c.lineWidth = 2; c.strokeStyle = 'rgba(255,230,0,.85)'; c.strokeRect(1, y0, W - 2, y1 - y0);
+  const S = +$('slots').value, y0 = Math.floor(H * $('roiTop').value / 100), y1 = Math.floor(H * $('roiBot').value / 100), sh = (y1 - y0) / S;
+  if (maskImg) c.putImageData(maskImg, 0, y0);
+  c.lineWidth = 2; c.strokeStyle = 'rgba(255,230,0,.9)'; c.strokeRect(1, y0, W - 2, y1 - y0);
   for (let s = 1; s < S; s++){ c.beginPath(); c.moveTo(0, y0 + s * sh); c.lineTo(W, y0 + s * sh); c.stroke(); }
   if (fr){ c.strokeStyle = '#0f0'; fr.forEach((x, s) => { if (x >= 0){ c.beginPath(); c.moveTo(x, y0 + s * sh); c.lineTo(x, y0 + (s + 1) * sh); c.stroke(); } }); }
 }
 ['roiTop', 'roiBot', 'slots'].forEach(id => $(id).addEventListener('input', () => drawOv()));
 
+function frameROI(){
+  const W = work.width, H = work.height;
+  const y0 = Math.floor(H * $('roiTop').value / 100), y1 = Math.floor(H * $('roiBot').value / 100);
+  wctx.drawImage(video, 0, 0, W, H);
+  return { y0, y1, img: wctx.getImageData(0, y0, W, y1 - y0) };
+}
+$('mask').onclick = () => {
+  if (scanning) return;
+  const { img } = frameROI(), m = matcher(), d = img.data;
+  const out = new ImageData(img.width, img.height); let n = 0;
+  for (let i = 0; i < d.length; i += 4) if (m(d[i], d[i + 1], d[i + 2])){ out.data[i + 1] = 255; out.data[i + 3] = 200; n++; }
+  drawOv(null, out); log(`Xem thử tại ${video.currentTime.toFixed(1)}s: ${n} điểm được nhận là màu chạy.`);
+};
+
+// ----- Nạp video -----
 $('file').onchange = e => {
   const f = e.target.files[0]; if (!f) return;
   video.src = URL.createObjectURL(f);
@@ -119,56 +178,72 @@ $('file').onchange = e => {
     const sc = Math.min(1, 960 / video.videoWidth);
     work.width = ov.width = Math.round(video.videoWidth * sc);
     work.height = ov.height = Math.round(video.videoHeight * sc);
-    $('start').disabled = false; $('pick').disabled = false;
+    ['start', 'pick', 'mask', 'goto', 'useNow'].forEach(id => $(id).disabled = false);
     drawOv(); log(`Đã nạp ${f.name} (${video.duration.toFixed(1)}s)`);
   };
 };
+$('goto').onclick = () => { const t = parseTime($('from').value); if (!isNaN(t)){ video.currentTime = Math.min(Math.max(0, t), video.duration); } };
+$('useNow').onclick = () => { $('from').value = video.currentTime.toFixed(1); };
 
-// Lấy màu bằng cách bấm vào chữ đã đổi màu
-$('pick').onclick = () => { ov.style.pointerEvents = 'auto'; ov.style.cursor = 'crosshair'; log('Bấm vào một chữ đã đổi màu trên video.'); };
+// ----- Lấy màu: tìm cụm màu đậm nhiều nhất quanh điểm bấm -----
+$('pick').onclick = () => {
+  if (scanning) return log('Đang quét, hãy bấm Dừng trước.');
+  video.pause(); pickMode = true; ov.style.pointerEvents = 'auto'; ov.style.cursor = 'crosshair';
+  log('Chạm vào nét chữ đã đổi màu.');
+};
 ov.onclick = e => {
-  if (ov.style.pointerEvents !== 'auto') return;
+  if (!pickMode) return; pickMode = false; ov.style.pointerEvents = 'none'; ov.style.cursor = '';
   const r = ov.getBoundingClientRect();
   const x = Math.round((e.clientX - r.left) * ov.width / r.width), y = Math.round((e.clientY - r.top) * ov.height / r.height);
   wctx.drawImage(video, 0, 0, work.width, work.height);
-  const d = wctx.getImageData(Math.max(0, x - 1), Math.max(0, y - 1), 3, 3).data;
-  let R = 0, G = 0, B = 0; for (let i = 0; i < 36; i += 4){ R += d[i]; G += d[i + 1]; B += d[i + 2]; }
-  $('color').value = '#' + [R, G, B].map(v => Math.round(v / 9).toString(16).padStart(2, '0')).join('');
-  ov.style.pointerEvents = 'none'; ov.style.cursor = ''; log('Đã lấy màu: ' + $('color').value);
+  const R = 14, x0 = Math.max(0, x - R), y0 = Math.max(0, y - R);
+  const w = Math.min(work.width - x0, 2 * R + 1), h = Math.min(work.height - y0, 2 * R + 1);
+  const d = wctx.getImageData(x0, y0, w, h).data;
+  const bins = new Array(30).fill(0), sat = new Array(30).fill(0);
+  for (let i = 0; i < d.length; i += 4){
+    const mx = Math.max(d[i], d[i + 1], d[i + 2]), mn = Math.min(d[i], d[i + 1], d[i + 2]), df = mx - mn;
+    if (mx < 70 || df < 0.3 * mx) continue;
+    let hh = mx === d[i] ? ((d[i + 1] - d[i + 2]) / df + 6) % 6 : mx === d[i + 1] ? (d[i + 2] - d[i]) / df + 2 : (d[i] - d[i + 1]) / df + 4;
+    const b = Math.floor(hh * 60 / 12) % 30; bins[b]++; sat[b] += df / mx;
+  }
+  let best = 0; for (let b = 1; b < 30; b++) if (bins[b] > bins[best]) best = b;
+  if (bins[best] < 6) return log('Không thấy màu đậm quanh điểm bấm. Tua tới lúc chữ đã đổi màu rồi bấm sát nét chữ hơn.');
+  $('hue').value = best * 12 + 6; updSw();
+  $('smin').value = Math.max(15, Math.round(sat[best] / bins[best] * 100 * 0.6));
+  log(`Đã lấy màu: sắc độ ${$('hue').value}. Bấm "Xem thử nhận diện" để kiểm tra.`);
 };
 
 $('stop').onclick = () => { stopFlag = true; };
 
+// ----- Quét -----
 $('start').onclick = async () => {
   const lines = $('lyrics').value.split('\n').map(s => s.trim()).filter(Boolean);
   if (!lines.length) return alert('Hãy nhập lyric trước.');
-  stopFlag = false; $('start').disabled = true; $('stop').disabled = false;
+  let tA = parseTime($('from').value); if (isNaN(tA)) tA = 0;
+  let tB = parseTime($('to').value); if (isNaN(tB) || tB > video.duration) tB = video.duration;
+  if (tA >= tB) return alert('Điểm bắt đầu phải nhỏ hơn điểm kết thúc.');
+  scanning = true; stopFlag = false; video.pause(); video.controls = false;
+  $('start').disabled = $('pick').disabled = $('mask').disabled = $('goto').disabled = true; $('stop').disabled = false;
   $('copy').disabled = $('dl').disabled = true;
 
   const W = work.width, H = work.height;
   const y0 = Math.floor(H * $('roiTop').value / 100), y1 = Math.floor(H * $('roiBot').value / 100);
-  const S = +$('slots').value, sh = (y1 - y0) / S, step = +$('step').value || 0.05;
-  const col = hex2rgb($('color').value), tol2 = (+$('tol').value) ** 2, MINC = 2;
+  const S = +$('slots').value, sh = (y1 - y0) / S, step = +$('step').value || 0.1;
+  const isM = matcher(), MINC = 2;
   const slots = Array.from({ length: S }, () => ({ seg: null, quiet: 0 }));
   const segs = [];
-  log('Đang quét video...');
+  log(`Quét từ ${tA.toFixed(1)}s đến ${tB.toFixed(1)}s...`);
 
-  for (let t = 0; t < video.duration && !stopFlag; t += step){
+  for (let t = tA; t < tB && !stopFlag; t += step){
     await seekTo(t);
     wctx.drawImage(video, 0, 0, W, H);
-    const img = wctx.getImageData(0, y0, W, y1 - y0).data;
-    const fr = [];
+    const img = wctx.getImageData(0, y0, W, y1 - y0).data, fr = [];
     for (let s = 0; s < S; s++){
-      const ra = Math.floor(s * sh), rb = Math.floor((s + 1) * sh);
-      const cnt = new Uint16Array(W);
+      const ra = Math.floor(s * sh), rb = Math.floor((s + 1) * sh), cnt = new Uint16Array(W);
       for (let r = ra; r < rb; r++){
         let i = r * W * 4;
-        for (let c = 0; c < W; c++, i += 4){
-          const dr = img[i] - col.r, dg = img[i + 1] - col.g, db = img[i + 2] - col.b;
-          if (dr * dr + dg * dg + db * db < tol2) cnt[c]++;
-        }
+        for (let c = 0; c < W; c++, i += 4) if (isM(img[i], img[i + 1], img[i + 2])) cnt[c]++;
       }
-      // cột "có màu chạy" = >= MINC điểm; chỉ tin cụm >= 3 cột trong cửa sổ 5 cột (lọc nhiễu)
       const pre = new Int32Array(W + 1);
       for (let c = 0; c < W; c++) pre[c + 1] = pre[c] + (cnt[c] >= MINC ? 1 : 0);
       const win = (a, b) => pre[Math.min(W, b + 1)] - pre[Math.max(0, a)];
@@ -183,25 +258,24 @@ $('start').onclick = async () => {
         const g = st.seg;
         g.minL = Math.min(g.minL, left); g.maxR = Math.max(g.maxR, right);
         g.samples.push([t, right]); g.t1 = t;
-      } else if (st.seg && ++st.quiet >= 4) st.seg = null; // dòng đã hết / bị thay
+      } else if (st.seg && ++st.quiet >= 4) st.seg = null;
     }
     drawOv(fr);
-    if (Math.round(t / step) % 100 === 0) log(`... ${t.toFixed(0)}s / ${video.duration.toFixed(0)}s`);
+    if (Math.round((t - tA) / step) % 50 === 0) log(`... ${t.toFixed(0)}s / ${tB.toFixed(0)}s`);
   }
 
-  // Lọc đoạn nhiễu, ghép theo thứ tự bắt đầu hát <-> thứ tự dòng lyric
   const good = segs.filter(g => g.samples.length >= 3 && g.t1 - g.t0 >= 0.3 && g.maxR - g.minL > 20);
   log(`Phát hiện ${good.length} dòng đang chạy / ${lines.length} dòng lyric.`);
-  if (good.length !== lines.length) log('Số dòng chưa khớp: chỉnh vùng quét, màu, dung sai hoặc số dòng hiện cùng lúc rồi quét lại.');
+  if (good.length !== lines.length) log('Số dòng chưa khớp: dùng "Xem thử nhận diện", chỉnh màu / vùng quét / số dòng rồi quét lại.');
+  if (good.some(g => g.samples[0][1] - g.minL > 0.85 * (g.maxR - g.minL))) log('Cảnh báo: có dòng bị nhận là đã chạy hết ngay từ đầu, màu đang trùng chữ chưa chạy hoặc nền.');
   rows = buildRows(good, lines);
-  renderTable();
-  drawOv();
-  $('start').disabled = false; $('stop').disabled = true;
+  renderTable(); drawOv();
+  scanning = false; video.controls = true;
+  $('start').disabled = $('pick').disabled = $('mask').disabled = $('goto').disabled = false; $('stop').disabled = true;
   $('copy').disabled = $('dl').disabled = !rows.length;
   log(stopFlag ? 'Đã dừng.' : 'Hoàn tất.');
 };
 
-// Chia dòng thành từng chữ theo tỉ lệ độ rộng, rồi tìm lúc mép màu chạy vượt biên chữ
 function buildRows(segs, lines){
   const ctx = document.createElement('canvas').getContext('2d');
   ctx.font = 'bold 40px sans-serif';
@@ -216,23 +290,18 @@ function buildRows(segs, lines){
       const a = x0 + ctx.measureText(words.slice(0, i).join(' ') + (i ? ' ' : '')).width / total * span;
       const b = x0 + ctx.measureText(words.slice(0, i + 1).join(' ')).width / total * span;
       const st = first(a + 2), en = Math.max(st, first(b - 2));
-      out.push({ line: k + 1, idx: i + 1, w, st, en, first: i === 0, text: line });
+      out.push({ line: k + 1, w, st, en, first: i === 0, text: line });
     });
   });
   return out;
 }
 
 function renderTable(){
-  const tb = $('tbl').tBodies[0]; tb.innerHTML = '';
-  let n = 0;
+  const tb = $('tbl').tBodies[0]; tb.innerHTML = ''; let n = 0;
   rows.forEach(r => {
-    if (r.first){
-      const tr = tb.insertRow(); tr.className = 'ln';
-      const td = tr.insertCell(); td.colSpan = 4; td.textContent = `Dòng ${r.line}: ${r.text}`;
-    }
+    if (r.first){ const tr = tb.insertRow(); tr.className = 'ln'; const td = tr.insertCell(); td.colSpan = 4; td.textContent = `Dòng ${r.line}: ${r.text}`; }
     const tr = tb.insertRow();
-    tr.insertCell().textContent = ++n;
-    tr.insertCell().textContent = r.w;
+    tr.insertCell().textContent = ++n; tr.insertCell().textContent = r.w;
     tr.insertCell().textContent = fmt(r.st); tr.cells[2].className = 't';
     tr.insertCell().textContent = fmt(r.en); tr.cells[3].className = 't';
   });
@@ -240,10 +309,7 @@ function renderTable(){
 $('fmt').onchange = renderTable;
 
 const tsv = sep => 'Chữ' + sep + 'Bắt đầu' + sep + 'Kết thúc\n' + rows.map(r => [r.w, fmt(r.st), fmt(r.en)].join(sep)).join('\n');
-$('copy').onclick = async () => {
-  try { await navigator.clipboard.writeText(tsv('\t')); log('Đã copy bảng.'); }
-  catch { log('Không copy được, hãy dùng nút Tải CSV.'); }
-};
+$('copy').onclick = async () => { try { await navigator.clipboard.writeText(tsv('\t')); log('Đã copy bảng.'); } catch { log('Không copy được, dùng nút Tải CSV.'); } };
 $('dl').onclick = () => {
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['\ufeff' + tsv(',')], { type: 'text/csv;charset=utf-8' }));
