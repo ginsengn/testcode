@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- CSP cho trình duyệt tĩnh gọi Pi SDK & App Studio trực tiếp (không dùng wildcard) -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://sdk.minepi.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://socialchain.app https://backend.appstudio-u7cm9zhmha0ruwv8.piappengine.com; frame-ancestors 'self' https://*.pinet.com https://*.minepi.com;">
 <title>Tra Cứu Niên Biểu - Trung Dụng Sự (60 Hoa Giáp) - Nâng cao</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
 <style>
 :root {
 --cat: #1a7f37;
@@ -28,6 +31,10 @@ label { font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; color: #495057
 select, input, button { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; }
 button { background: var(--primary); color: white; border: none; cursor: pointer; font-weight: 600; height: 38px; }
 button:hover { background: #0b5ed7; }
+button.secondary { background: #6c757d; }
+button.secondary:hover { background: #5c636a; }
+.pi-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; background: #eef4ff; border: 1px solid #bfd7ff; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; font-size: 0.9rem; }
+.pi-actions { display: flex; gap: 8px; align-items: center; }
 .tag { display: inline-block; padding: 3px 9px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; margin: 2px; }
 .tag-cat { background: #d1e7dd; color: var(--cat); }
 .tag-hung { background: #f8d7da; color: var(--hung); }
@@ -55,6 +62,14 @@ th { background: #e9ecef; font-weight: 600; }
 </style>
 </head>
 <body>
+<div class="pi-bar">
+  <div id="piAuthStatus">Pi Network: Đang khởi tạo SDK...</div>
+  <div class="pi-actions">
+    <button type="button" id="piLoginBtn" onclick="signInWithPi()">Đăng nhập Pi</button>
+    <button type="button" id="piLogoutBtn" class="secondary" onclick="signOutPi()" style="display:none;">Đăng xuất</button>
+  </div>
+</div>
+
 <h1>Tra Cứu Niên Biểu – Trung Dụng Sự (60 Hoa Giáp) – Phiên bản nâng cao</h1>
 <p class="note">Hỗ trợ Khai Sơn / Lập Hướng / Tu Phương + Tam Nguyên Tử Bạch + Thông Thiên Khiếu + Tẩu Mã Lục Nhâm + Tam Kỳ theo Tiết Khí (tietkhi_core.js) + Can Chi thời điểm</p>
 <div class="card">
@@ -144,6 +159,90 @@ th { background: #e9ecef; font-weight: 600; }
 <script src="tietkhi_core.js"></script>
 <script src="mtrachcat.js"></script>
 <script>
+// ====================== PI NETWORK AUTH (APP STUDIO) ======================
+const PI_APP_STUDIO_LOGIN_URL = "https://backend.appstudio-u7cm9zhmha0ruwv8.piappengine.com/pi/auth/v1/login";
+let piSessionToken = null;
+let piVerifiedUser = null;
+let piSdkInitialized = false;
+
+function updatePiAuthUi(statusText, isAuthenticated) {
+  const statusEl = document.getElementById("piAuthStatus");
+  const loginBtn = document.getElementById("piLoginBtn");
+  const logoutBtn = document.getElementById("piLogoutBtn");
+  if (statusEl) statusEl.textContent = statusText;
+  if (loginBtn) loginBtn.style.display = isAuthenticated ? "none" : "inline-block";
+  if (logoutBtn) logoutBtn.style.display = isAuthenticated ? "inline-block" : "none";
+}
+
+function onIncompletePaymentFound(payment) {
+  console.warn("Phát hiện giao dịch Pi chưa hoàn tất:", payment);
+}
+
+async function initPiSdkOnce() {
+  if (piSdkInitialized) return true;
+  if (!window.Pi || typeof window.Pi.init !== "function") {
+    updatePiAuthUi("Pi Network: Chưa tải được Pi SDK (mở trong Pi Browser/PiNet để xác thực).", false);
+    return false;
+  }
+  await window.Pi.init({ version: "2.0" });
+  piSdkInitialized = true;
+  return true;
+}
+
+async function exchangePiAccessToken(accessToken) {
+  const res = await fetch(PI_APP_STUDIO_LOGIN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ accessToken })
+  });
+  if (!res.ok) {
+    throw new Error("App Studio từ chối xác thực (HTTP " + res.status + ")");
+  }
+  const data = await res.json();
+  if (!data || !data.sessionToken || !data.user) {
+    throw new Error("Phản hồi App Studio thiếu sessionToken hoặc thông tin user");
+  }
+  // Chỉ tin tưởng uid và username do App Studio trả về sau khi kiểm tra với Pi Platform
+  piSessionToken = data.sessionToken;
+  piVerifiedUser = {
+    uid: data.user.uid,
+    username: data.user.username
+  };
+  return piVerifiedUser;
+}
+
+async function signInWithPi() {
+  try {
+    updatePiAuthUi("Pi Network: Đang kết nối...", false);
+    const ready = await initPiSdkOnce();
+    if (!ready || typeof window.Pi.authenticate !== "function") return;
+
+    // Bỏ qua uid/username trả trực tiếp ở trình duyệt, chỉ giữ accessToken để đổi qua App Studio
+    const authResult = await window.Pi.authenticate(["username"], onIncompletePaymentFound);
+    const accessToken = authResult && authResult.accessToken;
+    if (!accessToken) {
+      throw new Error("Không nhận được accessToken từ Pi.authenticate");
+    }
+
+    const verifiedUser = await exchangePiAccessToken(accessToken);
+    updatePiAuthUi("Pi Network: Đã xác thực @" + verifiedUser.username, true);
+  } catch (err) {
+    piSessionToken = null;
+    piVerifiedUser = null;
+    updatePiAuthUi("Pi Network: " + (err && err.message ? err.message : "Chưa đăng nhập Pi"), false);
+  }
+}
+
+function signOutPi() {
+  piSessionToken = null;
+  piVerifiedUser = null;
+  updatePiAuthUi("Pi Network: Đã đăng xuất phiên hiện tại.", false);
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+  signInWithPi();
+});
+
 // ====================== BẢNG QUY ĐỔI ======================
 const phuongToSon = {
   "Bắc": ["Nhâm", "Tý", "Quý"],
@@ -269,7 +368,7 @@ const yearData = {
       "Thiên quan phù": ["Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi"],
       "Địa quan phù": ["Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân"],
       "Tiểu Nguyệt kiến": ["Trung","Tuất Càn Hợi","Canh Đoài Tân","Sửu Cấn Dần","Bính Ly Đinh","Nhâm Khảm Quý","Mùi Khôn Thân","Giáp Chấn Ất","Thìn Tốn Tỵ","Trung","Tuất Càn Hợi","Canh Đoài Tân"],
-      "Đại Nguyệt kiến": ["Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh"],
+      "Đại Nguyệt kiến": ["Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh"],
       "Phi đại sát": ["Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân"],
       "Bính Đinh độc hỏa": ["Khôn Chấn","Khảm Khôn","Ly Khảm","Cấn Ly","Đoài Cấn","Càn Đoài","Trung Càn","Trung","Tốn Trung","Chấn Tốn","Khôn Chấn","Khảm Khôn"],
       "Nguyệt du hỏa": ["Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly"],
@@ -374,7 +473,7 @@ const yearData = {
       "Địa quan phù": ["Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi","Trung"],
       "Tiểu Nguyệt kiến": ["Trung","Tuất Càn Hợi","Canh Đoài Tân","Sửu Cấn Dần","Bính Ly Đinh","Nhâm Khảm Quý","Mùi Khôn Thân","Giáp Chấn Ất","Thìn Tốn Tỵ","Trung","Tuất Càn Hợi","Canh Đoài Tân"],
       "Đại Nguyệt kiến": ["Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi"],
-      "Phi đại sát": ["Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý"],
+      "Phi đại sát": ["Bính Ly Đinh","Sửu Cấn Dần","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý"],
       "Bính Đinh độc hỏa": ["Khôn Chấn","Khảm Khôn","Ly Khảm","Cấn Ly","Đoài Cấn","Càn Đoài","Trung Càn","Trung","Tốn Trung","Chấn Tốn","Khôn Chấn","Khảm Khôn"],
       "Nguyệt du hỏa": ["Khôn","Chấn","Khảm","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn"],
       "Kiếp sát": ["Hợi","Thân","Tỵ","Dần","Hợi","Thân","Tỵ","Dần","Hợi","Thân","Tỵ","Dần"],
@@ -580,7 +679,7 @@ const yearData = {
       "Thiên quan phù": ["Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân","Tuất Càn Hợi"],
       "Địa quan phù": ["Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ"],
       "Tiểu Nguyệt kiến": ["Trung","Tuất Càn Hợi","Canh Đoài Tân","Sửu Cấn Dần","Bính Ly Đinh","Nhâm Khảm Quý","Mùi Khôn Thân","Giáp Chấn Ất","Thìn Tốn Tỵ","Trung","Tuất Càn Hợi","Canh Đoài Tân"],
-      "Đại Nguyệt kiến": ["Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh"],
+      "Đại Nguyệt kiến": ["Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Canh Đoài Tân","Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh"],
       "Phi đại sát": ["Tuất Càn Hợi","Trung","Thìn Tốn Tỵ","Giáp Chấn Ất","Mùi Khôn Thân","Nhâm Khảm Quý","Bính Ly Đinh","Sửu Cấn Dần","Canh Đoài Tân","Tuất Càn Hợi","Trung","Canh Đoài Tân"],
       "Bính Đinh độc hỏa": ["Đoài Cấn","Càn Đoài","Trung Càn","Trung","Tốn Trung","Chấn Tốn","Khôn Chấn","Khảm Khôn","Ly Khảm","Cấn Ly","Đoài Cấn","Càn Đoài"],
       "Nguyệt du hỏa": ["Khôn","Chấn","Tốn","Trung","Càn","Đoài","Cấn","Ly","Khảm","Khôn","Chấn","Tốn"],
