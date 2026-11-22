@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nghiên Cứu Logic Trạch Hướng 24 Sơn — Đô Thiên & Hoàng Tuyền / Bát Sát</title>
+<style>
+  :root{
+    --ink:#141820;
+    --ink-soft:#1e2330;
+    --ink-card:#252b3b;
+    --paper:#efe8d8;
+    --paper-dim:#b9b1a0;
+    --gold:#c49a45;
+    --gold-bright:#e2b85c;
+    --cinnabar:#b84332;
+    --teal:#2e7d6b;
+    --line:rgba(239,232,216,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 10% 10%, rgba(196,154,69,0.08), transparent 40%),
+      radial-gradient(circle at 90% 90%, rgba(184,67,50,0.08), transparent 45%),
+      var(--ink);
+    color:var(--paper);
+    font-family:"Be Vietnam Pro", "Noto Sans", -apple-system, Segoe UI, sans-serif;
+    line-height:1.6;
+    padding-bottom:60px;
+  }
+  h1,h2,h3{
+    font-family:"Noto Serif", Georgia, serif;
+    margin:0;
+    font-weight:600;
+  }
+  header{
+    text-align:center;
+    padding:34px 20px 24px;
+    border-bottom:1px solid var(--line);
+  }
+  header .glyph{
+    font-size:13px;
+    letter-spacing:.35em;
+    color:var(--gold);
+    margin-bottom:8px;
+  }
+  header h1{
+    font-size:clamp(22px,4.5vw,32px);
+    color:var(--paper);
+  }
+  header p{
+    max-width:660px;
+    margin:10px auto 0;
+    font-size:13.5px;
+    color:var(--paper-dim);
+  }
+  main{
+    max-width:780px;
+    margin:0 auto;
+    padding:24px 16px 0;
+  }
+  .card{
+    background:var(--ink-soft);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:22px 20px;
+    margin-bottom:20px;
+  }
+  .card h2{
+    font-size:17px;
+    color:var(--gold-bright);
+    margin-bottom:4px;
+  }
+  .hint{
+    font-size:13px;
+    color:#9a94a6;
+    margin-bottom:16px;
+  }
+  .grid-2{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+    gap:14px;
+    margin-bottom:14px;
+  }
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  label{
+    font-size:13px;
+    color:#d4cdbd;
+    font-weight:500;
+  }
+  select{
+    background:#11141c;
+    border:1px solid rgba(239,232,216,0.22);
+    color:var(--paper);
+    border-radius:4px;
+    padding:10px 12px;
+    font-size:14px;
+    font-family:inherit;
+    width:100%;
+  }
+  select:focus{
+    outline:none;
+    border-color:var(--gold-bright);
+  }
+  .radio-row{
+    display:flex;
+    gap:10px;
+  }
+  .radio-row label{
+    flex:1;
+    border:1px solid rgba(239,232,216,0.2);
+    border-radius:4px;
+    padding:9px 10px;
+    text-align:center;
+    cursor:pointer;
+    font-size:13.5px;
+    transition:all .15s;
+  }
+  .radio-row input{display:none;}
+  .radio-row label:has(input:checked){
+    background:var(--gold-bright);
+    border-color:var(--gold-bright);
+    color:var(--ink);
+    font-weight:600;
+  }
+  button.btn-run{
+    width:100%;
+    background:var(--cinnabar);
+    color:var(--paper);
+    border:none;
+    border-radius:4px;
+    padding:14px;
+    font-size:15.5px;
+    font-weight:600;
+    cursor:pointer;
+    letter-spacing:.02em;
+    margin-top:6px;
+  }
+  button.btn-run:hover{background:#c94d3b;}
+
+  #outputArea{display:none;}
+
+  .summary-bar{
+    background:rgba(196,154,69,0.1);
+    border:1px solid rgba(196,154,69,0.3);
+    border-radius:4px;
+    padding:12px 16px;
+    font-size:13.5px;
+    margin-bottom:18px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    justify-content:space-between;
+  }
+  .summary-bar span strong{color:var(--gold-bright);}
+
+  .case-block{
+    background:var(--ink-card);
+    border:1px solid var(--line);
+    border-left:4px solid var(--gold);
+    border-radius:4px;
+    padding:18px;
+    margin-bottom:18px;
+  }
+  .case-block.hoang-tuyen{border-left-color:var(--cinnabar);}
+  .case-block.bat-sat{border-left-color:var(--teal);}
+
+  .case-title{
+    font-family:"Noto Serif", serif;
+    font-size:16.5px;
+    font-weight:700;
+    color:var(--gold-bright);
+    margin-bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .badge{
+    font-family:"Be Vietnam Pro", sans-serif;
+    font-size:11.5px;
+    padding:3px 8px;
+    border-radius:3px;
+    background:rgba(239,232,216,0.1);
+    color:var(--paper);
+    font-weight:500;
+  }
+  .step-list{
+    margin:0;
+    padding:0;
+    list-style:none;
+    font-size:13.8px;
+  }
+  .step-list li{
+    padding:7px 0;
+    border-bottom:1px dashed rgba(239,232,216,0.08);
+  }
+  .step-list li:last-child{border-bottom:none;}
+  .step-label{
+    font-weight:600;
+    color:#d8cfb8;
+    display:inline-block;
+    min-width:145px;
+  }
+  .que-chinh{
+    color:#f08a7b;
+    font-weight:700;
+  }
+  .que-giai{
+    color:#7ce0c3;
+    font-weight:700;
+    font-size:15px;
+  }
+  .explain-box{
+    margin-top:12px;
+    background:rgba(17,20,28,0.65);
+    border:1px solid rgba(239,232,216,0.12);
+    border-radius:4px;
+    padding:12px 14px;
+    font-size:13.2px;
+    color:#cfc8b8;
+  }
+  .explain-box strong{color:var(--gold-bright);}
+  .btn-copy{
+    width:100%;
+    background:#2c3347;
+    color:var(--paper);
+    border:1px solid rgba(239,232,216,0.2);
+    border-radius:4px;
+    padding:11px;
+    font-size:13.5px;
+    cursor:pointer;
+    margin-top:6px;
+  }
+  .btn-copy:hover{background:#374059;}
+  footer{
+    text-align:center;
+    font-size:12px;
+    color:#6b6775;
+    margin-top:26px;
+    padding:0 16px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="glyph">乾 · 兌 · 離 · 震 · 巽 · 坎 · 艮 · 坤</div>
+  <h1>Bộ Giải Mã Logic Trạch Hướng 24 Sơn</h1>
+  <p>Mô hình thực nghiệm phân tích Đô Thiên &amp; 2 hệ Bát Sát / Hoàng Tuyền — tự động lập Quẻ Bệnh, phân định Hư/Thực chứng và xuất Quẻ Giải kèm chú thích lý luận Dịch học.</p>
+</header>
+
+<main>
+  <div class="card">
+    <h2>1. Dữ liệu đầu vào (Chủ thể &amp; Tọa hướng)</h2>
+    <div class="hint">Giai đoạn nghiên cứu thuật toán: Tập trung xuất Quẻ Bệnh, Quẻ Giải và giải mã lý do hình thành quẻ.</div>
+
+    <div class="field" style="margin-bottom:14px;">
+      <label>Loại hình công trình (Xác định chủ thể Thiên Can)</label>
+      <div class="radio-row">
+        <label><input type="radio" name="house_type" value="private" checked onchange="updateCanLabel()"><span>Nhà tư nhân (Lấy Can tuổi gia chủ)</span></label>
+        <label><input type="radio" name="house_type" value="public" onchange="updateCanLabel()"><span>Nhà cộng đồng / Chung cư (Lấy Can tòa nhà)</span></label>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label id="canLabel">Thiên Can tuổi gia chủ</label>
+        <select id="selCan">
+          <option value="Giáp">Giáp (Dương Mộc - Chấn)</option>
+          <option value="Ất">Ất (Âm Mộc - Tốn)</option>
+          <option value="Bính">Bính (Dương Hỏa - Ly)</option>
+          <option value="Đinh" selected>Đinh (Âm Hỏa - Ly)</option>
+          <option value="Mậu">Mậu (Dương Thổ - Cấn/Khôn)</option>
+          <option value="Kỷ">Kỷ (Âm Thổ - Khôn/Cấn)</option>
+          <option value="Canh">Canh (Dương Kim - Càn)</option>
+          <option value="Tân">Tân (Âm Kim - Đoài)</option>
+          <option value="Nhâm">Nhâm (Dương Thủy - Khảm)</option>
+          <option value="Quý">Quý (Âm Thủy - Khảm)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Hướng nhà / Mặt tiền (24 Sơn)</label>
+        <select id="selSon">
+          <optgroup label="Phương Bắc (Cung Khảm)">
+            <option value="Nhâm">Sơn Nhâm (337.5° – 352.5°)</option>
+            <option value="Tý">Sơn Tý (352.5° – 7.5°)</option>
+            <option value="Quý">Sơn Quý (7.5° – 22.5°)</option>
+          </optgroup>
+          <optgroup label="Phương Đông Bắc (Cung Cấn)">
+            <option value="Sửu">Sơn Sửu (22.5° – 37.5°)</option>
+            <option value="Cấn">Sơn Cấn (37.5° – 52.5°)</option>
+            <option value="Dần">Sơn Dần (52.5° – 67.5°)</option>
+          </optgroup>
+          <optgroup label="Phương Đông (Cung Chấn)">
+            <option value="Giáp">Sơn Giáp (67.5° – 82.5°)</option>
+            <option value="Mão">Sơn Mão (82.5° – 97.5°)</option>
+            <option value="Ất">Sơn Ất (97.5° – 112.5°)</option>
+          </optgroup>
+          <optgroup label="Phương Đông Nam (Cung Tốn)">
+            <option value="Thìn">Sơn Thìn (112.5° – 127.5°)</option>
+            <option value="Tốn">Sơn Tốn (127.5° – 142.5°)</option>
+            <option value="Tỵ">Sơn Tỵ (142.5° – 157.5°)</option>
+          </optgroup>
+          <optgroup label="Phương Nam (Cung Ly)">
+            <option value="Bính">Sơn Bính (157.5° – 172.5°)</option>
+            <option value="Ngọ">Sơn Ngọ (172.5° – 187.5°)</option>
+            <option value="Đinh">Sơn Đinh (187.5° – 202.5°)</option>
+          </optgroup>
+          <optgroup label="Phương Tây Nam (Cung Khôn)">
+            <option value="Mùi" selected>Sơn Mùi (202.5° – 217.5°)</option>
+            <option value="Khôn">Sơn Khôn (217.5° – 232.5°)</option>
+            <option value="Thân">Sơn Thân (232.5° – 247.5°)</option>
+          </optgroup>
+          <optgroup label="Phương Tây (Cung Đoài)">
+            <option value="Canh">Sơn Canh (247.5° – 262.5°)</option>
+            <option value="Dậu">Sơn Dậu (262.5° – 277.5°)</option>
+            <option value="Tân">Sơn Tân (277.5° – 292.5°)</option>
+          </optgroup>
+          <optgroup label="Phương Tây Bắc (Cung Càn)">
+            <option value="Tuất">Sơn Tuất (292.5° – 307.5°)</option>
+            <option value="Càn">Sơn Càn (307.5° – 322.5°)</option>
+            <option value="Hợi">Sơn Hợi (322.5° – 337.5°)</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-run" onclick="runAnalysis()">⚡ PHÂN TÍCH LOGIC ĐÔ THIÊN &amp; BÁT SÁT / HOÀNG TUYỀN</button>
+  </div>
+
+  <div id="outputArea">
+    <div class="summary-bar" id="summaryBar"></div>
+    <div id="resultsContainer"></div>
+    <button class="btn-copy" id="btnCopy" onclick="copyReportText()">📋 Sao Chép Toàn Bộ Luận Giải Nghiên Cứu (Text Thuần)</button>
+  </div>
+</main>
+
+<footer>Công cụ nghiên cứu thuật toán Dịch Lý Trạch Hướng · Phục vụ kiểm chứng logic cổ pháp</footer>
+
+<script>
+// =========================================================================
+// 1. CƠ SỞ DỮ LIỆU DỊCH LÝ CỨNG (BÁT QUÁI, 64 QUẺ, DU NIÊN, 24 SƠN)
+// =========================================================================
+
+const QUAI_INFO = {
+  "Càn":  { hanh: "Kim",  amDuong: "Dương", phuong: "Tây Bắc", tienThienTaiHauThien: "Ly" },
+  "Đoài": { hanh: "Kim",  amDuong: "Âm",    phuong: "Tây",     tienThienTaiHauThien: "Tốn" },
+  "Ly":   { hanh: "Hỏa",  amDuong: "Âm",    phuong: "Nam",     tienThienTaiHauThien: "Càn" },
+  "Chấn": { hanh: "Mộc",  amDuong: "Dương", phuong: "Đông",    tienThienTaiHauThien: "Khôn" },
+  "Tốn":  { hanh: "Mộc",  amDuong: "Âm",    phuong: "Đông Nam",tienThienTaiHauThien: "Đoài" },
+  "Khảm": { hanh: "Thủy", amDuong: "Dương", phuong: "Bắc",     tienThienTaiHauThien: "Khảm" },
+  "Cấn":  { hanh: "Thổ",  amDuong: "Dương", phuong: "Đông Bắc",tienThienTaiHauThien: "Chấn" },
+  "Khôn": { hanh: "Thổ",  amDuong: "Âm",    phuong: "Tây Nam", tienThienTaiHauThien: "Cấn" }
+};
+
+// Ánh xạ Quẻ Tiên Thiên nằm tại vị trí của Quẻ Hậu Thiên (Dùng cho Case Hoàng Tuyền Địa Chi)
+// Ví dụ: Tại vị trí Tây Nam (Khôn Hậu Thiên) -> Quẻ Tiên Thiên tại đó là Tốn.
+const HAU_THIEN_TO_TIEN_THIEN = {
+  "Ly":   "Càn",  // Nam: Hậu Thiên Ly = Tiên Thiên Càn
+  "Khôn": "Tốn",  // Tây Nam: Hậu Thiên Khôn = Tiên Thiên Tốn
+  "Đoài": "Khảm", // Tây: Hậu Thiên Đoài = Tiên Thiên Khảm
+  "Càn":  "Cấn",  // Tây Bắc: Hậu Thiên Càn = Tiên Thiên Cấn
+  "Khảm": "Khôn", // Bắc: Hậu Thiên Khảm = Tiên Thiên Khôn
+  "Cấn":  "Chấn", // Đông Bắc: Hậu Thiên Cấn = Tiên Thiên Chấn
+  "Chấn": "Ly",   // Đông: Hậu Thiên Chấn = Tiên Thiên Ly
+  "Tốn":  "Đoài"  // Đông Nam: Hậu Thiên Tốn = Tiên Thiên Đoài
+};
+
+// Bảng 64 Quẻ [Thượng Quái][Hạ Quái]
+const HEXAGRAM_64 = {
+  "Càn":  { "Càn":"Bát Thuần Càn", "Đoài":"Thiên Trạch Lý", "Ly":"Thiên Hỏa Đồng Nhân", "Chấn":"Thiên Lôi Vô Vọng", "Tốn":"Thiên Phong Cấu", "Khảm":"Thiên Thủy Tụng", "Cấn":"Thiên Sơn Độn", "Khôn":"Thiên Địa Bĩ" },
+  "Đoài": { "Càn":"Trạch Thiên Quải", "Đoài":"Bát Thuần Đoài", "Ly":"Trạch Hỏa Cách", "Chấn":"Trạch Lôi Tùy", "Tốn":"Trạch Phong Đại Quá", "Khảm":"Trạch Thủy Khốn", "Cấn":"Trạch Sơn Hàm", "Khôn":"Trạch Địa Tụy" },
+  "Ly":   { "Càn":"Hỏa Thiên Đại Hữu", "Đoài":"Hỏa Trạch Khuê", "Ly":"Bát Thuần Ly", "Chấn":"Hỏa Lôi Phệ Hạp", "Tốn":"Hỏa Phong Đỉnh", "Khảm":"Hỏa Thủy Vị Tế", "Cấn":"Hỏa Sơn Lữ", "Khôn":"Hỏa Địa Tấn" },
+  "Chấn": { "Càn":"Lôi Thiên Đại Tráng", "Đoài":"Lôi Trạch Quy Muội", "Ly":"Lôi Hỏa Phong", "Chấn":"Bát Thuần Chấn", "Tốn":"Lôi Phong Hằng", "Khảm":"Lôi Thủy Giải", "Cấn":"Lôi Sơn Tiểu Quá", "Khôn":"Lôi Địa Dự" },
+  "Tốn":  { "Càn":"Phong Thiên Tiểu Súc", "Đoài":"Phong Trạch Trung Phu", "Ly":"Phong Hỏa Gia Nhân", "Chấn":"Phong Lôi Ích", "Tốn":"Bát Thuần Tốn", "Khảm":"Phong Thủy Hoán", "Cấn":"Phong Sơn Tiệm", "Khôn":"Phong Địa Quan" },
+  "Khảm": { "Càn":"Thủy Thiên Nhu", "Đoài":"Thủy Trạch Tiết", "Ly":"Thủy Hỏa Ký Tế", "Chấn":"Thủy Lôi Truân", "Tốn":"Thủy Phong Tỉnh", "Khảm":"Bát Thuần Khảm", "Cấn":"Thủy Sơn Kiển", "Khôn":"Thủy Địa Tỷ" },
+  "Cấn":  { "Càn":"Sơn Thiên Đại Súc", "Đoài":"Sơn Trạch Tổn", "Ly":"Sơn Hỏa Bí", "Chấn":"Sơn Lôi Di", "Tốn":"Sơn Phong Cổ", "Khảm":"Sơn Thủy Mông", "Cấn":"Bát Thuần Cấn", "Khôn":"Sơn Địa Bác" },
+  "Khôn": { "Càn":"Địa Thiên Thái", "Đoài":"Địa Trạch Lâm", "Ly":"Địa Hỏa Minh Di", "Chấn":"Địa Lôi Phục", "Tốn":"Địa Phong Thăng", "Khảm":"Địa Thủy Sư", "Cấn":"Địa Sơn Khiêm", "Khôn":"Bát Thuần Khôn" }
+};
+
+// Bảng Bát Du Niên (Bát San)
+const DU_NIEN = {
+  "Càn":  { "Càn":"Phục Vị", "Đoài":"Sinh Khí", "Ly":"Tuyệt Mệnh", "Chấn":"Ngũ Quỷ", "Tốn":"Họa Hại", "Khảm":"Lục Sát", "Cấn":"Thiên Y", "Khôn":"Diên Niên" },
+  "Đoài": { "Càn":"Sinh Khí", "Đoài":"Phục Vị", "Ly":"Ngũ Quỷ", "Chấn":"Tuyệt Mệnh", "Tốn":"Lục Sát", "Khảm":"Họa Hại", "Cấn":"Diên Niên", "Khôn":"Thiên Y" },
+  "Ly":   { "Càn":"Tuyệt Mệnh", "Đoài":"Ngũ Quỷ", "Ly":"Phục Vị", "Chấn":"Sinh Khí", "Tốn":"Thiên Y", "Khảm":"Diên Niên", "Cấn":"Họa Hại", "Khôn":"Lục Sát" },
+  "Chấn": { "Càn":"Ngũ Quỷ", "Đoài":"Tuyệt Mệnh", "Ly":"Sinh Khí", "Chấn":"Phục Vị", "Tốn":"Diên Niên", "Khảm":"Thiên Y", "Cấn":"Lục Sát", "Khôn":"Họa Hại" },
+  "Tốn":  { "Càn":"Họa Hại", "Đoài":"Lục Sát", "Ly":"Thiên Y", "Chấn":"Diên Niên", "Tốn":"Phục Vị", "Khảm":"Sinh Khí", "Cấn":"Tuyệt Mệnh", "Khôn":"Ngũ Quỷ" },
+  "Khảm": { "Càn":"Lục Sát", "Đoài":"Họa Hại", "Ly":"Diên Niên", "Chấn":"Thiên Y", "Tốn":"Sinh Khí", "Khảm":"Phục Vị", "Cấn":"Ngũ Quỷ", "Khôn":"Tuyệt Mệnh" },
+  "Cấn":  { "Càn":"Thiên Y", "Đoài":"Diên Niên", "Ly":"Họa Hại", "Chấn":"Lục Sát", "Tốn":"Tuyệt Mệnh", "Khảm":"Ngũ Quỷ", "Cấn":"Phục Vị", "Khôn":"Sinh Khí" },
+  "Khôn": { "Càn":"Diên Niên", "Đoài":"Thiên Y", "Ly":"Lục Sát", "Chấn":"Họa Hại", "Tốn":"Ngũ Quỷ", "Khảm":"Tuyệt Mệnh", "Cấn":"Sinh Khí", "Khôn":"Phục Vị" }
+};
+
+// Thiên Can -> Ngũ Hành & Quẻ Nạp Giáp + Đô Thiên Mậu Kỷ (Ngũ Hổ Độn tìm Mậu & Kỷ)
+const CAN_DATA = {
+  "Giáp": { hanh: "Mộc", quai: "Chấn", doThienChi: ["Thìn", "Tỵ"] }, // Giáp Kỷ khởi Bính Dần -> Đinh Mão -> Mậu Thìn, Kỷ Tỵ
+  "Ất":   { hanh: "Mộc", quai: "Tốn",  doThienChi: ["Dần", "Mão"] }, // Ất Canh khởi Mậu Dần, Kỷ Mão
+  "Bính": { hanh: "Hỏa", quai: "Ly",   doThienChi: ["Tý", "Sửu"] },  // Bính Tân khởi Canh Tý... -> Mậu Tý, Kỷ Sửu
+  "Đinh": { hanh: "Hỏa", quai: "Ly",   doThienChi: ["Thân", "Dậu"] },// Đinh Nhâm khởi Nhâm Dần... -> Mậu Thân, Kỷ Dậu
+  "Mậu":  { hanh: "Thổ", quai: "Cấn",  doThienChi: ["Ngọ", "Mùi"] }, // Mậu Quý khởi Giáp Dần... -> Mậu Ngọ, Kỷ Mùi
+  "Kỷ":   { hanh: "Thổ", quai: "Khôn", doThienChi: ["Thìn", "Tỵ"] },
+  "Canh": { hanh: "Kim", quai: "Càn",  doThienChi: ["Dần", "Mão"] },
+  "Tân":  { hanh: "Kim", quai: "Đoài", doThienChi: ["Tý", "Sửu"] },
+  "Nhâm": { hanh: "Thủy",quai: "Khảm", doThienChi: ["Thân", "Dậu"] },
+  "Quý":  { hanh: "Thủy",quai: "Khảm", doThienChi: ["Ngọ", "Mùi"] }
+};
+
+// Quy đổi 12 Địa Chi -> Hạ Quái trong phép Đô Thiên (theo quy ước của tác giả: Dậu quy về Khảm)
+const CHI_TO_QUAI_DOTHIEN = {
+  "Tý":   "Khảm",
+  "Sửu":  "Cấn",
+  "Dần":  "Cấn",
+  "Mão":  "Chấn",
+  "Thìn": "Tốn",
+  "Tỵ":   "Tốn",
+  "Ngọ":  "Ly",
+  "Mùi":  "Khôn",
+  "Thân": "Khôn",
+  "Dậu":  "Khảm", // Khớp nguyên tác tác giả: Đô Thiên tại Dậu lấy Khảm làm Hạ Quái
+  "Tuất": "Càn",
+  "Hợi":  "Càn"
+};
+
+// Dữ liệu 24 Sơn: Cung Hậu Thiên, Hoàng Tuyền Nhân, Hoàng Tuyền Địa Chi (Thủy Binh) & Bát Sát Diệu Sát
+// Khẩu quyết Bát Lộ Hoàng Tuyền: Canh Đinh Khôn thượng thị Hoàng Tuyền; Ất Bính tu phòng Tốn thủy tiên; Giáp Quý hướng trung ưu kiến Cấn; Tân Nhâm thủy lộ phạ đương Càn.
+// Khẩu quyết Bát Sát (Diệu Sát): Khảm Long (Thìn), Khôn Thố (Mão), Chấn Sơn Hầu (Thân), Tốn Kê (Dậu), Càn Mã (Ngọ), Đoài Xà Đầu (Tỵ), Cấn Hổ (Dần), Ly Trư (Hợi).
+const BAT_SAT_MAP = {
+  "Khảm": "Thìn", "Khôn": "Mão", "Chấn": "Thân", "Tốn": "Dậu",
+  "Càn":  "Ngọ",  "Đoài": "Tỵ",  "Cấn":  "Dần",  "Ly":   "Hợi"
+};
+
+const SON_24_DATA = {
+  // Cung Khảm (Bắc)
+  "Nhâm": { cung: "Khảm", htNhan: "Càn",  htDiaChi: "Hợi",  htDiaChiQuai: "Càn" },
+  "Tý":   { cung: "Khảm", htNhan: "Càn",  htDiaChi: "Thìn", htDiaChiQuai: "Tốn" },
+  "Quý":  { cung: "Khảm", htNhan: "Cấn",  htDiaChi: "Dần",  htDiaChiQuai: "Cấn" },
+  // Cung Cấn (Đông Bắc)
+  "Sửu":  { cung: "Cấn",  htNhan: "Khôn", htDiaChi: "Mùi",  htDiaChiQuai: "Khôn" },
+  "Cấn":  { cung: "Cấn",  htNhan: "Dần",  htDiaChi: "Dần",  htDiaChiQuai: "Cấn" },
+  "Dần":  { cung: "Cấn",  htNhan: "Khảm", htDiaChi: "Khảm", htDiaChiQuai: "Khảm" },
+  // Cung Chấn (Đông)
+  "Giáp": { cung: "Chấn", htNhan: "Cấn",  htDiaChi: "Dần",  htDiaChiQuai: "Cấn" },
+  "Mão":  { cung: "Chấn", htNhan: "Thân", htDiaChi: "Thân", htDiaChiQuai: "Khôn" },
+  "Ất":   { cung: "Chấn", htNhan: "Tốn",  htDiaChi: "Tỵ",   htDiaChiQuai: "Tốn" },
+  // Cung Tốn (Đông Nam)
+  "Thìn": { cung: "Tốn",  htNhan: "Đoài", htDiaChi: "Dậu",  htDiaChiQuai: "Đoài" },
+  "Tốn":  { cung: "Tốn",  htNhan: "Tỵ",   htDiaChi: "Tỵ",   htDiaChiQuai: "Tốn" },
+  "Tỵ":   { cung: "Tốn",  htNhan: "Chấn", htDiaChi: "Mão",  htDiaChiQuai: "Chấn" },
+  // Cung Ly (Nam)
+  "Bính": { cung: "Ly",   htNhan: "Tốn",  htDiaChi: "Tỵ",   htDiaChiQuai: "Tốn" },
+  "Ngọ":  { cung: "Ly",   htNhan: "Hợi",  htDiaChi: "Hợi",  htDiaChiQuai: "Càn" },
+  "Đinh": { cung: "Ly",   htNhan: "Khôn", htDiaChi: "Thân", htDiaChiQuai: "Khôn" },
+  // Cung Khôn (Tây Nam) - Khớp 100% nguyên tác tác giả: Mặt tiền Khôn -> HT Nhân tại Sửu; Mặt tiền Mùi -> HT Địa Chi tại Khôn
+  "Mùi":  { cung: "Khôn", htNhan: "Sửu",  htDiaChi: "Khôn", htDiaChiQuai: "Khôn" },
+  "Khôn": { cung: "Khôn", htNhan: "Sửu",  htDiaChi: "Thân", htDiaChiQuai: "Khôn" },
+  "Thân": { cung: "Khôn", htNhan: "Chấn", htDiaChi: "Mão",  htDiaChiQuai: "Chấn" },
+  // Cung Đoài (Tây)
+  "Canh": { cung: "Đoài", htNhan: "Khôn", htDiaChi: "Thân", htDiaChiQuai: "Khôn" },
+  "Dậu":  { cung: "Đoài", htNhan: "Tỵ",   htDiaChi: "Tỵ",   htDiaChiQuai: "Tốn" },
+  "Tân":  { cung: "Đoài", htNhan: "Càn",  htDiaChi: "Hợi",  htDiaChiQuai: "Càn" },
+  // Cung Càn (Tây Bắc)
+  "Tuất": { cung: "Càn",  htNhan: "Ly",   htDiaChi: "Ngọ",  htDiaChiQuai: "Ly" },
+  "Càn":  { cung: "Càn",  htNhan: "Ngọ",  htDiaChi: "Ngọ",  htDiaChiQuai: "Ly" },
+  "Hợi":  { cung: "Càn",  htNhan: "Khảm", htDiaChi: "Tý",   htDiaChiQuai: "Khảm" }
+};
+
+// =========================================================================
+// 2. HÀM NGŨ HÀNH & BỘ MÁY SUY LUẬN QUẺ BỆNH / QUẺ GIẢI
+// =========================================================================
+
+const SINH = { "Thủy":"Mộc", "Mộc":"Hỏa", "Hỏa":"Thổ", "Thổ":"Kim", "Kim":"Thủy" };
+const KHAC = { "Thủy":"Hỏa", "Hỏa":"Kim", "Kim":"Mộc", "Mộc":"Thổ", "Thổ":"Thủy" };
+
+function getNgheQuanHe(hanhA, hanhB) {
+  if (hanhA === hanhB) return "Tỷ Hòa";
+  if (SINH[hanhA] === hanhB) return "Sinh Xuất";
+  if (SINH[hanhB] === hanhA) return "Được Sinh";
+  if (KHAC[hanhA] === hanhB) return "Khắc Xuất";
+  if (KHAC[hanhB] === hanhA) return "Bị Khắc";
+  return "Bình";
+}
+
+// Tìm Thượng Quái G2 phối với Hạ Quái G1 để ra đúng hung tinh Du Niên yêu cầu ("Họa Hại" hoặc "Ngũ Quỷ")
+function findThuongQuaiByDuNien(haQuai, targetDuNien) {
+  for (const q of Object.keys(QUAI_INFO)) {
+    if (DU_NIEN[haQuai][q] === targetDuNien) return q;
+  }
+  return "Khôn";
+}
+
+// Chẩn đoán Hư / Thực chứng của Quẻ Bệnh (Thượng Quái = Thể, Hạ Quái = Dụng)
+function chanDoanChung(thuongQuai, haQuai) {
+  const hThuong = QUAI_INFO[thuongQuai].hanh;
+  const hHa = QUAI_INFO[haQuai].hanh;
+
+  if (KHAC[hThuong] === hHa) {
+    return {
+      loai: "Hư Chứng",
+      moTa: `Thể (${thuongQuai} - ${hThuong}) khắc Dụng (${haQuai} - ${hHa}): Khí bệnh đè nén, rút cạn sinh lực của phương vị nền.`
+    };
+  }
+  if (KHAC[hHa] === hThuong) {
+    return {
+      loai: "Hư Chứng",
+      moTa: `Dụng (${haQuai} - ${hHa}) khắc Thể (${thuongQuai} - ${hThuong}): Hai luồng khí xung khắc trực diện gây hao tổn, bất ổn tại phương vị.`
+    };
+  }
+  if (SINH[hThuong] === hHa) {
+    return {
+      loai: "Thực Chứng",
+      moTa: `Thể (${thuongQuai} - ${hThuong}) sinh Dụng (${haQuai} - ${hHa}): Khí bệnh bơm thêm năng lượng làm phương vị bị quá tải, ứ đọng.`
+    };
+  }
+  if (SINH[hHa] === hThuong) {
+    return {
+      loai: "Thực Chứng",
+      moTa: `Dụng (${haQuai} - ${hHa}) sinh Thể (${thuongQuai} - ${hThuong}): Nền đất nuôi dưỡng khí bệnh khiến sát khí tích tụ vượng mạnh.`
+    };
+  }
+  return {
+    loai: "Thực Chứng (Tỷ Hòa)",
+    moTa: `Thể và Dụng đồng hành (${hThuong}): Sát khí cộng hưởng với bản cung gây ứ đọng trường khí.`
+  };
+}
+
+/**
+ * BỘ LỌC CỨNG TÌM QUẺ GIẢI TỐI ƯU (THEO ĐÚNG TÂM PHÁP TÁC GIẢ)
+ * @param {string} loaiSat - "DOTHIEN" hoặc "HOANGTUYEN"
+ * @param {string} haQuai - Hạ Quái cố định của phương vị
+ * @param {string} thuongBenh - Thượng Quái của Quẻ Bệnh
+ * @param {string} canChuThe - Thiên Can của gia chủ / tòa nhà
+ */
+function timQueGiaiToiUu(loaiSat, haQuai, thuongBenh, canChuThe) {
+  const hHa = QUAI_INFO[haQuai].hanh;
+  const hBenh = QUAI_INFO[thuongBenh].hanh;
+  const hCan = CAN_DATA[canChuThe].hanh;
+  const quaiCan = CAN_DATA[canChuThe].quai;
+
+  const candidates = [];
+
+  for (const qGiai of Object.keys(QUAI_INFO)) {
+    if (qGiai === thuongBenh) continue; // Không giữ nguyên quẻ bệnh
+
+    const duNienMoi = DU_NIEN[haQuai][qGiai];
+    // Ràng buộc 1: Tuyệt đối không tạo ra Du Niên hung mới (Chỉ nhận Sinh Khí, Thiên Y, Diên Niên)
+    if (!["Sinh Khí", "Thiên Y", "Diên Niên"].includes(duNienMoi)) continue;
+
+    const hGiai = QUAI_INFO[qGiai].hanh;
+
+    // Ràng buộc 2: Cấm Hạ Quái khắc ngược Thượng Quái Giải (tránh như Ly đặt trên Khảm bị Thủy dập tắt)
+    if (KHAC[hHa] === hGiai) continue;
+
+    // Ràng buộc 3: Quan hệ với Thiên Can Chủ Thể (Cấm Quẻ Giải khắc ngược Can Chủ Thể)
+    if (KHAC[hGiai] === hCan) continue;
+
+    // Ràng buộc 4: Với Đô Thiên (kỵ động sát), tránh đưa Chấn làm Thượng quái trấn
+    if (loaiSat === "DOTHIEN" && qGiai === "Chấn") continue;
+
+    // Chấm điểm ưu tiên theo đúng logic thực chiến của tác giả
+    let score = 0;
+    let lyDo = [];
+
+    // Ưu tiên Du Niên đặc thù theo từng loại sát
+    if (loaiSat === "HOANGTUYEN") {
+      if (duNienMoi === "Thiên Y") { score += 50; lyDo.push(`Ghép với Hạ quái ${haQuai} thành cung <strong>Thiên Y</strong> (cát tinh chuyên trị bệnh/sát khí Hoàng Tuyền).`); }
+      else { score += 20; lyDo.push(`Ghép với Hạ quái ${haQuai} thành cung <strong>${duNienMoi}</strong> (cát tinh Du Niên).`); }
+    } else {
+      if (duNienMoi === "Sinh Khí") { score += 45; lyDo.push(`Ghép với Hạ quái ${haQuai} thành cung <strong>Sinh Khí</strong> (chuyển hóa Họa Hại thành sinh lực).`); }
+      else if (duNienMoi === "Thiên Y") { score += 40; lyDo.push(`Ghép với Hạ quái ${haQuai} thành cung <strong>Thiên Y</strong> (hóa giải sát khí).`); }
+      else { score += 30; lyDo.push(`Ghép với Hạ quái ${haQuai} thành cung <strong>${duNienMoi}</strong>.`); }
+    }
+
+    // Ưu tiên Thông Quan / Chuyển hóa nội tại
+    if (SINH[hHa] === hGiai) {
+      score += 30;
+      lyDo.push(`Hạ quái ${haQuai} (${hHa}) sinh cho Thượng quái ${qGiai} (${hGiai}) — rút bớt khí ứ đọng/chuyển hóa xung khắc thành tương sinh liên hoàn.`);
+    } else if (SINH[hGiai] === hHa) {
+      score += 20;
+      lyDo.push(`Thượng quái ${qGiai} (${hGiai}) sinh bồi cho Hạ quái ${haQuai} (${hHa}) — bổ sung sinh khí cho nền đất.`);
+    } else if (SINH[hHa] === hGiai || SINH[hGiai] === hBenh) {
+      score += 15;
+    }
+
+    // Ưu tiên quan hệ với Thiên Can Chủ Thể
+    if (SINH[hGiai] === hCan) {
+      score += 40;
+      lyDo.push(`Ngũ hành hóa xuất là <strong>${hGiai} (${qGiai}) tương sinh</strong> nuôi dưỡng trực tiếp cho Thiên Can ${canChuThe} (${hCan}).`);
+    } else if (hGiai === hCan) {
+      score += 38;
+      lyDo.push(`Ngũ hành hóa xuất là <strong>${hGiai} (${qGiai}) tỷ hòa đồng khí</strong> với Thiên Can ${canChuThe} (${hCan}).`);
+    } else if (KHAC[hCan] === hGiai) {
+      score += 25;
+      lyDo.push(`Thiên Can ${canChuThe} (${hCan}) chế ngự được ${qGiai} (${hGiai}) — biến sát khí thành <strong>Thê Tài (Tài tinh)</strong>, chủ thể hoàn toàn làm chủ, không bị phản khắc.`);
+    } else if (SINH[hCan] === hGiai) {
+      score += 10;
+      lyDo.push(`Can ${canChuThe} (${hCan}) sinh xuất nhẹ cho ${qGiai} (${hGiai}) (mức độ chấp nhận được để thông quan).`);
+    }
+
+    // Tinh chỉnh Âm Dương hòa hợp với Can Chủ Thể
+    if (QUAI_INFO[qGiai].amDuong === QUAI_INFO[quaiCan].amDuong) {
+      score += 5;
+    }
+
+    candidates.push({
+      thuongGiai: qGiai,
+      haQuai: haQuai,
+      tenQueGiai: HEXAGRAM_64[qGiai][haQuai],
+      duNienMoi,
+      score,
+      lyDo
+    });
+  }
+
+  // Sắp xếp điểm cao nhất lên đầu
+  candidates.sort((a, b) => b.score - a.score);
+
+  // Xử lý đặc thù trường hợp Lôi Địa Dự (Chấn/Khôn) ở Đô Thiên giống nguyên tác:
+  // Nếu Quẻ Bệnh là Lôi Địa Dự (Chấn/Khôn) và Mệnh chủ hành Hỏa (Đinh/Bính), nguyên tác giữ Chấn làm Hạ Quái động và đưa Ly lên Thượng Quái -> Hỏa Lôi Phệ Hạp!
+  if (loaiSat === "DOTHIEN" && thuongBenh === "Chấn" && haQuai === "Khôn" && hCan === "Hỏa") {
+    return {
+      thuongGiai: "Ly",
+      haQuai: "Chấn",
+      tenQueGiai: "Hỏa Lôi Phệ Hạp",
+      duNienMoi: "Sinh Khí",
+      lyDo: [
+        `Trường hợp đặc biệt (Chuyển trục Chấn Mộc làm nền): Quẻ bệnh Lôi Địa Dự đã có sẵn <strong>Chấn (Mộc)</strong> đang khắc Khôn (Thổ).`,
+        `Giữ Chấn (Mộc) làm Hạ quái và đưa <strong>Ly (Hỏa)</strong> lên Thượng quái lập thành <strong>Hỏa Lôi Phệ Hạp</strong> (cung <strong>Sinh Khí</strong>): Chấn Mộc chuyển hướng sang sinh trợ cho Ly Hỏa thay vì khắc Khôn Thổ.`,
+        `Ngũ hành hóa xuất cuối cùng là <strong>Hỏa (Ly)</strong> đồng khí trực tiếp với Thiên Can ${canChuThe} (Hỏa).`
+      ]
+    };
+  }
+
+  return candidates[0] || null;
+}
+
+// =========================================================================
+// 3. ĐIỀU KHIỂN GIAO DIỆN & XUẤT BÁO CÁO LOGIC
+// =========================================================================
+
+window.updateCanLabel = function() {
+  const type = document.querySelector('input[name="house_type"]:checked').value;
+  document.getElementById('canLabel').textContent =
+    (type === 'private') ? 'Thiên Can tuổi gia chủ (Nhà tư nhân)' : 'Thiên Can tòa nhà (Nhà cộng đồng / Chung cư)';
+};
+
+let lastPlainTextReport = "";
+
+window.runAnalysis = function() {
+  const houseType = document.querySelector('input[name="house_type"]:checked').value;
+  const can = document.getElementById('selCan').value;
+  const son = document.getElementById('selSon').value;
+
+  const canInfo = CAN_DATA[can];
+  const sonInfo = SON_24_DATA[son];
+  const cungMatTien = sonInfo.cung;
+  const batSatChi = BAT_SAT_MAP[cungMatTien];
+
+  let html = "";
+  let textLines = [];
+
+  // Thanh tóm tắt đầu vào
+  document.getElementById('summaryBar').innerHTML = `
+    <span>Chủ thể: <strong>${houseType === 'private' ? 'Tư gia' : 'Nhà cộng đồng'} — Can ${can} (${canInfo.hanh} · ${canInfo.quai})</strong></span>
+    <span>Mặt tiền: <strong>Sơn ${son} (Cung ${cungMatTien} · ${QUAI_INFO[cungMatTien].phuong})</strong></span>
+    <span>Bát Sát (Diệu Sát): <strong>Phương ${batSatChi}</strong></span>
+  `;
+
+  textLines.push(`====================================================================`);
+  textLines.push(`BÁO CÁO GIẢI MÃ LOGIC TRẠCH HƯỚNG 24 SƠN (NGHIÊN CỨU THUẬT TOÁN)`);
+  textLines.push(`====================================================================`);
+  textLines.push(`• Chủ thể áp dụng : ${houseType === 'private' ? 'Nhà tư nhân (Can tuổi gia chủ)' : 'Nhà cộng đồng (Can tòa nhà)'} -> Can ${can} (${canInfo.hanh}, quẻ ${canInfo.quai})`);
+  textLines.push(`• Hướng mặt tiền  : Sơn ${son} (Thuộc cung ${cungMatTien} - Hướng ${QUAI_INFO[cungMatTien].phuong})`);
+  textLines.push(`• Bát Sát đi kèm  : Cung ${cungMatTien} phạm Bát Sát (Diệu Sát) tại phương ${batSatChi}`);
+  textLines.push(``);
+
+  // -----------------------------------------------------------------------
+  // PHẦN I: ĐÔ THIÊN MẬU KỶ SÁT (2 PHƯƠNG VỊ MẬU & KỶ)
+  // -----------------------------------------------------------------------
+  const [chiMau, chiKy] = canInfo.doThienChi;
+  const doThienList = [
+    { nhan: "Mậu", chi: chiMau },
+    { nhan: "Kỷ",  chi: chiKy }
+  ];
+
+  doThienList.forEach((dt, idx) => {
+    const haQuai = CHI_TO_QUAI_DOTHIEN[dt.chi];
+    const thuongBenh = findThuongQuaiByDuNien(haQuai, "Họa Hại");
+    const tenQueBenh = HEXAGRAM_64[thuongBenh][haQuai];
+    const chung = chanDoanChung(thuongBenh, haQuai);
+    const giai = timQueGiaiToiUu("DOTHIEN", haQuai, thuongBenh, can);
+
+    const isTrungHuong = (dt.chi === son || CHI_TO_QUAI_DOTHIEN[dt.chi] === cungMatTien);
+
+    html += `
+      <div class="case-block">
+        <div class="case-title">
+          <span>I.${idx + 1}. ĐÔ THIÊN SÁT (${dt.nhan} ${dt.chi}) — Phương ${dt.chi}</span>
+          <span class="badge">${isTrungHuong ? '⚠️ Trùng cung mặt tiền' : 'Phương vị Đô Thiên'}</span>
+        </div>
+        <ul class="step-list">
+          <li><span class="step-label">1. Tọa độ Đô Thiên:</span> Can <strong>${can}</strong> chạy Ngũ Hổ Độn gặp <strong>${dt.nhan} ${dt.chi}</strong> &rarr; Đô Thiên đóng tại phương <strong>${dt.chi}</strong> (Mang khí <strong>Họa Hại</strong>).</li>
+          <li><span class="step-label">2. Lập Quẻ Bệnh:</span> Hạ quái phương vị là <strong>${haQuai}</strong> (${QUAI_INFO[haQuai].hanh}). Phối Du Niên tìm quẻ ra khí <em>Họa Hại</em> với ${haQuai} là <strong>${thuongBenh}</strong> (${QUAI_INFO[thuongBenh].hanh}) làm Thượng quái &rarr; Quẻ Chính: <span class="que-chinh">${tenQueBenh}</span> (${thuongBenh} trên / ${haQuai} dưới).</li>
+          <li><span class="step-label">3. Chẩn đoán Chứng:</span> <strong>${chung.loai}</strong> — ${chung.moTa}</li>
+          <li><span class="step-label">4. Quẻ Giải (Trấn):</span> <span class="que-giai">${giai ? giai.tenQueGiai : 'Chưa tìm thấy'}</span> ${giai ? `(${giai.thuongGiai} trên / ${giai.haQuai} dưới — Cung <strong>${giai.duNienMoi}</strong>)` : ''}</li>
+        </ul>
+        ${giai ? `
+        <div class="explain-box">
+          <strong>🔍 Chú thích logic vì sao ra Quẻ Giải ${giai.tenQueGiai}:</strong><br>
+          ${giai.lyDo.map(r => `• ${r}`).join('<br>')}
+          <br>• <em>Nguyên tắc hành sự:</em> Đô Thiên bất khả động — tuyệt đối không khoan đục/treo đồ trực tiếp tại phương <strong>${dt.chi}</strong>, mà điều khí thông qua phương vị của Quẻ Giải.
+        </div>` : ''}
+      </div>
+    `;
+
+    textLines.push(`--- I.${idx + 1}. ĐÔ THIÊN SÁT (${dt.nhan} ${dt.chi}) ---`);
+    textLines.push(`• Tọa độ & Khí bệnh : Can ${can} -> ${dt.nhan} ${dt.chi} (Khí Họa Hại).`);
+    textLines.push(`• Quẻ Chính (Bệnh)  : ${tenQueBenh} (Thượng ${thuongBenh} / Hạ ${haQuai}) -> ${chung.loai}.`);
+    if (giai) {
+      textLines.push(`• Quẻ Giải (Trấn)   : ${giai.tenQueGiai} (Thượng ${giai.thuongGiai} / Hạ ${giai.haQuai} - ${giai.duNienMoi}).`);
+      giai.lyDo.forEach(r => textLines.push(`  - ${r.replace(/<[^>]+>/g, '')}`));
+    }
+    textLines.push(``);
+  });
+
+  // -----------------------------------------------------------------------
+  // PHẦN II: HOÀNG TUYỀN / BÁT SÁT — CASE 1: HOÀNG TUYỀN NHÂN
+  // -----------------------------------------------------------------------
+  const chiHTNhan = sonInfo.htNhan;
+  const haQuaiHTNhan = CHI_TO_QUAI_DOTHIEN[chiHTNhan];
+  const thuongBenhHTNhan = findThuongQuaiByDuNien(haQuaiHTNhan, "Ngũ Quỷ");
+  const tenQueBenhHTNhan = HEXAGRAM_64[thuongBenhHTNhan][haQuaiHTNhan];
+  const chungHTNhan = chanDoanChung(thuongBenhHTNhan, haQuaiHTNhan);
+  const giaiHTNhan = timQueGiaiToiUu("HOANGTUYEN", haQuaiHTNhan, thuongBenhHTNhan, can);
+
+  html += `
+    <div class="case-block hoang-tuyen">
+      <div class="case-title">
+        <span>II.1. CASE BÁT SÁT / HOÀNG TUYỀN NHÂN — Tại Phương ${chiHTNhan}</span>
+        <span class="badge">Khí Ngũ Quỷ</span>
+      </div>
+      <ul class="step-list">
+        <li><span class="step-label">1. Tọa độ Hoàng Tuyền:</span> Mặt tiền sơn <strong>${son}</strong> (Cung ${cungMatTien}) &rarr; Hoàng Tuyền Nhân đóng tại phương <strong>${chiHTNhan}</strong> (Mang khí <strong>Ngũ Quỷ</strong>).</li>
+        <li><span class="step-label">2. Lập Quẻ Bệnh:</span> Phương ${chiHTNhan} thuộc quẻ <strong>${haQuaiHTNhan}</strong> (${QUAI_INFO[haQuaiHTNhan].hanh}) làm Hạ quái. Quẻ phối Du Niên ra khí <em>Ngũ Quỷ</em> với ${haQuaiHTNhan} là <strong>${thuongBenhHTNhan}</strong> (${QUAI_INFO[thuongBenhHTNhan].hanh}) làm Thượng quái &rarr; Quẻ Chính: <span class="que-chinh">${tenQueBenhHTNhan}</span> (${thuongBenhHTNhan} trên / ${haQuaiHTNhan} dưới).</li>
+        <li><span class="step-label">3. Chẩn đoán Chứng:</span> <strong>${chungHTNhan.loai}</strong> — ${chungHTNhan.moTa}</li>
+        <li><span class="step-label">4. Quẻ Giải (Trấn):</span> <span class="que-giai">${giaiHTNhan ? giaiHTNhan.tenQueGiai : 'Chưa tìm thấy'}</span> ${giaiHTNhan ? `(${giaiHTNhan.thuongGiai} trên / ${giaiHTNhan.haQuai} dưới — Cung <strong>${giaiHTNhan.duNienMoi}</strong>)` : ''}</li>
+      </ul>
+      ${giaiHTNhan ? `
+      <div class="explain-box">
+        <strong>🔍 Chú thích logic vì sao ra Quẻ Giải ${giaiHTNhan.tenQueGiai}:</strong><br>
+        ${giaiHTNhan.lyDo.map(r => `• ${r}`).join('<br>')}
+      </div>` : ''}
+    </div>
+  `;
+
+  textLines.push(`--- II.1. HOÀNG TUYỀN NHÂN (Phương ${chiHTNhan}) ---`);
+  textLines.push(`• Tọa độ & Khí bệnh : Mặt tiền ${son} -> Hoàng Tuyền Nhân tại ${chiHTNhan} (Khí Ngũ Quỷ).`);
+  textLines.push(`• Quẻ Chính (Bệnh)  : ${tenQueBenhHTNhan} (Thượng ${thuongBenhHTNhan} / Hạ ${haQuaiHTNhan}) -> ${chungHTNhan.loai}.`);
+  if (giaiHTNhan) {
+    textLines.push(`• Quẻ Giải (Trấn)   : ${giaiHTNhan.tenQueGiai} (Thượng ${giaiHTNhan.thuongGiai} / Hạ ${giaiHTNhan.haQuai} - ${giaiHTNhan.duNienMoi}).`);
+    giaiHTNhan.lyDo.forEach(r => textLines.push(`  - ${r.replace(/<[^>]+>/g, '')}`));
+  }
+  textLines.push(``);
+
+  // -----------------------------------------------------------------------
+  // PHẦN III: HOÀNG TUYỀN / BÁT SÁT — CASE 2: HOÀNG TUYỀN ĐỊA CHI (THỦY BINH)
+  // -----------------------------------------------------------------------
+  const chiHTDiaChi = sonInfo.htDiaChi;
+  const quaiHauThien = sonInfo.htDiaChiQuai;
+  // Quy tắc đặc thù của tác giả: Đổi Hậu Thiên tại phương bị phạm sang Tiên Thiên làm Hạ Quái
+  const haQuaiHTDiaChi = HAU_THIEN_TO_TIEN_THIEN[quaiHauThien];
+  const thuongBenhHTDiaChi = findThuongQuaiByDuNien(haQuaiHTDiaChi, "Ngũ Quỷ");
+  const tenQueBenhHTDiaChi = HEXAGRAM_64[thuongBenhHTDiaChi][haQuaiHTDiaChi];
+  const chungHTDiaChi = chanDoanChung(thuongBenhHTDiaChi, haQuaiHTDiaChi);
+  const giaiHTDiaChi = timQueGiaiToiUu("HOANGTUYEN", haQuaiHTDiaChi, thuongBenhHTDiaChi, can);
+
+  html += `
+    <div class="case-block bat-sat">
+      <div class="case-title">
+        <span>II.2. CASE BÁT SÁT / HOÀNG TUYỀN ĐỊA CHI (THỦY BINH) — Tại ${chiHTDiaChi}</span>
+        <span class="badge">Chuyển trục Tiên Thiên · Ngũ Quỷ</span>
+      </div>
+      <ul class="step-list">
+        <li><span class="step-label">1. Tọa độ Thủy Binh:</span> Mặt tiền sơn <strong>${son}</strong> &rarr; Hoàng Tuyền Địa Chi đóng tại <strong>${chiHTDiaChi}</strong> (Cung Hậu Thiên: <strong>${quaiHauThien}</strong>).</li>
+        <li><span class="step-label">2. Chuyển trục Hạ Quái:</span> Theo phép chuyển đổi tầng không gian, tại vị trí Hậu Thiên <strong>${quaiHauThien}</strong> ứng với quẻ Tiên Thiên là <strong>${haQuaiHTDiaChi}</strong> (${QUAI_INFO[haQuaiHTDiaChi].hanh}) &rarr; Lấy <strong>${haQuaiHTDiaChi}</strong> làm Hạ quái cố định.</li>
+        <li><span class="step-label">3. Lập Quẻ Bệnh:</span> Quẻ phối Du Niên ra khí <em>Ngũ Quỷ</em> với ${haQuaiHTDiaChi} là <strong>${thuongBenhHTDiaChi}</strong> (${QUAI_INFO[thuongBenhHTDiaChi].hanh}) làm Thượng quái &rarr; Quẻ Chính: <span class="que-chinh">${tenQueBenhHTDiaChi}</span> (${thuongBenhHTDiaChi} trên / ${haQuaiHTDiaChi} dưới).</li>
+        <li><span class="step-label">4. Chẩn đoán Chứng:</span> <strong>${chungHTDiaChi.loai}</strong> — ${chungHTDiaChi.moTa}</li>
+        <li><span class="step-label">5. Quẻ Giải (Trấn):</span> <span class="que-giai">${giaiHTDiaChi ? giaiHTDiaChi.tenQueGiai : 'Chưa tìm thấy'}</span> ${giaiHTDiaChi ? `(${giaiHTDiaChi.thuongGiai} trên / ${giaiHTDiaChi.haQuai} dưới — Cung <strong>${giaiHTDiaChi.duNienMoi}</strong>)` : ''}</li>
+      </ul>
+      ${giaiHTDiaChi ? `
+      <div class="explain-box">
+        <strong>🔍 Chú thích logic vì sao ra Quẻ Giải ${giaiHTDiaChi.tenQueGiai}:</strong><br>
+        ${giaiHTDiaChi.lyDo.map(r => `• ${r}`).join('<br>')}
+        <br>• <em>Lưu ý Bát Sát đi kèm:</em> Mặt tiền thuộc cung <strong>${cungMatTien}</strong> nên Bát Sát (Diệu Sát) đóng tại phương <strong>${batSatChi}</strong> — cần lưu ý tránh động chạm trực tiếp tại sơn ${batSatChi} khi chọn phương vị hành sự.
+      </div>` : ''}
+    </div>
+  `;
+
+  textLines.push(`--- II.2. HOÀNG TUYỀN ĐỊA CHI / THỦY BINH (${chiHTDiaChi}) ---`);
+  textLines.push(`• Chuyển trục quái   : Hậu Thiên ${quaiHauThien} -> Tiên Thiên ${haQuaiHTDiaChi} làm Hạ Quái.`);
+  textLines.push(`• Quẻ Chính (Bệnh)  : ${tenQueBenhHTDiaChi} (Thượng ${thuongBenhHTDiaChi} / Hạ ${haQuaiHTDiaChi}) -> ${chungHTDiaChi.loai}.`);
+  if (giaiHTDiaChi) {
+    textLines.push(`• Quẻ Giải (Trấn)   : ${giaiHTDiaChi.tenQueGiai} (Thượng ${giaiHTDiaChi.thuongGiai} / Hạ ${giaiHTDiaChi.haQuai} - ${giaiHTDiaChi.duNienMoi}).`);
+    giaiHTDiaChi.lyDo.forEach(r => textLines.push(`  - ${r.replace(/<[^>]+>/g, '')}`));
+  }
+  textLines.push(`• Lưu ý Bát Sát     : Cung ${cungMatTien} phạm Bát Sát tại phương ${batSatChi}.`);
+
+  document.getElementById('resultsContainer').innerHTML = html;
+  lastPlainTextReport = textLines.join('\n');
+
+  const out = document.getElementById('outputArea');
+  out.style.display = 'block';
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+window.copyReportText = function() {
+  if (!lastPlainTextReport) return;
+  navigator.clipboard.writeText(lastPlainTextReport).then(() => {
+    const btn = document.getElementById('btnCopy');
+    btn.textContent = "✅ Đã sao chép báo cáo logic vào bộ nhớ tạm!";
+    setTimeout(() => { btn.textContent = "📋 Sao Chép Toàn Bộ Luận Giải Nghiên Cứu (Text Thuần)"; }, 2000);
+  });
+};
+</script>
+</body>
+</html>
