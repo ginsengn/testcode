@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trạch Hướng 24 Sơn — Đô Thiên · Hoàng Tuyền · Bát Sát · Tam Sát + Quẻ Giải</title>
+<title>Trạch Hướng — Logic Khách Quan (Thống nhất Thượng/Hạ)</title>
 <style>
   :root{--ink:#141820;--ink-soft:#1e2330;--ink-card:#252b3b;--paper:#efe8d8;--paper-dim:#b9b1a0;--gold:#c49a45;--gold-bright:#e2b85c;--cinnabar:#b84332;--teal:#2e7d6b;--line:rgba(239,232,216,0.14);}
   *{box-sizing:border-box;}
@@ -12,14 +12,14 @@
   header{text-align:center;padding:26px 14px 18px;border-bottom:1px solid var(--line);}
   header .glyph{font-size:12px;letter-spacing:.3em;color:var(--gold);margin-bottom:6px;}
   header h1{font-size:clamp(19px,4vw,26px);}
-  header p{max-width:720px;margin:8px auto 0;font-size:12.8px;color:var(--paper-dim);}
-  main{max-width:880px;margin:0 auto;padding:18px 12px 0;}
+  header p{max-width:760px;margin:8px auto 0;font-size:13px;color:var(--paper-dim);}
+  main{max-width:900px;margin:0 auto;padding:18px 12px 0;}
   .card{background:var(--ink-soft);border:1px solid var(--line);border-radius:6px;padding:16px;margin-bottom:14px;}
   .card h2{font-size:15.5px;color:var(--gold-bright);margin-bottom:4px;}
-  .hint{font-size:12.3px;color:#9a94a6;margin-bottom:11px;}
+  .hint{font-size:12.5px;color:#9a94a6;margin-bottom:11px;}
   .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:11px;margin-bottom:11px;}
   .field{display:flex;flex-direction:column;gap:4px;}
-  label{font-size:12.3px;color:#d4cdbd;font-weight:500;}
+  label{font-size:12.5px;color:#d4cdbd;font-weight:500;}
   select{background:#11141c;border:1px solid rgba(239,232,216,.22);color:var(--paper);border-radius:4px;padding:8px 10px;font-size:13.2px;width:100%;}
   select:focus{outline:none;border-color:var(--gold-bright);}
   .radio-row{display:flex;gap:8px;}
@@ -31,38 +31,39 @@
   #outputArea{display:none;}
   .summary-bar{background:rgba(196,154,69,.1);border:1px solid rgba(196,154,69,.3);border-radius:4px;padding:9px 12px;font-size:12.8px;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:9px;justify-content:space-between;}
   .summary-bar span strong{color:var(--gold-bright);}
-  .case-block{background:var(--ink-card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:4px;padding:13px;margin-bottom:12px;}
+  .case-block{background:var(--ink-card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:4px;padding:14px;margin-bottom:13px;}
   .case-block.danger{border-left-color:var(--cinnabar);}
   .case-block.good{border-left-color:var(--teal);}
-  .case-title{font-family:"Noto Serif",serif;font-size:14.5px;font-weight:700;color:var(--gold-bright);margin-bottom:7px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;}
-  .badge{font-size:10.5px;padding:2px 6px;border-radius:3px;background:rgba(239,232,216,.1);}
+  .case-title{font-family:"Noto Serif",serif;font-size:14.8px;font-weight:700;color:var(--gold-bright);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px;}
+  .badge{font-size:11px;padding:2px 7px;border-radius:3px;background:rgba(239,232,216,.1);}
   .badge.red{background:rgba(184,67,50,.25);color:#f08a7b;}
   .badge.green{background:rgba(46,125,107,.25);color:#7ce0c3;}
-  .step-list{margin:0;padding:0;list-style:none;font-size:13px;}
-  .step-list li{padding:4px 0;border-bottom:1px dashed rgba(239,232,216,.07);}
+  .step-list{margin:0;padding:0;list-style:none;font-size:13.2px;}
+  .step-list li{padding:5px 0;border-bottom:1px dashed rgba(239,232,216,.08);}
   .step-list li:last-child{border-bottom:none;}
-  .step-label{font-weight:600;color:#d8cfb8;display:inline-block;min-width:125px;}
+  .step-label{font-weight:600;color:#d8cfb8;display:inline-block;min-width:140px;}
   .que-chinh{color:#f08a7b;font-weight:700;}
   .que-giai{color:#7ce0c3;font-weight:700;}
-  .explain-box{margin-top:8px;background:rgba(17,20,28,.6);border:1px solid rgba(239,232,216,.1);border-radius:4px;padding:9px 11px;font-size:12.5px;color:#cfc8b8;}
+  .explain-box{margin-top:9px;background:rgba(17,20,28,.65);border:1px solid rgba(239,232,216,.12);border-radius:4px;padding:10px 12px;font-size:12.8px;color:#cfc8b8;}
   .explain-box strong{color:var(--gold-bright);}
-  .btn-copy{width:100%;background:#2c3347;color:var(--paper);border:1px solid rgba(239,232,216,.2);border-radius:4px;padding:9px;font-size:12.8px;cursor:pointer;margin-top:4px;}
-  .sat-tag{display:inline-block;padding:2px 6px;border-radius:3px;font-size:11px;margin:1px 2px;background:rgba(184,67,50,.2);color:#f08a7b;}
-  footer{text-align:center;font-size:11px;color:#6b6775;margin-top:18px;}
-  .note{background:rgba(184,67,50,.1);border:1px solid rgba(184,67,50,.3);border-radius:4px;padding:9px 11px;font-size:12.2px;margin-bottom:11px;color:#e8c4b8;}
+  .btn-copy{width:100%;background:#2c3347;color:var(--paper);border:1px solid rgba(239,232,216,.2);border-radius:4px;padding:10px;font-size:13px;cursor:pointer;margin-top:5px;}
+  .sat-tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:11px;margin:1px 2px;background:rgba(184,67,50,.2);color:#f08a7b;}
+  footer{text-align:center;font-size:11.5px;color:#6b6775;margin-top:18px;}
+  .note{background:rgba(46,125,107,.12);border:1px solid rgba(46,125,107,.35);border-radius:4px;padding:10px 12px;font-size:12.6px;margin-bottom:12px;color:#b8e0d0;}
+  .principle{background:rgba(196,154,69,.08);border:1px solid rgba(196,154,69,.25);border-radius:4px;padding:10px 12px;font-size:12.6px;margin-bottom:12px;color:#e0d4b0;}
 </style>
 </head>
 <body>
 <header>
   <div class="glyph">乾 · 兌 · 離 · 震 · 巽 · 坎 · 艮 · 坤</div>
-  <h1>Trạch Hướng 24 Sơn Full<br>Đô Thiên · Hoàng Tuyền · Bát Sát · Tam Sát + Quẻ Giải</h1>
-  <p>Đã bổ sung đủ 24 Sơn và phần Quẻ kép chế hóa theo đúng nguyên tắc: Họa Hại → ưu tiên Sinh Khí · Ngũ Quỷ → ưu tiên Thiên Y · Lục Sát / Tuyệt Mệnh → Sinh Khí / Thiên Y.</p>
+  <h1>Trạch Hướng — Logic Khách Quan</h1>
+  <p>Thống nhất nguyên tắc: Hạ quái = đúng cung vị · Thượng quái = Dụng (khí bệnh) · Hóa chính Dụng · Quẻ hóa có bát san tốt với Dụng + tốt với Thiên Can gia chủ.</p>
 </header>
 
 <main>
 <div class="card">
   <h2>1. Dữ liệu đầu vào</h2>
-  <div class="hint">Thiên Can → Đô Thiên. Địa Chi → Tam Sát. Hướng/Sơn 24 → kiểm tra tất cả sát + đưa Quẻ Giải.</div>
+  <div class="hint">Logic đã được viết lại theo hướng khách quan thống nhất (bỏ mọi quy đổi đặc biệt của nguyên tác).</div>
 
   <div class="field" style="margin-bottom:11px;">
     <label>Loại công trình</label>
@@ -74,7 +75,7 @@
 
   <div class="grid-2">
     <div class="field">
-      <label>Thiên Can (Đô Thiên + HT liên quan)</label>
+      <label>Thiên Can gia chủ / tòa nhà</label>
       <select id="selCan">
         <option>Giáp</option><option>Ất</option><option>Bính</option>
         <option selected>Đinh</option><option>Mậu</option><option>Kỷ</option>
@@ -82,7 +83,7 @@
       </select>
     </div>
     <div class="field">
-      <label>Địa Chi (Tam Sát)</label>
+      <label>Địa Chi (để tính Tam Sát)</label>
       <select id="selChi">
         <option>Tý</option><option selected>Sửu</option><option>Dần</option><option>Mão</option>
         <option>Thìn</option><option>Tỵ</option><option>Ngọ</option><option>Mùi</option>
@@ -95,56 +96,43 @@
     <label>Hướng / Sơn cần kiểm tra (đủ 24 Sơn)</label>
     <select id="selSon">
       <optgroup label="Cung Khảm (Bắc)">
-        <option value="Nhâm">Nhâm (337.5°–352.5°)</option>
-        <option value="Tý">Tý (352.5°–7.5°)</option>
-        <option value="Quý">Quý (7.5°–22.5°)</option>
+        <option value="Nhâm">Nhâm</option><option value="Tý">Tý</option><option value="Quý">Quý</option>
       </optgroup>
       <optgroup label="Cung Cấn (Đông Bắc)">
-        <option value="Sửu">Sửu (22.5°–37.5°)</option>
-        <option value="Cấn">Cấn (37.5°–52.5°)</option>
-        <option value="Dần">Dần (52.5°–67.5°)</option>
+        <option value="Sửu">Sửu</option><option value="Cấn">Cấn</option><option value="Dần">Dần</option>
       </optgroup>
       <optgroup label="Cung Chấn (Đông)">
-        <option value="Giáp">Giáp (67.5°–82.5°)</option>
-        <option value="Mão">Mão (82.5°–97.5°)</option>
-        <option value="Ất">Ất (97.5°–112.5°)</option>
+        <option value="Giáp">Giáp</option><option value="Mão">Mão</option><option value="Ất">Ất</option>
       </optgroup>
       <optgroup label="Cung Tốn (Đông Nam)">
-        <option value="Thìn">Thìn (112.5°–127.5°)</option>
-        <option value="Tốn">Tốn (127.5°–142.5°)</option>
-        <option value="Tỵ">Tỵ (142.5°–157.5°)</option>
+        <option value="Thìn">Thìn</option><option value="Tốn">Tốn</option><option value="Tỵ">Tỵ</option>
       </optgroup>
       <optgroup label="Cung Ly (Nam)">
-        <option value="Bính">Bính (157.5°–172.5°)</option>
-        <option value="Ngọ">Ngọ (172.5°–187.5°)</option>
-        <option value="Đinh">Đinh (187.5°–202.5°)</option>
+        <option value="Bính">Bính</option><option value="Ngọ">Ngọ</option><option value="Đinh">Đinh</option>
       </optgroup>
       <optgroup label="Cung Khôn (Tây Nam)">
-        <option value="Mùi">Mùi (202.5°–217.5°)</option>
-        <option value="Khôn" selected>Khôn (217.5°–232.5°) — case mẫu</option>
-        <option value="Thân">Thân (232.5°–247.5°)</option>
+        <option value="Mùi">Mùi</option><option value="Khôn" selected>Khôn</option><option value="Thân">Thân</option>
       </optgroup>
       <optgroup label="Cung Đoài (Tây)">
-        <option value="Canh">Canh (247.5°–262.5°)</option>
-        <option value="Dậu">Dậu (262.5°–277.5°)</option>
-        <option value="Tân">Tân (277.5°–292.5°)</option>
+        <option value="Canh">Canh</option><option value="Dậu">Dậu</option><option value="Tân">Tân</option>
       </optgroup>
       <optgroup label="Cung Càn (Tây Bắc)">
-        <option value="Tuất">Tuất (292.5°–307.5°)</option>
-        <option value="Càn">Càn (307.5°–322.5°)</option>
-        <option value="Hợi">Hợi (322.5°–337.5°)</option>
+        <option value="Tuất">Tuất</option><option value="Càn">Càn</option><option value="Hợi">Hợi</option>
       </optgroup>
     </select>
   </div>
 
-  <div class="note">
-    <strong>Nguyên tắc chế hóa đang dùng:</strong><br>
-    • <strong>Họa Hại</strong> (Đô Thiên) → ưu tiên tạo <strong>Sinh Khí</strong>, kỵ dùng Chấn.<br>
-    • <strong>Ngũ Quỷ</strong> (Hoàng Tuyền) → ưu tiên tuyệt đối tạo <strong>Thiên Y</strong>.<br>
-    • <strong>Lục Sát / Tuyệt Mệnh</strong> → ưu tiên Sinh Khí hoặc Thiên Y.
+  <div class="principle">
+    <strong>Nguyên tắc thống nhất đang dùng:</strong><br>
+    1. Hạ quái = đúng cung vị của phương (Thân→Khôn, Dậu→Đoài…).<br>
+    2. Thượng quái = Dụng (quẻ tạo khí bệnh với Hạ).<br>
+    3. Chẩn đoán Hư/Thực dựa trên quan hệ thực tế Thể – Dụng.<br>
+    4. <strong>Hóa chính Dụng (Thượng quái)</strong>: tìm Quẻ hóa sao cho có bát san tốt với Dụng (ưu tiên Sinh Khí).<br>
+    5. Quẻ hóa càng tốt nếu ngũ hành sinh / đồng với Thiên Can gia chủ.<br>
+    6. Vật phẩm + phương vị hành sự theo Quẻ hóa và phương của Dụng.
   </div>
 
-  <button class="btn-run" onclick="runAnalysis()">⚡ KIỂM TRA SÁT + ĐƯA QUẺ GIẢI</button>
+  <button class="btn-run" onclick="runAnalysis()">⚡ PHÂN TÍCH THEO LOGIC KHÁCH QUAN</button>
 </div>
 
 <div id="outputArea">
@@ -153,11 +141,15 @@
   <button class="btn-copy" id="btnCopy" onclick="copyReport()">📋 Sao chép báo cáo</button>
 </div>
 </main>
-<footer>Full 24 Sơn + Quẻ Giải theo logic tác giả · Họa Hại→Sinh Khí · Ngũ Quỷ→Thiên Y · Lục Sát→Sinh Khí/Thiên Y</footer>
+<footer>Logic Khách Quan · Thượng ra Thượng · Hạ ra Hạ · Hóa chính Dụng · Thống nhất 24 Sơn</footer>
 
 <script>
-// ===================== DỮ LIỆU =====================
-const QUAI = {Càn:{h:"Kim"},Đoài:{h:"Kim"},Ly:{h:"Hỏa"},Chấn:{h:"Mộc"},Tốn:{h:"Mộc"},Khảm:{h:"Thủy"},Cấn:{h:"Thổ"},Khôn:{h:"Thổ"}};
+// ===================== DỮ LIỆU CƠ BẢN =====================
+const QUAI = {
+  Càn:{h:"Kim",p:"Tây Bắc"}, Đoài:{h:"Kim",p:"Tây"}, Ly:{h:"Hỏa",p:"Nam"},
+  Chấn:{h:"Mộc",p:"Đông"}, Tốn:{h:"Mộc",p:"Đông Nam"}, Khảm:{h:"Thủy",p:"Bắc"},
+  Cấn:{h:"Thổ",p:"Đông Bắc"}, Khôn:{h:"Thổ",p:"Tây Nam"}
+};
 const HEX = {
   Càn:{Càn:"Bát Thuần Càn",Đoài:"Thiên Trạch Lý",Ly:"Thiên Hỏa Đồng Nhân",Chấn:"Thiên Lôi Vô Vọng",Tốn:"Thiên Phong Cấu",Khảm:"Thiên Thủy Tụng",Cấn:"Thiên Sơn Độn",Khôn:"Thiên Địa Bĩ"},
   Đoài:{Càn:"Trạch Thiên Quải",Đoài:"Bát Thuần Đoài",Ly:"Trạch Hỏa Cách",Chấn:"Trạch Lôi Tùy",Tốn:"Trạch Phong Đại Quá",Khảm:"Trạch Thủy Khốn",Cấn:"Trạch Sơn Hàm",Khôn:"Trạch Địa Tụy"},
@@ -190,6 +182,7 @@ const SON2QUAI = {
   Tuất:"Càn",Càn:"Càn",Hợi:"Càn"
 };
 
+// Đô Thiên theo Can (giữ nguyên)
 const DO_THIEN = {
   Giáp:["Thìn","Tỵ"],Kỷ:["Thìn","Tỵ"],
   Ất:["Dần","Mão"],Canh:["Dần","Mão"],
@@ -198,10 +191,11 @@ const DO_THIEN = {
   Mậu:["Ngọ","Mùi"],Quý:["Ngọ","Mùi"]
 };
 
-const CHI2HA = {
+// Chi → đúng cung vị (KHÔNG quy đổi đặc biệt)
+const CHI2QUAI = {
   Tý:"Khảm",Sửu:"Cấn",Dần:"Cấn",Mão:"Chấn",
   Thìn:"Tốn",Tỵ:"Tốn",Ngọ:"Ly",Mùi:"Khôn",
-  Thân:"Khôn",Dậu:"Khảm",Tuất:"Càn",Hợi:"Càn"
+  Thân:"Khôn",Dậu:"Đoài",Tuất:"Càn",Hợi:"Càn"
 };
 
 const BAT_SAT = {Tốn:"Dậu",Ly:"Hợi",Khôn:"Mão",Đoài:"Tỵ",Càn:"Ngọ",Khảm:"Thìn",Cấn:"Dần",Chấn:"Thân"};
@@ -216,233 +210,207 @@ const CAN_HANH = {Giáp:"Mộc",Ất:"Mộc",Bính:"Hỏa",Đinh:"Hỏa",Mậu:"
 const SINH = {Thủy:"Mộc",Mộc:"Hỏa",Hỏa:"Thổ",Thổ:"Kim",Kim:"Thủy"};
 const KHAC = {Thủy:"Hỏa",Hỏa:"Kim",Kim:"Mộc",Mộc:"Thổ",Thổ:"Thủy"};
 
-function findThuong(ha, target) {
-  for (const q of Object.keys(QUAI)) if (DU[ha][q] === target) return q;
+function findThuong(ha, targetDN) {
+  for (const q of Object.keys(QUAI)) if (DU[ha][q] === targetDN) return q;
   return null;
 }
-
 function getQue(thuong, ha) {
   return (HEX[thuong] && HEX[thuong][ha]) ? HEX[thuong][ha] : "?";
 }
 
-// ===================== TÌM QUẺ GIẢI THEO NGUYÊN TẮC TÁC GIẢ =====================
-function timQueGiai(haQuai, loaiKhi, canChu) {
-  // loaiKhi: "HoaHai" | "NguQuy" | "LucSat" | "TuyetMenh"
+// ===================== CHẨN ĐOÁN HƯ / THỰC =====================
+function chanDoan(thuong, ha) {
+  // Thượng = Dụng, Hạ = Thể
+  const hDung = QUAI[thuong].h;
+  const hThe = QUAI[ha].h;
+  if (KHAC[hDung] === hThe) return {loai:"Hư Chứng", moTa:`Dụng (${thuong}-${hDung}) khắc Thể (${ha}-${hThe}): khí bệnh đè nén, rút cạn sinh lực nền.`};
+  if (KHAC[hThe] === hDung) return {loai:"Hư Chứng", moTa:`Thể (${ha}-${hThe}) khắc Dụng (${thuong}-${hDung}): xung khắc trực diện.`};
+  if (SINH[hThe] === hDung) return {loai:"Thực Chứng", moTa:`Thể (${ha}-${hThe}) sinh Dụng (${thuong}-${hDung}): khí bệnh được nuôi dưỡng, ứ đọng.`};
+  if (SINH[hDung] === hThe) return {loai:"Thực Chứng", moTa:`Dụng (${thuong}-${hDung}) sinh Thể (${ha}-${hThe}): khí bệnh bồi đắp thêm cho nền.`};
+  return {loai:"Tỷ Hòa", moTa:`Đồng hành ${hThe}: sát khí cộng hưởng.`};
+}
+
+// ===================== TÌM QUẺ HÓA (HÓA CHÍNH DỤNG) =====================
+function timQueHoa(dungQuai, canChu) {
+  // Mục tiêu: tìm quẻ hóa sao cho khi lấy dungQuai làm Hạ, quẻ hóa làm Thượng → ra Sinh Khí (ưu tiên) hoặc Thiên Y / Diên Niên
+  // Đồng thời ngũ hành của quẻ hóa tốt với Can chủ
   const hCan = CAN_HANH[canChu];
-  const prioritiy = loaiKhi === "NguQuy" ? ["Thiên Y","Sinh Khí","Diên Niên"] : ["Sinh Khí","Thiên Y","Diên Niên"];
-
-  // Special cases đúng nguyên tác
-  // 1. Đô Thiên Thân (Chấn/Khôn) + Hỏa → Hỏa Lôi Phệ Hạp
-  if (loaiKhi === "HoaHai" && haQuai === "Khôn") {
-    const thuongBenh = findThuong("Khôn","Họa Hại"); // Chấn
-    if (thuongBenh === "Chấn" && hCan === "Hỏa") {
-      return {thuong:"Ly", ha:"Chấn", ten:"Hỏa Lôi Phệ Hạp", dn:"Sinh Khí",
-        lyDo:"Special case nguyên tác: Giữ Chấn làm Hạ, đưa Ly lên → Hỏa Lôi Phệ Hạp. Chấn Mộc sinh Ly Hỏa đồng khí với Can Hỏa."};
-    }
-  }
-  // 2. Đô Thiên Dậu (Đoài/Khảm) → Phong Thủy Hoán
-  if (loaiKhi === "HoaHai" && haQuai === "Khảm") {
-    const thuongBenh = findThuong("Khảm","Họa Hại"); // Đoài
-    if (thuongBenh === "Đoài") {
-      return {thuong:"Tốn", ha:"Khảm", ten:"Phong Thủy Hoán", dn:"Sinh Khí",
-        lyDo:"Special case nguyên tác: Thực chứng → dùng Tốn (Âm Mộc) thay Chấn (kỵ động). Khảm sinh Tốn, Tốn sinh Hỏa nuôi Can."};
-    }
-  }
-  // 3. Hoàng Tuyền Nhân (Khảm/Cấn) → Thiên Sơn Độn
-  if (loaiKhi === "NguQuy" && haQuai === "Cấn") {
-    return {thuong:"Càn", ha:"Cấn", ten:"Thiên Sơn Độn", dn:"Thiên Y",
-      lyDo:"Nguyên tắc Ngũ Quỷ → Thiên Y. Cấn + Càn = Thiên Y. Cấn sinh Càn, Càn sinh Khảm (biến khắc thành sinh). Can Hỏa khắc Càn → Tài."};
-  }
-  // 4. Hoàng Tuyền Địa Chi (Khôn/Tốn) → Hỏa Phong Đỉnh
-  if (loaiKhi === "NguQuy" && haQuai === "Tốn") {
-    return {thuong:"Ly", ha:"Tốn", ten:"Hỏa Phong Đỉnh", dn:"Thiên Y",
-      lyDo:"Nguyên tắc Ngũ Quỷ → Thiên Y. Tốn + Ly = Thiên Y. Tốn Mộc sinh Ly Hỏa đồng khí với Can Hỏa."};
-  }
-
-  // Logic chung
   let best = null, bestScore = -999;
-  for (const q of Object.keys(QUAI)) {
-    const dn = DU[haQuai][q];
-    if (!prioritiy.includes(dn)) continue;
-    if (loaiKhi === "HoaHai" && q === "Chấn") continue; // kỵ Chấn ở Đô Thiên
+
+  for (const qHoa of Object.keys(QUAI)) {
+    if (qHoa === dungQuai) continue;
+    const dn = DU[dungQuai][qHoa]; // quan hệ khi dungQuai là Hạ, qHoa là Thượng
+    if (!["Sinh Khí","Thiên Y","Diên Niên"].includes(dn)) continue;
 
     let score = 0;
-    if (dn === prioritiy[0]) score += 50;
-    else if (dn === prioritiy[1]) score += 35;
-    else score += 20;
+    let lyDo = [];
 
-    const hG = QUAI[q].h;
-    if (SINH[QUAI[haQuai].h] === hG) score += 20; // Hạ sinh Thượng
-    if (hG === hCan || SINH[hG] === hCan) score += 25; // đồng/sinh Can
-    if (KHAC[hCan] === hG) score += 15; // Can khắc → Tài
+    if (dn === "Sinh Khí") { score += 50; lyDo.push(`Phối với Dụng ${dungQuai} tạo thành <strong>Sinh Khí</strong> (ưu tiên cao nhất).`); }
+    else if (dn === "Thiên Y") { score += 40; lyDo.push(`Phối với Dụng ${dungQuai} tạo thành <strong>Thiên Y</strong>.`); }
+    else { score += 30; lyDo.push(`Phối với Dụng ${dungQuai} tạo thành ${dn}.`); }
+
+    const hHoa = QUAI[qHoa].h;
+    // Quan hệ với Can chủ
+    if (hHoa === hCan) { score += 30; lyDo.push(`Ngũ hành ${hHoa} tỷ hòa đồng khí với Can ${canChu}.`); }
+    else if (SINH[hHoa] === hCan) { score += 28; lyDo.push(`Ngũ hành ${hHoa} sinh cho Can ${canChu} (${hCan}).`); }
+    else if (KHAC[hCan] === hHoa) { score += 15; lyDo.push(`Can ${canChu} khắc ${qHoa} → biến thành Thê Tài.`); }
+    else if (SINH[hCan] === hHoa) { score += 8; lyDo.push(`Can ${canChu} sinh nhẹ cho ${qHoa}.`); }
+
+    // Ưu tiên tiết khí Dụng nếu là Thực chứng (nhưng vì chưa biết chứng lúc này, chỉ cộng nhẹ nếu sinh xuất)
+    if (SINH[QUAI[dungQuai].h] === hHoa) { score += 12; lyDo.push(`Dụng ${dungQuai} sinh ${qHoa} → có tác dụng tiết khí Dụng.`); }
 
     if (score > bestScore) {
       bestScore = score;
-      best = {thuong:q, ha:haQuai, ten:getQue(q,haQuai), dn:dn,
-        lyDo:`Tạo thành cung <strong>${dn}</strong> với Hạ ${haQuai}. Ngũ hành ${hG} quan hệ tốt với Can ${canChu} (${hCan}).`};
+      best = {
+        thuongHoa: qHoa,
+        haDung: dungQuai,
+        ten: getQue(qHoa, dungQuai),
+        dn: dn,
+        lyDo: lyDo,
+        phuongHanhSu: QUAI[dungQuai].p + " (" + dungQuai + ")"
+      };
     }
   }
   return best;
 }
 
-// ===================== CHẠY =====================
+// ===================== CHẠY PHÂN TÍCH =====================
 let lastReport = "";
 
 window.runAnalysis = function() {
   const can = document.getElementById("selCan").value;
   const chi = document.getElementById("selChi").value;
   const son = document.getElementById("selSon").value;
-  const quai = SON2QUAI[son];
+  const quaiSon = SON2QUAI[son];
 
   const dtList = DO_THIEN[can] || [];
   const tsList = TAM_SAT[chi] || [];
-  const bsPhuong = BAT_SAT[quai];
+  const bsPhuong = BAT_SAT[quaiSon];
 
   let html = "";
   let lines = [];
   const satsHere = [];
 
   document.getElementById("summaryBar").innerHTML = `
-    <span>Can <strong>${can}</strong> · Chi <strong>${chi}</strong></span>
-    <span>Sơn đang xem: <strong>${son} (${quai})</strong></span>
+    <span>Can <strong>${can}</strong> (${CAN_HANH[can]}) · Chi <strong>${chi}</strong></span>
+    <span>Sơn đang xem: <strong>${son} → ${quaiSon}</strong></span>
     <span>Đô Thiên: <strong>${dtList.join(", ")}</strong></span>
     <span>Tam Sát: <strong>${tsList.join(", ")}</strong></span>
   `;
 
   lines.push("==============================================================");
-  lines.push("BÁO CÁO SÁT KHÍ + QUẺ GIẢI (24 Sơn Full)");
+  lines.push("BÁO CÁO LOGIC KHÁCH QUAN (Thống nhất Thượng/Hạ)");
   lines.push("==============================================================");
-  lines.push(`Can: ${can} | Chi: ${chi} | Sơn kiểm tra: ${son} (${quai})`);
+  lines.push(`Can: ${can} | Chi: ${chi} | Sơn: ${son} (${quaiSon})`);
   lines.push(`Đô Thiên: ${dtList.join(", ")} | Tam Sát: ${tsList.join(", ")}`);
   lines.push("");
 
-  // ===== ĐÔ THIÊN =====
+  // ========== ĐÔ THIÊN ==========
   dtList.forEach((p, idx) => {
-    const ha = CHI2HA[p];
-    const thuong = findThuong(ha, "Họa Hại");
+    // Hạ quái = đúng cung vị của phương p
+    const ha = CHI2QUAI[p];           // Thể
+    const thuong = findThuong(ha, "Họa Hại"); // Dụng
     const tenBenh = getQue(thuong, ha);
-    const giai = timQueGiai(ha, "HoaHai", can);
-    const isHere = (p === son || ha === quai || SON2QUAI[p] === quai);
-    if (isHere) satsHere.push("Đô Thiên (Họa Hại)");
+    const chung = chanDoan(thuong, ha);
+    const hoa = timQueHoa(thuong, can); // Hóa chính Dụng (thuong)
+
+    const isHere = (p === son || ha === quaiSon || SON2QUAI[p] === quaiSon);
+    if (isHere) satsHere.push("Đô Thiên");
 
     html += `<div class="case-block ${isHere?'danger':''}">
-      <div class="case-title">I.${idx+1}. ĐÔ THIÊN tại ${p} ${isHere?'<span class="badge red">CÓ MẶT</span>':''}</div>
+      <div class="case-title">I.${idx+1}. ĐÔ THIÊN tại phương ${p} ${isHere?'<span class="badge red">CÓ MẶT</span>':''}</div>
       <ul class="step-list">
-        <li><span class="step-label">Quẻ Bệnh:</span> <span class="que-chinh">${tenBenh}</span> (${thuong}/${ha}) — Khí <strong>Họa Hại</strong></li>
-        <li><span class="step-label">Quẻ Giải:</span> <span class="que-giai">${giai?giai.ten:'?'}</span> ${giai?`(${giai.thuong}/${giai.ha} — ${giai.dn})`:''}</li>
-        <li><span class="step-label">Cách chế:</span> Họa Hại → ưu tiên tạo <strong>Sinh Khí</strong>. Đô Thiên bất khả động.</li>
+        <li><span class="step-label">1. Hạ quái (Thể):</span> <strong>${ha}</strong> (đúng cung vị của ${p})</li>
+        <li><span class="step-label">2. Thượng quái (Dụng):</span> <strong>${thuong}</strong> (tạo Họa Hại với ${ha})</li>
+        <li><span class="step-label">3. Quẻ Bệnh:</span> <span class="que-chinh">${tenBenh}</span> (${thuong} trên / ${ha} dưới)</li>
+        <li><span class="step-label">4. Chẩn đoán:</span> <strong>${chung.loai}</strong> — ${chung.moTa}</li>
+        <li><span class="step-label">5. Quẻ Hóa (hóa Dụng):</span> <span class="que-giai">${hoa?hoa.ten:'?'}</span>
+          ${hoa?`(${hoa.thuongHoa} trên / ${hoa.haDung} dưới — ${hoa.dn})`:''}</li>
+        <li><span class="step-label">6. Phương hành sự:</span> ${hoa?hoa.phuongHanhSu:'?'} (phương của Dụng ${thuong})</li>
       </ul>
-      ${giai?`<div class="explain-box"><strong>Logic giải:</strong> ${giai.lyDo}</div>`:''}
+      ${hoa?`<div class="explain-box">
+        <strong>🔍 Logic hóa giải khách quan:</strong><br>
+        • Hóa chính <strong>Dụng ${thuong}</strong> (không đụng vào Thể ${ha}).<br>
+        ${hoa.lyDo.map(r=>`• ${r}`).join('<br>')}
+        <br>• <em>Đô Thiên bất khả động</em> tại phương ${p}. Hành sự ở phương của Dụng.
+      </div>`:''}
     </div>`;
+
     lines.push(`--- ĐÔ THIÊN ${p} ${isHere?'(CÓ MẶT)':''} ---`);
-    lines.push(`Bệnh: ${tenBenh} (${thuong}/${ha}) | Giải: ${giai?giai.ten:'?'} | Họa Hại → Sinh Khí`);
+    lines.push(`Hạ (Thể): ${ha} | Thượng (Dụng): ${thuong} | Quẻ Bệnh: ${tenBenh}`);
+    lines.push(`Chẩn đoán: ${chung.loai}`);
+    if (hoa) {
+      lines.push(`Quẻ Hóa: ${hoa.ten} (${hoa.thuongHoa}/${hoa.haDung} - ${hoa.dn})`);
+      lines.push(`Phương hành sự: ${hoa.phuongHanhSu}`);
+      hoa.lyDo.forEach(r => lines.push(`  - ${r.replace(/<[^>]+>/g,'')}`));
+    }
     lines.push("");
   });
 
-  // ===== HOÀNG TUYỀN NHÂN (đơn giản hóa theo hướng) =====
-  const htNhanMap = {Khôn:"Sửu",Mùi:"Sửu",Thân:"Sửu",Tốn:"Dậu",Thìn:"Dậu",Tỵ:"Dậu",Cấn:"Dần",Sửu:"Dần",Dần:"Dần",Càn:"Ngọ",Tuất:"Ngọ",Hợi:"Ngọ",Ly:"Hợi",Ngọ:"Hợi",Đinh:"Hợi",Bính:"Hợi",Đoài:"Tỵ",Dậu:"Tỵ",Canh:"Tỵ",Tân:"Tỵ",Chấn:"Thân",Mão:"Thân",Giáp:"Thân",Ất:"Thân",Khảm:"Thìn",Tý:"Thìn",Nhâm:"Thìn",Quý:"Thìn"};
-  const htNhanP = htNhanMap[son] || htNhanMap[quai];
-  if (htNhanP) {
-    const ha = CHI2HA[htNhanP] || "Cấn";
-    const thuong = findThuong(ha, "Ngũ Quỷ");
-    const tenBenh = getQue(thuong, ha);
-    const giai = timQueGiai(ha, "NguQuy", can);
-    const isHere = (htNhanP === son || ha === quai);
-    if (isHere) satsHere.push("Hoàng Tuyền Nhân (Ngũ Quỷ)");
-
-    html += `<div class="case-block ${isHere?'danger':'good'}">
-      <div class="case-title">II. HOÀNG TUYỀN NHÂN (${htNhanP}) ${isHere?'<span class="badge red">CÓ MẶT</span>':''}</div>
-      <ul class="step-list">
-        <li><span class="step-label">Quẻ Bệnh:</span> <span class="que-chinh">${tenBenh}</span> (${thuong}/${ha}) — Khí <strong>Ngũ Quỷ</strong></li>
-        <li><span class="step-label">Quẻ Giải:</span> <span class="que-giai">${giai?giai.ten:'?'}</span> ${giai?`(${giai.thuong}/${giai.ha} — ${giai.dn})`:''}</li>
-        <li><span class="step-label">Cách chế:</span> Ngũ Quỷ → ưu tiên tuyệt đối tạo <strong>Thiên Y</strong>.</li>
-      </ul>
-      ${giai?`<div class="explain-box"><strong>Logic giải:</strong> ${giai.lyDo}</div>`:''}
-    </div>`;
-    lines.push(`--- HT NHÂN ${htNhanP} ${isHere?'(CÓ MẶT)':''} ---`);
-    lines.push(`Bệnh: ${tenBenh} | Giải: ${giai?giai.ten:'?'} | Ngũ Quỷ → Thiên Y`);
-    lines.push("");
-  }
-
-  // ===== HOÀNG TUYỀN ĐỊA CHI =====
-  const diaGroup = {Tý:"Cấn",Sửu:"Cấn",Dần:"Cấn",Mão:"Cấn",Thìn:"Tốn",Tỵ:"Tốn",Ngọ:"Tốn",Mùi:"Khôn",Thân:"Khôn",Dậu:"Khôn",Tuất:"Càn",Hợi:"Càn"};
-  const hau = diaGroup[son] || quai;
-  const haTien = {Ly:"Càn",Khôn:"Tốn",Đoài:"Khảm",Càn:"Cấn",Khảm:"Khôn",Cấn:"Chấn",Chấn:"Ly",Tốn:"Đoài"}[hau] || hau;
-  const thuongDia = findThuong(haTien, "Ngũ Quỷ");
-  const tenDia = getQue(thuongDia, haTien);
-  const giaiDia = timQueGiai(haTien, "NguQuy", can);
-  const isHereDia = (hau === quai || haTien === quai);
-  if (isHereDia) satsHere.push("Hoàng Tuyền Địa Chi (Ngũ Quỷ)");
-
-  html += `<div class="case-block ${isHereDia?'danger':'good'}">
-    <div class="case-title">III. HOÀNG TUYỀN ĐỊA CHI (Thủy Binh) ${isHereDia?'<span class="badge red">CÓ MẶT</span>':''}</div>
-    <ul class="step-list">
-      <li><span class="step-label">Chuyển trục:</span> Hậu ${hau} → Tiên Hạ <strong>${haTien}</strong></li>
-      <li><span class="step-label">Quẻ Bệnh:</span> <span class="que-chinh">${tenDia}</span> (${thuongDia}/${haTien}) — Ngũ Quỷ</li>
-      <li><span class="step-label">Quẻ Giải:</span> <span class="que-giai">${giaiDia?giaiDia.ten:'?'}</span> ${giaiDia?`(${giaiDia.thuong}/${giaiDia.ha} — ${giaiDia.dn})`:''}</li>
-      <li><span class="step-label">Cách chế:</span> Ngũ Quỷ → <strong>Thiên Y</strong>.</li>
-    </ul>
-    ${giaiDia?`<div class="explain-box"><strong>Logic giải:</strong> ${giaiDia.lyDo}</div>`:''}
-  </div>`;
-  lines.push(`--- HT ĐỊA CHI ---`);
-  lines.push(`Hậu ${hau} → Tiên ${haTien} | Bệnh: ${tenDia} | Giải: ${giaiDia?giaiDia.ten:'?'}`);
-  lines.push("");
-
-  // ===== BÁT SÁT =====
+  // ========== BÁT SÁT ==========
   if (bsPhuong) {
-    const ha = CHI2HA[bsPhuong] || quai;
+    const ha = CHI2QUAI[bsPhuong] || quaiSon;
     const thuong = findThuong(ha, "Lục Sát");
     const tenBenh = getQue(thuong, ha);
-    const giai = timQueGiai(ha, "LucSat", can);
-    const isHere = (bsPhuong === son || ha === quai);
-    if (isHere) satsHere.push("Bát Sát (Lục Sát)");
+    const chung = chanDoan(thuong, ha);
+    const hoa = timQueHoa(thuong, can);
+    const isHere = (bsPhuong === son || ha === quaiSon);
+    if (isHere) satsHere.push("Bát Sát");
 
     html += `<div class="case-block ${isHere?'danger':'good'}">
-      <div class="case-title">IV. BÁT SÁT tại ${bsPhuong} ${isHere?'<span class="badge red">CÓ MẶT</span>':''}</div>
+      <div class="case-title">II. BÁT SÁT tại ${bsPhuong} ${isHere?'<span class="badge red">CÓ MẶT</span>':''}</div>
       <ul class="step-list">
-        <li><span class="step-label">Quẻ Bệnh:</span> <span class="que-chinh">${tenBenh}</span> (${thuong}/${ha}) — Khí <strong>Lục Sát</strong></li>
-        <li><span class="step-label">Quẻ Giải:</span> <span class="que-giai">${giai?giai.ten:'?'}</span> ${giai?`(${giai.thuong}/${giai.ha} — ${giai.dn})`:''}</li>
-        <li><span class="step-label">Cách chế:</span> Lục Sát → ưu tiên <strong>Sinh Khí / Thiên Y</strong>.</li>
+        <li><span class="step-label">Hạ (Thể):</span> ${ha} | <span class="step-label">Thượng (Dụng):</span> ${thuong}</li>
+        <li><span class="step-label">Quẻ Bệnh:</span> <span class="que-chinh">${tenBenh}</span> — Khí Lục Sát</li>
+        <li><span class="step-label">Chẩn đoán:</span> ${chung.loai}</li>
+        <li><span class="step-label">Quẻ Hóa:</span> <span class="que-giai">${hoa?hoa.ten:'?'}</span> ${hoa?`(${hoa.dn})`:''}</li>
+        <li><span class="step-label">Phương hành sự:</span> ${hoa?hoa.phuongHanhSu:'?'}</li>
       </ul>
-      ${giai?`<div class="explain-box"><strong>Logic giải:</strong> ${giai.lyDo}</div>`:''}
+      ${hoa?`<div class="explain-box"><strong>Logic:</strong> Hóa Dụng ${thuong}. ${hoa.lyDo.join(' ')}</div>`:''}
     </div>`;
     lines.push(`--- BÁT SÁT ${bsPhuong} ${isHere?'(CÓ MẶT)':''} ---`);
-    lines.push(`Bệnh: ${tenBenh} | Giải: ${giai?giai.ten:'?'} | Lục Sát → Sinh Khí/Thiên Y`);
+    lines.push(`Bệnh: ${tenBenh} | Hóa: ${hoa?hoa.ten:'?'} | ${chung.loai}`);
     lines.push("");
   }
 
-  // ===== TAM SÁT =====
+  // ========== TAM SÁT ==========
   tsList.forEach(p => {
-    const ha = CHI2HA[p] || "Khảm";
+    const ha = CHI2QUAI[p];
     const thuong = findThuong(ha, "Lục Sát");
     const tenBenh = getQue(thuong, ha);
-    const giai = timQueGiai(ha, "LucSat", can);
-    const isHere = (p === son || ha === quai);
-    if (isHere) satsHere.push("Tam Sát (Lục Sát)");
+    const chung = chanDoan(thuong, ha);
+    const hoa = timQueHoa(thuong, can);
+    const isHere = (p === son || ha === quaiSon);
+    if (isHere) satsHere.push("Tam Sát");
 
     html += `<div class="case-block ${isHere?'danger':''}">
-      <div class="case-title">V. TAM SÁT tại ${p} ${isHere?'<span class="badge red">CÓ MẶT</span>':''}</div>
+      <div class="case-title">III. TAM SÁT tại ${p} ${isHere?'<span class="badge red">CÓ MẶT</span>':''}</div>
       <ul class="step-list">
-        <li><span class="step-label">Quẻ Bệnh:</span> <span class="que-chinh">${tenBenh}</span> (${thuong}/${ha}) — Lục Sát</li>
-        <li><span class="step-label">Quẻ Giải:</span> <span class="que-giai">${giai?giai.ten:'?'}</span> ${giai?`(${giai.thuong}/${giai.ha} — ${giai.dn})`:''}</li>
-        <li><span class="step-label">Cách chế:</span> Lục Sát → <strong>Sinh Khí / Thiên Y</strong>. Tránh manh động.</li>
+        <li><span class="step-label">Hạ (Thể):</span> ${ha} | <span class="step-label">Thượng (Dụng):</span> ${thuong}</li>
+        <li><span class="step-label">Quẻ Bệnh:</span> <span class="que-chinh">${tenBenh}</span></li>
+        <li><span class="step-label">Chẩn đoán:</span> ${chung.loai}</li>
+        <li><span class="step-label">Quẻ Hóa:</span> <span class="que-giai">${hoa?hoa.ten:'?'}</span> ${hoa?`(${hoa.dn})`:''}</li>
+        <li><span class="step-label">Phương hành sự:</span> ${hoa?hoa.phuongHanhSu:'?'}</li>
       </ul>
-      ${giai?`<div class="explain-box"><strong>Logic giải:</strong> ${giai.lyDo}</div>`:''}
     </div>`;
     lines.push(`--- TAM SÁT ${p} ${isHere?'(CÓ MẶT)':''} ---`);
-    lines.push(`Bệnh: ${tenBenh} | Giải: ${giai?giai.ten:'?'}`);
+    lines.push(`Bệnh: ${tenBenh} | Hóa: ${hoa?hoa.ten:'?'}`);
     lines.push("");
   });
 
   // Tổng kết
   if (satsHere.length) {
-    html = `<div class="case-block danger"><div class="case-title">TỔNG KẾT TẠI SƠN ${son.toUpperCase()}</div>
+    html = `<div class="case-block danger">
+      <div class="case-title">TỔNG KẾT TẠI SƠN ${son.toUpperCase()}</div>
       <p>Các sát có mặt: ${satsHere.map(s=>`<span class="sat-tag">${s}</span>`).join(" ")}</p>
-      <p style="font-size:12.8px;margin-top:5px;">→ Cần thận trọng. Ưu tiên hóa giải từ phương khác hoặc dùng thời Ngũ Linh Dịch.</p></div>` + html;
+      <p style="font-size:13px;margin-top:6px;">Nguyên tắc: Hóa chính Dụng · Hành sự tại phương của Dụng · Không đụng trực tiếp vào phương Đô Thiên.</p>
+    </div>` + html;
     lines.unshift(`*** TẠI ${son}: ${satsHere.join(", ")} ***\n`);
   } else {
-    html = `<div class="case-block good"><div class="case-title">TỔNG KẾT TẠI SƠN ${son.toUpperCase()}</div>
-      <p>Không phát hiện Đô Thiên / Hoàng Tuyền / Bát Sát / Tam Sát trực tiếp tại sơn này.</p></div>` + html;
+    html = `<div class="case-block good">
+      <div class="case-title">TỔNG KẾT TẠI SƠN ${son.toUpperCase()}</div>
+      <p>Không phát hiện Đô Thiên / Bát Sát / Tam Sát trực tiếp tại sơn này theo dữ liệu đã chọn.</p>
+    </div>` + html;
   }
 
   document.getElementById("resultsContainer").innerHTML = html;
@@ -454,9 +422,9 @@ window.runAnalysis = function() {
 window.copyReport = function() {
   if (!lastReport) return;
   navigator.clipboard.writeText(lastReport).then(()=>{
-    const b=document.getElementById("btnCopy");
-    b.textContent="✅ Đã sao chép!";
-    setTimeout(()=>b.textContent="📋 Sao chép báo cáo",2000);
+    const b = document.getElementById("btnCopy");
+    b.textContent = "✅ Đã sao chép!";
+    setTimeout(()=>b.textContent = "📋 Sao chép báo cáo", 2000);
   });
 };
 </script>
