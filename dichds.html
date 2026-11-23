@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trạch Hướng 24 Sơn v2 — Đô Thiên · Hoàng Tuyền · Bát Sát · Tam Sát + Quẻ Giải</title>
+<style>
+:root{--ink:#141820;--soft:#1e2330;--card:#252b3b;--paper:#efe8d8;--dim:#b9b1a0;--gold:#c49a45;--gb:#e2b85c;--red:#b84332;--teal:#2e7d6b;--line:rgba(239,232,216,.14)}
+*{box-sizing:border-box}body{margin:0;background:var(--ink);color:var(--paper);font-family:"Be Vietnam Pro","Noto Sans",sans-serif;line-height:1.55;padding-bottom:50px}
+header{text-align:center;padding:24px 14px 14px;border-bottom:1px solid var(--line)}header h1{font:600 clamp(18px,4vw,25px) Georgia,serif;margin:0}header p{max-width:760px;margin:8px auto 0;font-size:12.5px;color:var(--dim)}
+main{max-width:880px;margin:0 auto;padding:16px 12px}.card{background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:15px;margin-bottom:13px}
+.card h2{font-size:15px;color:var(--gb);margin:0 0 8px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:10px}
+.field{display:flex;flex-direction:column;gap:4px}label{font-size:12.3px;color:#d4cdbd}select{background:#11141c;border:1px solid rgba(239,232,216,.22);color:var(--paper);border-radius:4px;padding:8px;font-size:13px;width:100%}
+.radio{display:flex;gap:8px;margin-bottom:10px}.radio label{flex:1;border:1px solid rgba(239,232,216,.2);border-radius:4px;padding:7px;text-align:center;cursor:pointer;font-size:12.2px}.radio input{display:none}.radio label:has(input:checked){background:var(--gb);color:var(--ink);font-weight:600}
+button{width:100%;border:none;border-radius:4px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;color:var(--paper);background:var(--red)}button.c{background:#2c3347;border:1px solid var(--line);font-size:12.8px;padding:9px;margin-top:4px}
+#out{display:none}.bar{background:rgba(196,154,69,.1);border:1px solid rgba(196,154,69,.3);border-radius:4px;padding:9px 12px;font-size:12.6px;margin-bottom:11px;display:flex;flex-wrap:wrap;gap:9px;justify-content:space-between}.bar b{color:var(--gb)}
+.blk{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:4px;padding:12px;margin-bottom:11px}.blk.here{border-left-color:var(--red)}
+.t{font:700 14px Georgia,serif;color:var(--gb);margin-bottom:6px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px}.bd{font:10.5px sans-serif;padding:2px 6px;border-radius:3px;background:rgba(184,67,50,.3);color:#f08a7b}
+ul{margin:0;padding:0;list-style:none;font-size:12.9px}li{padding:4px 0;border-bottom:1px dashed rgba(239,232,216,.07)}li:last-child{border:0}.l{font-weight:600;color:#d8cfb8;display:inline-block;min-width:112px}
+.qb{color:#f08a7b;font-weight:700}.qg{color:#7ce0c3;font-weight:700}.ex{margin-top:7px;background:rgba(17,20,28,.6);border:1px solid rgba(239,232,216,.1);border-radius:4px;padding:8px 10px;font-size:12.2px;color:#cfc8b8}
+.note{background:rgba(184,67,50,.1);border:1px solid rgba(184,67,50,.3);border-radius:4px;padding:9px 11px;font-size:12.2px;color:#e8c4b8}.ok{color:#7ce0c3}.no{color:#f08a7b}
+footer{text-align:center;font-size:11px;color:#6b6775;margin-top:16px}
+</style></head><body>
+<header><h1>Trạch Hướng 24 Sơn v2<br>Đô Thiên · Hoàng Tuyền (Thiên/Nhân/Địa Chi) · Bát Sát · Tam Sát + Quẻ Giải</h1>
+<p>Thượng quái = Thể (khí bệnh/quẻ giải), Hạ quái = Dụng (nền phương vị). Chọn quẻ giải: tầng Du Niên (theo ví dụ tác giả, thiếu thì theo cổ pháp chung) → tầng Ngũ hành (loại quẻ khắc Can, loại Hạ khắc Thượng).</p></header>
+<main>
+<div class="card"><h2>1. Dữ liệu đầu vào</h2>
+<div class="radio"><label><input type="radio" name="ht" value="p" checked><span>Tư nhân (Can + Chi tuổi gia chủ)</span></label><label><input type="radio" name="ht" value="c"><span>Cộng đồng (Can + Chi tòa nhà)</span></label></div>
+<div class="grid"><div class="field"><label id="lCan">Thiên Can tuổi gia chủ → Đô Thiên</label><select id="selCan"></select></div>
+<div class="field"><label id="lChi">Địa Chi tuổi gia chủ → Tam Sát</label><select id="selChi"></select></div></div>
+<div class="grid"><div class="field"><label>Hướng mặt tiền (24 Sơn) → Bát Sát, Hoàng Tuyền</label><select id="selSon"></select></div>
+<div class="field"><label>Bảng Tam Sát</label><select id="selTS"><option value="doc">Theo tài liệu tác giả (thực chất là bảng Tam Tai/tam hội)</option><option value="std">Tam Sát chuẩn (Kiếp–Tai–Tuế sát)</option></select></div></div>
+<button onclick="run()">⚡ KIỂM TRA SÁT + QUẺ GIẢI</button></div>
+<div id="out"><div class="bar" id="bar"></div><div id="res"></div><button class="c" onclick="cp()" id="bc">📋 Sao chép báo cáo</button>
+<div class="card" style="margin-top:12px"><h2>Kiểm chứng logic với ví dụ của tác giả (Can Đinh)</h2><div id="tests" style="font-size:12.5px"></div></div></div>
+</main><footer>v2 — quy tắc chung thay cho special-case cứng; kiểm chứng tự động với các ví dụ mẫu</footer>
+<script>
+const Q8=["Càn","Đoài","Ly","Chấn","Tốn","Khảm","Cấn","Khôn"];
+const QH={Càn:"Kim",Đoài:"Kim",Ly:"Hỏa",Chấn:"Mộc",Tốn:"Mộc",Khảm:"Thủy",Cấn:"Thổ",Khôn:"Thổ"};
+const SINH={Thủy:"Mộc",Mộc:"Hỏa",Hỏa:"Thổ",Thổ:"Kim",Kim:"Thủy"},KHAC={Thủy:"Hỏa",Hỏa:"Kim",Kim:"Mộc",Mộc:"Thổ",Thổ:"Thủy"};
+// HEX[thượng] theo thứ tự Hạ = Q8
+const HX={Càn:"Bát Thuần Càn|Thiên Trạch Lý|Thiên Hỏa Đồng Nhân|Thiên Lôi Vô Vọng|Thiên Phong Cấu|Thiên Thủy Tụng|Thiên Sơn Độn|Thiên Địa Bĩ",
+Đoài:"Trạch Thiên Quải|Bát Thuần Đoài|Trạch Hỏa Cách|Trạch Lôi Tùy|Trạch Phong Đại Quá|Trạch Thủy Khốn|Trạch Sơn Hàm|Trạch Địa Tụy",
+Ly:"Hỏa Thiên Đại Hữu|Hỏa Trạch Khuê|Bát Thuần Ly|Hỏa Lôi Phệ Hạp|Hỏa Phong Đỉnh|Hỏa Thủy Vị Tế|Hỏa Sơn Lữ|Hỏa Địa Tấn",
+Chấn:"Lôi Thiên Đại Tráng|Lôi Trạch Quy Muội|Lôi Hỏa Phong|Bát Thuần Chấn|Lôi Phong Hằng|Lôi Thủy Giải|Lôi Sơn Tiểu Quá|Lôi Địa Dự",
+Tốn:"Phong Thiên Tiểu Súc|Phong Trạch Trung Phu|Phong Hỏa Gia Nhân|Phong Lôi Ích|Bát Thuần Tốn|Phong Thủy Hoán|Phong Sơn Tiệm|Phong Địa Quan",
+Khảm:"Thủy Thiên Nhu|Thủy Trạch Tiết|Thủy Hỏa Ký Tế|Thủy Lôi Truân|Thủy Phong Tỉnh|Bát Thuần Khảm|Thủy Sơn Kiển|Thủy Địa Tỷ",
+Cấn:"Sơn Thiên Đại Súc|Sơn Trạch Tổn|Sơn Hỏa Bí|Sơn Lôi Di|Sơn Phong Cổ|Sơn Thủy Mông|Bát Thuần Cấn|Sơn Địa Bác",
+Khôn:"Địa Thiên Thái|Địa Trạch Lâm|Địa Hỏa Minh Di|Địa Lôi Phục|Địa Phong Thăng|Địa Thủy Sư|Địa Sơn Khiêm|Bát Thuần Khôn"};
+const AB={PV:"Phục Vị",SK:"Sinh Khí",TY:"Thiên Y",DN:"Diên Niên",HH:"Họa Hại",LS:"Lục Sát",NQ:"Ngũ Quỷ",TM:"Tuyệt Mệnh"};
+// DU[hạ][thượng] (Bát Du Niên), thượng theo thứ tự Q8
+const DR={Càn:"PV SK TM NQ HH LS TY DN",Đoài:"SK PV NQ TM LS HH DN TY",Ly:"TM NQ PV SK TY DN HH LS",Chấn:"NQ TM SK PV DN TY LS HH",
+Tốn:"HH LS TY DN PV SK TM NQ",Khảm:"LS HH DN TY SK PV NQ TM",Cấn:"TY DN HH LS TM NQ PV SK",Khôn:"DN TY LS HH NQ TM SK PV"};
+const DU={};Q8.forEach(h=>{DU[h]={};DR[h].split(" ").forEach((a,i)=>DU[h][Q8[i]]=AB[a]);});
+const que=(t,h)=>HX[t].split("|")[Q8.indexOf(h)];
+const thuongOf=(h,s)=>Q8.find(q=>DU[h][q]===s);
+const SON2QUAI={Nhâm:"Khảm",Tý:"Khảm",Quý:"Khảm",Sửu:"Cấn",Cấn:"Cấn",Dần:"Cấn",Giáp:"Chấn",Mão:"Chấn",Ất:"Chấn",Thìn:"Tốn",Tốn:"Tốn",Tỵ:"Tốn",Bính:"Ly",Ngọ:"Ly",Đinh:"Ly",Mùi:"Khôn",Khôn:"Khôn",Thân:"Khôn",Canh:"Đoài",Dậu:"Đoài",Tân:"Đoài",Tuất:"Càn",Càn:"Càn",Hợi:"Càn"};
+const GROUPS=[["Khảm (Bắc)",["Nhâm","Tý","Quý"]],["Cấn (Đông Bắc)",["Sửu","Cấn","Dần"]],["Chấn (Đông)",["Giáp","Mão","Ất"]],["Tốn (Đông Nam)",["Thìn","Tốn","Tỵ"]],["Ly (Nam)",["Bính","Ngọ","Đinh"]],["Khôn (Tây Nam)",["Mùi","Khôn","Thân"]],["Đoài (Tây)",["Canh","Dậu","Tân"]],["Càn (Tây Bắc)",["Tuất","Càn","Hợi"]]];
+const HUONG={Khảm:"Bắc",Cấn:"Đông Bắc",Chấn:"Đông",Tốn:"Đông Nam",Ly:"Nam",Khôn:"Tây Nam",Đoài:"Tây",Càn:"Tây Bắc"};
+const VAT={Càn:"tranh Ngựa / Thiên Nga",Khôn:"gốm đất / trâu bò",Chấn:"sấm / rồng (động mạnh — kỵ ở Đô Thiên)",Tốn:"phong lan / cây cỏ thanh tao",Khảm:"nước / tượng Thủy",Ly:"hoa hồng đỏ / chim công",Cấn:"đá / núi",Đoài:"hồ / tượng Kim nhỏ"};
+const CAN_HANH={Giáp:"Mộc",Ất:"Mộc",Bính:"Hỏa",Đinh:"Hỏa",Mậu:"Thổ",Kỷ:"Thổ",Canh:"Kim",Tân:"Kim",Nhâm:"Thủy",Quý:"Thủy"};
+const CAN2Q={Giáp:"Chấn",Ất:"Tốn",Bính:"Ly",Đinh:"Ly",Mậu:"Cấn",Kỷ:"Khôn",Canh:"Càn",Tân:"Đoài",Nhâm:"Khảm",Quý:"Khảm"};
+const CHI2HA={Tý:"Khảm",Sửu:"Cấn",Dần:"Cấn",Mão:"Chấn",Thìn:"Tốn",Tỵ:"Tốn",Ngọ:"Ly",Mùi:"Khôn",Thân:"Khôn",Dậu:"Khảm",Tuất:"Càn",Hợi:"Càn"}; // Dậu→Khảm theo ví dụ tác giả
+const POS2HA=p=>CHI2HA[p]||CAN2Q[p];
+const DO_THIEN={Giáp:["Thìn","Tỵ"],Kỷ:["Thìn","Tỵ"],Ất:["Dần","Mão"],Canh:["Dần","Mão"],Bính:["Tuất","Hợi"],Tân:["Tuất","Hợi"],Đinh:["Thân","Dậu"],Nhâm:["Thân","Dậu"],Mậu:["Ngọ","Mùi"],Quý:["Ngọ","Mùi"]};
+const BAT_SAT={Tốn:"Dậu",Ly:"Hợi",Khôn:"Mão",Đoài:"Tỵ",Càn:"Ngọ",Khảm:"Thìn",Cấn:"Dần",Chấn:"Thân"};
+const HT_THIEN={Tốn:["Ất","Bính"],Khôn:["Đinh","Canh"],Cấn:["Giáp","Quý"],Càn:["Tân","Nhâm"]};
+const HTN={};[[["Hợi","Mão","Mùi"],["Thân"]],[["Dần","Ngọ","Tuất"],["Hợi"]],[["Tỵ","Dậu","Sửu"],["Thìn","Tuất"]],[["Thân","Tý","Thìn","Càn","Giáp","Quý"],["Mùi","Đinh"]],[["Tân","Tốn"],["Tý"]],[["Bính","Cấn"],["Ngọ"]],[["Ất","Khôn"],["Sửu"]],[["Canh"],["Thân"]],[["Nhâm"],["Hợi"]],[["Đinh"],["Thìn","Tuất"]]].forEach(([k,v])=>k.forEach(s=>HTN[s]=v));
+const HTN_NGO=["Canh","Nhâm","Đinh"]; // bảng gốc ghi "Canh" lặp 3 lần → suy luận theo phân hoạch 24 sơn
+const DIA={Tý:["Cấn","Càn"],Sửu:["Cấn"],Dần:["Cấn"],Mão:["Cấn","Tốn"],Thìn:["Tốn"],Tỵ:["Tốn"],Ngọ:["Tốn","Khôn"],Mùi:["Khôn"],Thân:["Khôn"],Dậu:["Khôn","Càn"],Tuất:["Càn"],Hợi:["Càn"]};
+const TIEN={Ly:"Càn",Khôn:"Tốn",Đoài:"Khảm",Càn:"Cấn",Khảm:"Khôn",Cấn:"Chấn",Chấn:"Ly",Tốn:"Đoài"}; // Hậu thiên → quẻ Tiên thiên cùng phương
+const TG=[["Dần","Ngọ","Tuất"],["Hợi","Mão","Mùi"],["Tỵ","Dậu","Sửu"],["Thân","Tý","Thìn"]];
+const TS={doc:[["Thân","Dậu","Tuất"],["Tỵ","Ngọ","Mùi"],["Hợi","Tý","Sửu"],["Dần","Mão","Thìn"]],std:[["Hợi","Tý","Sửu"],["Thân","Dậu","Tuất"],["Dần","Mão","Thìn"],["Tỵ","Ngọ","Mùi"]]};
+// Quy tắc chọn sao chế hoá: uu = thứ tự ưu tiên; chung = cổ pháp chung (đối chiếu)
+const RULE={
+ HoaHai:{ben:"Họa Hại",uu:["Sinh Khí","Phục Vị","Diên Niên","Thiên Y"],chung:"Phục Vị",nguon:"Ví dụ tác giả (Đô Thiên Thân, Dậu) dùng Sinh Khí, không dùng Phục Vị"},
+ NguQuy:{ben:"Ngũ Quỷ",uu:["Thiên Y","Sinh Khí","Diên Niên"],chung:"Sinh Khí",nguon:"Ví dụ tác giả (HT Nhân, HT Địa Chi) dùng Thiên Y, không dùng Sinh Khí"},
+ LucSat:{ben:"Lục Sát",uu:["Diên Niên","Thiên Y","Sinh Khí"],chung:"Diên Niên",nguon:"Cổ pháp chung (tài liệu chưa có ví dụ chế Lục Sát)"},
+ TuyetMenh:{ben:"Tuyệt Mệnh",uu:["Thiên Y","Sinh Khí","Diên Niên"],chung:"Thiên Y",nguon:"Cổ pháp chung (tài liệu chưa có ví dụ chế Tuyệt Mệnh)"}};
+const chk=(h,t,hc)=>KHAC[QH[t]]===hc?"quẻ giải khắc Can":(KHAC[QH[h]]===QH[t]?"Hạ khắc Thượng (khí giải bị dập)":"");
+function chan(t,h){const a=QH[t],b=QH[h];if(a===b)return"Bình hòa (tỷ hòa)";if(KHAC[b]===a)return"Hư chứng (Dụng khắc Thể)";if(KHAC[a]===b)return"Hư chứng (Thể khắc Dụng, hao tổn)";if(SINH[a]===b)return"Thực chứng (Thể sinh Dụng, dồn ứ)";return"Tiết (Dụng sinh Thể)";}
+function giai(h,loai,can){
+ const R=RULE[loai],hc=CAN_HANH[can],c=R.uu.map(s=>({s,t:thuongOf(h,s)}));
+ let p=c.find(x=>!chk(h,x.t,hc)),warn="";
+ if(!p){p=c[0];warn="⚠ Mọi phương án đều phạm kỵ — tạm dùng "+p.s+", cần chọn giờ Ngũ Linh Dịch thật kỹ.";}
+ const g=QH[p.t],grade=(g===hc||SINH[g]===hc)?"Thượng sách (sinh/tỷ hòa Can)":KHAC[hc]===g?"Trung sách (Can khắc → thành Tài)":"Hạ sách (Can sinh quẻ giải → tiết khí)";
+ const skip=c.slice(0,c.indexOf(p)).map(x=>x.s+" ("+x.t+": "+chk(h,x.t,hc)+")");
+ const ct=thuongOf(h,R.chung);
+ return{t:p.t,h,ten:que(p.t,h),star:p.s,grade,warn,skip,ct,cten:que(ct,h),cbad:chk(h,ct,hc)};}
+const hereOf=(p,s)=>p===s?"TRÙNG SƠN":(SON2QUAI[p]===SON2QUAI[s]?"CÙNG CUNG":"");
+function sec(title,loai,ha0,can,son,pos,o={}){
+ const R=RULE[loai],bt=thuongOf(ha0,R.ben),haG=o.shift?bt:ha0,g=giai(haG,loai,can),here=hereOf(pos,son);
+ const L=[["Quẻ Bệnh",`<span class="qb">${que(bt,ha0)}</span> (${bt}/${ha0}) — khí <b>${R.ben}</b> · ${chan(bt,ha0)}`],
+ ["Quẻ Giải",`<span class="qg">${g.ten}</span> (${g.t}/${g.h}) — cung <b>${g.star}</b> · ${g.grade}`],
+ ["Thi công",`Hạ quái ${g.h} → hướng <b>${HUONG[g.h]}</b>; tượng Thượng quái ${g.t}: ${VAT[g.t]}`]];
+ const ex=[];if(o.shift)ex.push(`Đô Thiên bất khả động: Hạ quái ${ha0} trùng cung sát nên đổi Hạ = Thượng quẻ bệnh (${bt}), như ví dụ Thân.`);
+ if(g.skip.length)ex.push("Đã loại: "+g.skip.join("; ")+".");
+ ex.push(`Đối chiếu cổ pháp chung (${R.chung}): ${g.cten} (${g.ct}/${g.h}) — ${g.cbad?'<span class="no">không dùng được: '+g.cbad+'</span>':(g.star===R.chung?'<span class="ok">trùng quẻ giải</span>':'<span class="ok">dùng được, nhưng ví dụ tác giả ưu tiên '+g.star+'</span>')}.`);
+ ex.push("Nguồn quy tắc: "+R.nguon+"."+(o.note?" "+o.note:""));if(g.warn)ex.push(g.warn);
+ const html=`<div class="blk ${here?'here':''}"><div class="t"><span>${title}</span>${here?`<span class="bd">${here}</span>`:''}</div><ul>${L.map(x=>`<li><span class="l">${x[0]}:</span> ${x[1]}</li>`).join("")}</ul><div class="ex">${ex.join("<br>")}</div></div>`;
+ const txt=`--- ${title} ${here?'('+here+')':''} ---\nBệnh: ${que(bt,ha0)} (${bt}/${ha0}) | Giải: ${g.ten} (${g.t}/${g.h}, ${g.star}) | ${g.grade} | Đặt: ${HUONG[g.h]}\n`;
+ return{html,txt,ben:que(bt,ha0),gi:g.ten,here,title};}
+function doThien(p,can,son){const ha=CHI2HA[p];return sec(`ĐÔ THIÊN tại ${p}`,"HoaHai",ha,can,son,p,{shift:SON2QUAI[p]===ha});}
+function htNhan(son,can){return(HTN[son]||[]).map(p=>sec(`HOÀNG TUYỀN NHÂN tại ${p}`,"NguQuy",POS2HA(p),can,son,p,{note:HTN_NGO.includes(son)?"(Mục bảng gốc của sơn này mơ hồ — đang suy luận.)":""}));}
+function htDia(son,can){const cs=DIA[son];if(!cs)return[];return cs.map(c=>sec(`HOÀNG TUYỀN ĐỊA CHI (Thủy Binh) tại ${c}`,"NguQuy",TIEN[c],can,son,c,{note:`Hậu thiên ${c} → Tiên thiên ${TIEN[c]} làm Hạ.`}));}
+function htThien(son,can){return(HT_THIEN[son]||[]).map(s=>sec(`HOÀNG TUYỀN THIÊN tại ${s}`,"TuyetMenh",CAN2Q[s],can,son,s,{note:"Hạ quái theo Can→quẻ (Ất→Tốn, Bính→Ly có trong tài liệu; còn lại suy theo ngũ hành âm/dương)."}));}
+function batSat(son,can){const c=SON2QUAI[son],p=BAT_SAT[c];return sec(`BÁT SÁT tại ${p}`,"LucSat",c,can,son,p,{note:"Hạ quái = cung mặt tiền (khớp ví dụ Khôn/Mão → Ly/Khôn)."});}
+function tamSat(chi,can,son,mode){const g=TS[mode][TG.findIndex(x=>x.includes(chi))];return g.map(p=>sec(`TAM SÁT tại ${p}`,"LucSat",CHI2HA[p],can,son,p));}
+const $=id=>document.getElementById(id);let last="";
+const SONS=GROUPS.flatMap(g=>g[1]);
+function init(){
+ $("selCan").innerHTML=Object.keys(CAN_HANH).map(c=>`<option ${c==="Đinh"?"selected":""}>${c}</option>`).join("");
+ $("selChi").innerHTML=Object.keys(CHI2HA).map(c=>`<option ${c==="Sửu"?"selected":""}>${c}</option>`).join("");
+ let i=0;$("selSon").innerHTML=GROUPS.map(g=>`<optgroup label="Cung ${g[0]}">`+g[1].map(s=>{const a=(337.5+15*i++)%360,b=(a+15)%360;return`<option value="${s}" ${s==="Khôn"?"selected":""}>${s} (${a}°–${b}°)</option>`}).join("")+"</optgroup>").join("");
+ document.querySelectorAll('input[name=ht]').forEach(r=>r.addEventListener("change",()=>{const c=r.value==="c"&&r.checked;if(!r.checked)return;$("lCan").textContent=c?"Thiên Can tòa nhà → Đô Thiên":"Thiên Can tuổi gia chủ → Đô Thiên";$("lChi").textContent=c?"Địa Chi tòa nhà → Tam Sát":"Địa Chi tuổi gia chủ → Tam Sát";}));
+}
+function tests(){const T=[],f=(n,got,exp)=>T.push([n,got,exp,got===exp]);
+ let a=doThien("Thân","Đinh","Khôn");f("Đô Thiên Thân — Bệnh",a.ben,"Lôi Địa Dự");f("Đô Thiên Thân — Giải",a.gi,"Hỏa Lôi Phệ Hạp");
+ a=doThien("Dậu","Đinh","Khôn");f("Đô Thiên Dậu — Bệnh",a.ben,"Trạch Thủy Khốn");f("Đô Thiên Dậu — Giải",a.gi,"Phong Thủy Hoán");
+ a=htNhan("Khôn","Đinh")[0];f("HT Nhân (Khôn→Sửu) — Bệnh",a.ben,"Thủy Sơn Kiển");f("HT Nhân — Giải",a.gi,"Thiên Sơn Độn");
+ a=htDia("Mùi","Đinh")[0];f("HT Địa Chi (Mùi→Khôn→Tốn) — Bệnh",a.ben,"Địa Phong Thăng");f("HT Địa Chi — Giải",a.gi,"Hỏa Phong Đỉnh");
+ a=batSat("Khôn","Đinh");f("Bát Sát (Khôn→Mão) — Bệnh",a.ben,"Hỏa Địa Tấn");
+ a=htThien("Tốn","Đinh");f("HT Thiên Ất — Bệnh",a[0].ben,"Sơn Phong Cổ");f("HT Thiên Bính — Bệnh",a[1].ben,"Thiên Hỏa Đồng Nhân");
+ return T;}
+function run(){
+ const can=$("selCan").value,chi=$("selChi").value,son=$("selSon").value,mode=$("selTS").value,q=SON2QUAI[son];
+ const B=[["I. ĐÔ THIÊN",DO_THIEN[can].map(p=>doThien(p,can,son))],["II. HOÀNG TUYỀN THIÊN (chỉ ở Tứ Duy)",htThien(son,can)],["III. HOÀNG TUYỀN NHÂN",htNhan(son,can)],["IV. HOÀNG TUYỀN ĐỊA CHI (chỉ khi mặt tiền ở 12 địa chi)",htDia(son,can)],["V. BÁT SÁT",[batSat(son,can)]],["VI. TAM SÁT",tamSat(chi,can,son,mode)]];
+ let html="",txt=`BÁO CÁO SÁT KHÍ + QUẺ GIẢI\nCan ${can} | Chi ${chi} | Mặt tiền ${son} (${q})\n\n`;const hit=[];
+ B.forEach(([n,a])=>{html+=`<h2 style="font-size:14px;color:var(--gb);margin:14px 0 7px">${n}</h2>`;if(!a.length)html+=`<div class="note">Không áp dụng cho sơn ${son}.</div>`;a.forEach(x=>{html+=x.html;txt+=x.txt+"\n";if(x.here)hit.push(`${x.title} [${x.here}]`);});});
+ $("bar").innerHTML=`<span>Can <b>${can}</b> · Chi <b>${chi}</b></span><span>Mặt tiền <b>${son} (${q})</b></span><span>Sát trùng/cùng cung mặt tiền: <b>${hit.length?hit.join("; "):"không có"}</b></span>`;
+ $("res").innerHTML=html;const T=tests(),ok=T.filter(x=>x[3]).length;
+ $("tests").innerHTML=`<b class="${ok===T.length?'ok':'no'}">${ok}/${T.length} khớp ví dụ</b><br>`+T.map(x=>`<span class="${x[3]?'ok':'no'}">${x[3]?"✓":"✗"}</span> ${x[0]}: ${x[1]}${x[3]?"":" (mong đợi "+x[2]+")"}`).join("<br>");
+ last=txt;$("out").style.display="block";$("out").scrollIntoView({behavior:"smooth"});}
+function cp(){if(!last)return;navigator.clipboard.writeText(last).then(()=>{$("bc").textContent="✅ Đã sao chép!";setTimeout(()=>$("bc").textContent="📋 Sao chép báo cáo",1800);});}
+init();
+</script></body></html>
