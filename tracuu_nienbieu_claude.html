@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1b1f3b">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://sdk.minepi.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https://socialchain.app https://backend.appstudio-u7cm9zhmha0ruwv8.piappengine.com; frame-ancestors 'self' https://*.pinet.com https://*.minepi.com;">
+<title>Tra Cứu Niên Biểu - Trung Dụng Sự (60 Hoa Giáp) - Nâng cao</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<style>
+:root{
+  --fs:16px;
+  --cat:#15803d; --hung:#be123c; --warn:#b45309; --info:#0369a1;
+  --bg:#f3f1ea; --card:#fffdf8; --border:#e4dfd0; --ink:#262432; --muted:#6b6878;
+  --primary:#3b3fd8; --primary-d:#2d31b0; --gold:#c9972b; --navy:#1b1f3b;
+  --radius:14px; --shadow:0 4px 18px rgba(27,31,59,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:var(--fs);-webkit-text-size-adjust:100%}
+body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;background:var(--bg);
+  background-image:radial-gradient(circle at 15% 0,#e9e4ff 0,transparent 40%),radial-gradient(circle at 100% 20%,#fbeed0 0,transparent 35%);
+  background-attachment:fixed;color:var(--ink);line-height:1.6;
+  padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) calc(90px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));
+  max-width:1240px;margin:auto}
+.hero{background:linear-gradient(135deg,var(--navy),#3b3fd8 70%,#6d4fd8);color:#fff;border-radius:var(--radius);padding:20px 18px;margin-bottom:14px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero::after{content:"☯";position:absolute;right:-8px;top:-30px;font-size:8rem;opacity:.08}
+h1{font-size:clamp(1.15rem,4.5vw,1.7rem);line-height:1.3;margin-bottom:6px;color:#fff}
+.hero .note{color:#d9dcff;margin:0}
+h2{font-size:1.15rem;margin:0 0 10px;color:var(--navy);display:flex;align-items:center;gap:8px}
+h2::before{content:"";width:5px;height:1.1em;background:linear-gradient(var(--gold),#e8c46a);border-radius:3px}
+h3{font-size:1.05rem;margin:4px 0 8px;color:var(--navy)}
+h4{font-size:.95rem;margin:2px 0 8px;color:#333}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.form-group{display:flex;flex-direction:column;flex:1 1 200px;min-width:0}
+label{font-weight:600;font-size:.85rem;margin-bottom:5px;color:#4a4757}
+select,input,button{font:inherit;font-size:.95rem;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--ink);min-height:44px;width:100%}
+select:focus,input:focus{outline:3px solid #c9cbff;border-color:var(--primary)}
+button{width:auto;background:linear-gradient(135deg,var(--primary),#6d4fd8);color:#fff;border:none;cursor:pointer;font-weight:600;padding:10px 18px;transition:transform .1s,box-shadow .2s;box-shadow:0 3px 10px rgba(59,63,216,.3)}
+button:hover{box-shadow:0 5px 16px rgba(59,63,216,.4)}
+button:active{transform:scale(.97)}
+button.secondary{background:#6c6a7a;box-shadow:none}
+.pi-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:8px 14px;margin-bottom:12px;font-size:.85rem}
+.pi-actions{display:flex;gap:8px}
+.pi-actions button{min-height:36px;padding:6px 14px}
+.tag{display:inline-block;padding:3px 10px;border-radius:14px;font-size:.8rem;font-weight:600;margin:3px 2px}
+.tag-cat{background:#dcfce7;color:var(--cat)}
+.tag-hung{background:#ffe4e9;color:var(--hung)}
+.tag-warn{background:#fef3c7;color:var(--warn);border:1px solid #f59e0b}
+.tag-info{background:#e0f2fe;color:var(--info)}
+.tag-tamky{background:#dcfce7;color:#15803d;border:1px solid #22c55e}
+.tag-neutral{background:#ece9f3;color:#4a4757}
+table{width:100%;border-collapse:separate;border-spacing:0;font-size:.82rem;margin-top:8px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+th,td{border-bottom:1px solid var(--border);padding:7px 8px;text-align:center}
+th{background:#ece9f8;font-weight:600;color:var(--navy)}
+tr:nth-child(even) td{background:#faf8f2}
+.result-box{border:2px solid var(--primary);display:none}
+.ratio{font-size:1.05rem;font-weight:700;margin:12px 0;padding:12px 14px;background:linear-gradient(135deg,#f6f5ff,#fffaf0);border:1px solid var(--border);border-radius:12px}
+.nien-khac-banner{background:#fff6e6;border-left:5px solid #d97706;padding:10px 12px;margin:10px 0;border-radius:8px;font-size:.92rem;color:#78350f}
+.tamky-banner{background:#effcf3;border-left:5px solid #16a34a;padding:10px 12px;margin:10px 0;border-radius:8px;font-size:.92rem;color:#14532d}
+.section-box{border:1px solid var(--border);border-radius:12px;padding:12px;margin:12px 0;background:#fff}
+.section-box.ks{border-left:5px solid #3b3fd8}
+.section-box.lh{border-left:5px solid #198754}
+.section-box.tp{border-left:5px solid #7c3aed}
+.section-box.ml{border-left:5px solid #c9972b;background:#fffcf3}
+.warning{color:var(--hung);font-weight:700}
+.good{color:var(--cat);font-weight:700}
+.note{font-size:.85rem;color:var(--muted);margin-bottom:12px}
+.empty-notice{background:#fff3cd;color:#664d03;border:1px solid #ffecb5;padding:12px;border-radius:10px;font-weight:500;margin-top:8px}
+.tietkhi-info{background:#e9efff;border:1px solid #c3d3fb;padding:10px 14px;border-radius:10px;margin:10px 0;font-size:.92rem}
+#quetResult{overflow-x:auto}
+/* Nút nổi: chỉnh cỡ chữ + gốc cho module nút nổi */
+.fab-dock{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end;gap:10px;z-index:50}
+.fab-zoom{display:flex;gap:4px;background:var(--navy);padding:5px;border-radius:30px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.fab-zoom button{min-height:42px;min-width:42px;padding:0 10px;border-radius:30px;background:transparent;box-shadow:none;font-size:1rem}
+.fab-zoom button:hover{background:rgba(255,255,255,.18)}
+#floatingModuleRoot{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+@media (max-width:640px){
+  body{padding-left:10px;padding-right:10px}
+  .card{padding:12px}
+  .form-group{flex:1 1 100%}
+  .row>button{width:100%}
+  table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#14152a;--card:#1e2040;--border:#34376b;--ink:#ecebf5;--muted:#a9a8c4}
+  body{background-image:none}
+  h2,h3,h4,th{color:#e7e5ff}
+  th{background:#2a2d5c}tr:nth-child(even) td{background:#23264d}
+  select,input,.section-box,.pi-bar{background:#262950;color:var(--ink)}
+  .section-box.ml,.ratio{background:#2a2b52}
+  label{color:#c8c6e0}
+}
+</style>
+</head>
+<body>
+<div class="pi-bar">
+  <div id="piAuthStatus">Pi Network: Đang khởi tạo SDK...</div>
+  <div class="pi-actions">
+    <button type="button" id="piLoginBtn" onclick="signInWithPi()">Đăng nhập Pi</button>
+    <button type="button" id="piLogoutBtn" class="secondary" onclick="signOutPi()" style="display:none;">Đăng xuất</button>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>Tra Cứu Niên Biểu – Trung Dụng Sự (60 Hoa Giáp)</h1>
+  <p class="note">Khai Sơn / Lập Hướng / Tu Phương · Tam Nguyên Tử Bạch · Thông Thiên Khiếu · Tẩu Mã Lục Nhâm · Tam Kỳ theo Tiết Khí · Can Chi thời điểm</p>
+</div>
+
+<div class="card">
+<h2>Tra cứu</h2>
+<div class="row">
+<div class="form-group">
+<label for="yearSelect">1. Chọn Năm (60 Hoa Giáp):</label>
+<select id="yearSelect" onchange="renderYearData(this.value)"></select>
+</div>
+<div class="form-group">
+<label for="huongSelect">2. Chọn Phương (8) hoặc Sơn (24):</label>
+<select id="huongSelect">
+<option value="">-- Chọn phương hoặc sơn --</option>
+<optgroup label="8 Phương (Bát Quái)">
+<option value="Bắc">Bắc (Khảm)</option>
+<option value="Đông Bắc">Đông Bắc (Cấn)</option>
+<option value="Đông">Đông (Chấn)</option>
+<option value="Đông Nam">Đông Nam (Tốn)</option>
+<option value="Nam">Nam (Ly)</option>
+<option value="Tây Nam">Tây Nam (Khôn)</option>
+<option value="Tây">Tây (Đoài)</option>
+<option value="Tây Bắc">Tây Bắc (Càn)</option>
+</optgroup>
+<optgroup label="24 Sơn Hướng">
+<option value="Nhâm">Nhâm</option><option value="Tý">Tý</option><option value="Quý">Quý</option>
+<option value="Sửu">Sửu</option><option value="Cấn">Cấn</option><option value="Dần">Dần</option>
+<option value="Giáp">Giáp</option><option value="Mão">Mão</option><option value="Ất">Ất</option>
+<option value="Thìn">Thìn</option><option value="Tốn">Tốn</option><option value="Tỵ">Tỵ</option>
+<option value="Bính">Bính</option><option value="Ngọ">Ngọ</option><option value="Đinh">Đinh</option>
+<option value="Mùi">Mùi</option><option value="Khôn">Khôn</option><option value="Thân">Thân</option>
+<option value="Canh">Canh</option><option value="Dậu">Dậu</option><option value="Tân">Tân</option>
+<option value="Tuất">Tuất</option><option value="Càn">Càn</option><option value="Hợi">Hợi</option>
+</optgroup>
+</select>
+</div>
+<div class="form-group">
+<label for="thangSelect">3. Tháng Âm (Tùy chọn):</label>
+<select id="thangSelect">
+<option value="0">-- Chỉ xem theo Năm --</option>
+<option value="1">Tháng Giêng</option><option value="2">Tháng Hai</option><option value="3">Tháng Ba</option><option value="4">Tháng Tư</option>
+<option value="5">Tháng Năm</option><option value="6">Tháng Sáu</option><option value="7">Tháng Bảy</option><option value="8">Tháng Tám</option>
+<option value="9">Tháng Chín</option><option value="10">Tháng Mười</option><option value="11">Tháng Một (11)</option><option value="12">Tháng Chạp (12)</option>
+</select>
+</div>
+<div class="form-group">
+<label for="nguyenSelect">4. Nguyên (Tam Nguyên Tử Bạch):</label>
+<select id="nguyenSelect">
+<option value="Thượng">Thượng Nguyên</option>
+<option value="Trung">Trung Nguyên</option>
+<option value="Hạ">Hạ Nguyên</option>
+</select>
+</div>
+</div>
+<div class="row" style="margin-top:14px;">
+<div class="form-group">
+<label for="dateInput">5. Ngày giờ (để lấy Tiết Khí & Tam Kỳ):</label>
+<input type="datetime-local" id="dateInput">
+</div>
+<button onclick="traCuu()">🔍 Phân Tích & Tra Cứu Chi Tiết</button>
+</div>
+</div>
+
+<div class="card">
+<h2>Phân tích nâng cao: Mộ – Long Biến Vận</h2>
+<p class="note">Các tùy chọn này áp dụng cho kết quả Mộ Long (nhập Ngày giờ ở mục 5) và cho nút tìm thời gian. Phương/Sơn lấy từ mục 2, Nguyên lấy từ mục 4.</p>
+<div class="row">
+<div class="form-group"><label for="loaiSelect">Loại dụng sự:</label>
+<select id="loaiSelect"><option value="all">Tất cả (Khai Sơn + Lập Hướng + Tu Phương)</option><option value="khaiSon">Khai Sơn</option><option value="lapHuong">Lập Hướng</option><option value="tuPhuong">Tu Phương</option></select></div>
+<div class="form-group"><label for="nguongInput">Ngưỡng bình hòa (% cát):</label><input type="number" id="nguongInput" value="60" min="0" max="100" inputmode="numeric"></div>
+<div class="form-group"><label for="namTu">Từ năm Dương lịch:</label><input type="number" id="namTu" inputmode="numeric"></div>
+<div class="form-group"><label for="namDen">Đến năm Dương lịch:</label><input type="number" id="namDen" inputmode="numeric"></div>
+<button onclick="quetThoiGian()">🔎 Tìm thời gian thỏa mãn (1 &amp; 2)</button>
+</div>
+<div id="quetResult"></div>
+</div>
+
+<div id="analysisResult" class="card result-box">
+<h2>Kết Quả Phân Tích Dụng Sự</h2>
+<div id="tietKhiBox" class="tietkhi-info" style="display:none;"></div>
+<div id="analysisContent"></div>
+</div>
+
+<div class="card">
+<h2>Dữ Liệu Gốc Năm: <span id="currentYearName">—</span></h2>
+<p class="note" id="yearMeta"></p>
+<div id="detailDataContainer"></div>
+</div>
+
+<!-- NÚT NỔI: chỉnh cỡ chữ (có sẵn) + vùng gắn module nút nổi -->
+<div class="fab-dock">
+  <div id="floatingModuleRoot"></div>
+  <div class="fab-zoom" role="group" aria-label="Cỡ chữ">
+    <button type="button" onclick="TraCuuApp.setFont(-1)" aria-label="Giảm cỡ chữ">A−</button>
+    <button type="button" onclick="TraCuuApp.setFont(0)" aria-label="Cỡ chữ mặc định">A</button>
+    <button type="button" onclick="TraCuuApp.setFont(1)" aria-label="Tăng cỡ chữ">A+</button>
+  </div>
+</div>
+
+<!-- ===== MODULE LÕI (đã có) ===== -->
+<script src="tietkhi_core.js"></script>
+<script src="mtrachcat.js"></script>
+<script>
+// ====================== CỠ CHỮ (người mắt kém) ======================
+var TraCuuApp = (function () {
+  var MIN = 13, MAX = 26, DEF = 16, cur = DEF;
+  function apply() { document.documentElement.style.setProperty("--fs", cur + "px"); }
+  try { var s = parseInt(localStorage.getItem("tc_fs"), 10); if (s >= MIN && s <= MAX) cur = s; } catch (e) {}
+  apply();
+  return {
+    setFont: function (d) {
+      cur = d === 0 ? DEF : Math.min(MAX, Math.max(MIN, cur + d * 2));
+      apply();
+      try { localStorage.setItem("tc_fs", cur); } catch (e) {}
+    },
+    // Các module ngoài truy cập dữ liệu/hàm qua đối tượng này (gán ở cuối file)
+    ready: false
+  };
+})();
+
+// ====================== PI NETWORK AUTH (APP STUDIO) ======================
+const PI_APP_STUDIO_LOGIN_URL = "https://backend.appstudio-u7cm9zhmha0ruwv8.piappengine.com/pi/auth/v1/login";
+let piSessionToken = null;
+let piVerifiedUser = null;
+let piSdkInitialized = false;
+
+function updatePiAuthUi(statusText, isAuthenticated) {
+  const statusEl = document.getElementById("piAuthStatus");
+  const loginBtn = document.getElementById("piLoginBtn");
+  const logoutBtn = document.getElementById("piLogoutBtn");
+  if (statusEl) statusEl.textContent = statusText;
+  if (loginBtn) loginBtn.style.display = isAuthenticated ? "none" : "inline-block";
+  if (logoutBtn) logoutBtn.style.display = isAuthenticated ? "inline-block" : "none";
+}
+function onIncompletePaymentFound(payment) {
+  console.warn("Phát hiện giao dịch Pi chưa hoàn tất:", payment);
+}
+async function initPiSdkOnce() {
+  if (piSdkInitialized) return true;
+  if (!window.Pi || typeof window.Pi.init !== "function") {
+    updatePiAuthUi("Pi Network: Chưa tải được Pi SDK (mở trong Pi Browser/PiNet để xác thực).", false);
+    return false;
+  }
+  await window.Pi.init({ version: "2.0" });
+  piSdkInitialized = true;
+  return true;
+}
+async function exchangePiAccessToken(accessToken) {
+  const res = await fetch(PI_APP_STUDIO_LOGIN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ accessToken })
+  });
+  if (!res.ok) {
+    throw new Error("App Studio từ chối xác thực (HTTP " + res.status + ")");
+  }
+  const data = await res.json();
+  if (!data || !data.sessionToken || !data.user) {
+    throw new Error("Phản hồi App Studio thiếu sessionToken hoặc thông tin user");
+  }
+  piSessionToken = data.sessionToken;
+  piVerifiedUser = { uid: data.user.uid, username: data.user.username };
+  return piVerifiedUser;
+}
+async function signInWithPi() {
+  try {
+    updatePiAuthUi("Pi Network: Đang kết nối...", false);
+    const ready = await initPiSdkOnce();
+    if (!ready || typeof window.Pi.authenticate !== "function") return;
+    const authResult = await window.Pi.authenticate(["username"], onIncompletePaymentFound);
+    const accessToken = authResult && authResult.accessToken;
+    if (!accessToken) {
+      throw new Error("Không nhận được accessToken từ Pi.authenticate");
+    }
+    const verifiedUser = await exchangePiAccessToken(accessToken);
+    updatePiAuthUi("Pi Network: Đã xác thực @" + verifiedUser.username, true);
+  } catch (err) {
+    piSessionToken = null;
+    piVerifiedUser = null;
+    updatePiAuthUi("Pi Network: " + (err && err.message ? err.message : "Chưa đăng nhập Pi"), false);
+  }
+}
+function signOutPi() {
+  piSessionToken = null;
+  piVerifiedUser = null;
+  updatePiAuthUi("Pi Network: Đã đăng xuất phiên hiện tại.", false);
+}
+window.addEventListener("DOMContentLoaded", function () { signInWithPi(); });
+
+// ====================== BẢNG QUY ĐỔI ======================
+const phuongToSon = {
+  "Bắc": ["Nhâm", "Tý", "Quý"], "Đông Bắc": ["Sửu", "Cấn", "Dần"], "Đông": ["Giáp", "Mão", "Ất"],
+  "Đông Nam": ["Thìn", "Tốn", "Tỵ"], "Nam": ["Bính", "Ngọ", "Đinh"], "Tây Nam": ["Mùi", "Khôn", "Thân"],
+  "Tây": ["Canh", "Dậu", "Tân"], "Tây Bắc": ["Tuất", "Càn", "Hợi"]
+};
+const quaiToSon = {
+  "Khảm": ["Nhâm", "Tý", "Quý"], "Cấn": ["Sửu", "Cấn", "Dần"], "Chấn": ["Giáp", "Mão", "Ất"],
+  "Tốn": ["Thìn", "Tốn", "Tỵ"], "Ly": ["Bính", "Ngọ", "Đinh"], "Khôn": ["Mùi", "Khôn", "Thân"],
+  "Đoài": ["Canh", "Dậu", "Tân"], "Càn": ["Tuất", "Càn", "Hợi"], "Trung": ["Trung"]
+};
+const tietKhiToTamKyKey = {
+  "lapxuan": "Lập Xuân", "vuthuy": "Lập Xuân", "kinhtrap": "Lập Xuân",
+  "xuanphan": "Xuân Phân", "thanhminh": "Xuân Phân", "cocvu": "Xuân Phân",
+  "lapha": "Lập Hạ", "tieuman": "Lập Hạ", "mangchung": "Lập Hạ",
+  "hachi": "Hạ Chí", "tieuthu": "Hạ Chí", "daithu": "Hạ Chí",
+  "lapthu": "Lập Thu", "xuthu": "Lập Thu", "bachlo": "Lập Thu",
+  "thuphan": "Thu Phân", "hanlo": "Thu Phân", "suonggiang": "Thu Phân",
+  "lapdong": "Lập Đông", "tieutuyet": "Lập Đông", "daituyet": "Lập Đông",
+  "dongchi": "Đông Chí", "tieuhan": "Đông Chí", "daihan": "Đông Chí"
+};
+
+// ====================== DỮ LIỆU NĂM: nạp từ nienbieu.html ======================
+// nienbieu.html định nghĩa window.NIENBIEU = { BinhThan: {...}, ... } (cấu trúc y hệt trước đây)
+var yearData = {};
+
+async function loadNienBieu() {
+  try {
+    var res = await fetch("nienbieu.html", { cache: "no-cache" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    var txt = await res.text();
+    var doc = new DOMParser().parseFromString(txt, "text/html");
+    var code = Array.prototype.map.call(doc.querySelectorAll("script:not([src])"), function (s) { return s.textContent; }).join("\n");
+    var el = document.createElement("script");
+    el.textContent = code;
+    document.head.appendChild(el);
+    el.remove();
+    if (window.NIENBIEU && typeof window.NIENBIEU === "object") yearData = window.NIENBIEU;
+    else throw new Error("nienbieu.html không khai báo window.NIENBIEU");
+  } catch (err) {
+    document.getElementById("detailDataContainer").innerHTML =
+      '<div class="empty-notice">⚠️ Không nạp được <code>nienbieu.html</code> (' + (err && err.message ? err.message : err) +
+      '). Hãy đặt file cùng thư mục và mở trang qua http(s), không mở trực tiếp file://.</div>';
+  }
+  initYearDropdown();
+  TraCuuApp.ready = true;
+  document.dispatchEvent(new CustomEvent("nienbieu:ready"));
+}
+
+// ====================== HÀM HỖ TRỢ ======================
+const CAN = ["Giáp","Ất","Bính","Đinh","Mậu","Kỷ","Canh","Tân","Nhâm","Quý"];
+const CHI = ["Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi"];
+function normalizeText(str) {
+  if (!str) return "";
+  return str.toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/\s+/g, "");
+}
+function matchSon(dataStr, targetSon) {
+  if (!dataStr || !targetSon) return false;
+  var tokens = dataStr.toString().split(/[\s,]+/).map(function (t) { return t.trim(); }).filter(Boolean);
+  for (var i = 0; i < tokens.length; i++) {
+    var token = tokens[i];
+    if (token === targetSon) return true;
+    if (quaiToSon[token] && quaiToSon[token].indexOf(targetSon) !== -1) return true;
+  }
+  return false;
+}
+function getSons(huong) { return phuongToSon[huong] ? phuongToSon[huong] : [huong]; }
+function tagsHtml(arr, cls, prefix) {
+  return arr.map(function (x) { return '<span class="tag ' + cls + '">' + (prefix || '') + x + '</span>'; }).join('');
+}
+function get12CatSonGuide(obj) {
+  if (!obj) return "";
+  for (var key in obj) { if (key.toLowerCase().indexOf("12 cát sơn") !== -1) return obj[key]; }
+  return "";
+}
+function resolveTamKyInfo(d, currentTietKhiName) {
+  if (!currentTietKhiName || !d || !d.thangCat || !d.thangCat["Tam Kỳ"]) return null;
+  var normTk = normalizeText(currentTietKhiName);
+  var tamKyKey = tietKhiToTamKyKey[normTk] || null;
+  if (!tamKyKey) return null;
+  var tkTable = d.thangCat["Tam Kỳ"], mapObj = null;
+  for (var key in tkTable) {
+    if (normalizeText(key) === normalizeText(tamKyKey)) { mapObj = tkTable[key]; break; }
+  }
+  if (!mapObj) return null;
+  return { tietGoc: tamKyKey, tietThucTe: currentTietKhiName, map: mapObj };
+}
+function getYearCanChi(year) {
+  var idx = (year - 4) % 60;
+  if (idx < 0) idx += 60;
+  return CAN[idx % 10] + " " + CHI[idx % 12];
+}
+function getHourChi(date) {
+  var h = date.getHours(), m = date.getMinutes();
+  var totalMin = h * 60 + m;
+  if (totalMin >= 23 * 60 || totalMin < 1 * 60) return CHI[0];
+  var idx = Math.floor(((totalMin - 60) / 120) + 1) % 12;
+  return CHI[idx];
+}
+function getDayCanChiApprox(date) {
+  var y = date.getFullYear(), m = date.getMonth() + 1, d = date.getDate();
+  if (m <= 2) { y--; m += 12; }
+  var A = Math.floor(y / 100);
+  var B = 2 - A + Math.floor(A / 4);
+  var JD = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524.5;
+  var canIdx = Math.floor(JD + 9.5) % 10;
+  var chiIdx = Math.floor(JD + 1.5) % 12;
+  if (canIdx < 0) canIdx += 10;
+  if (chiIdx < 0) chiIdx += 12;
+  return CAN[canIdx] + " " + CHI[chiIdx];
+}
+function getCanChiInfo(date) {
+  if (!date || isNaN(date.getTime())) return null;
+  var y = date.getFullYear();
+  return { nam: getYearCanChi(y), thang: "(cần tháng âm lịch để tính chính xác)", ngay: getDayCanChiApprox(date), gio: getHourChi(date), gioFull: null };
+}
+function checkHungWithTietKhi(hungStr, son, currentTietKhiName) {
+  if (!hungStr) return { applies: false, reason: "" };
+  if (matchSon(hungStr, son)) return { applies: true, reason: "Áp dụng theo dữ liệu năm" };
+  var re = /Sau\s+([^\s:]+(?:\s+[^\s:]+)?)\s*khắc\s*:\s*([^.\n]+)/i;
+  var m = hungStr.match(re);
+  if (m) {
+    var tietTrigger = m[1].trim(), afterList = m[2].trim(), isAfter = false;
+    if (currentTietKhiName) {
+      if (normalizeText(currentTietKhiName).indexOf(normalizeText(tietTrigger)) !== -1) isAfter = true;
+    }
+    if (isAfter && matchSon(afterList, son)) {
+      return { applies: true, reason: "Đã vào tiết " + tietTrigger + " → áp dụng Niên khắc sơn gia cho sơn này" };
+    }
+    return { applies: false, reason: "Chưa đến tiết " + tietTrigger + " nên chưa khắc" };
+  }
+  return { applies: false, reason: "" };
+}
+
+// ===== PHÂN TÍCH THEO MỘT SƠN =====
+function analyzeSonCore(d, son, thang, nguyen, tamKyInfo, currentTietKhiName) {
+  var thangNames = ["", "Giêng", "Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy", "Tám", "Chín", "Mười", "Một", "Chạp"];
+  var r = {
+    khaiSon: { cat: [], hung: [] }, lapHuong: { cat: [], hung: [] },
+    tuPhuong: { cat: [], hung: [] }, chung: { cat: [], hung: [], info: [] }
+  };
+  var k, e;
+  for (k in (d.cat || {})) if (matchSon(d.cat[k], son)) r.chung.cat.push(k);
+  for (k in (d.caiSonHoangDao || {})) if (matchSon(d.caiSonHoangDao[k], son)) r.chung.cat.push("[Hoàng Đạo] " + k);
+  if (tamKyInfo) {
+    for (var kyCan in tamKyInfo.map) {
+      var kyQuai = tamKyInfo.map[kyCan];
+      if (matchSon(kyQuai, son)) {
+        r.chung.cat.push("[Tam Kỳ " + tamKyInfo.tietGoc + "] " + kyCan + " Kỳ (" + kyQuai + ")");
+        r.chung.info.push("✨ Sơn/Phương này đắc <strong>Tam Kỳ " + kyCan + "</strong> (phương " + kyQuai + ") trong tiết <strong>" + tamKyInfo.tietThucTe + "</strong>");
+      }
+    }
+  }
+  var hitThongThien = [];
+  for (k in (d.thongThienKhieu || {})) {
+    if (k.toLowerCase().indexOf("12 cát sơn") !== -1) continue;
+    if (matchSon(d.thongThienKhieu[k], son)) { r.chung.cat.push("[Thông Thiên] " + k); hitThongThien.push(k); }
+  }
+  if (hitThongThien.length > 0) {
+    var listCatTT = get12CatSonGuide(d.thongThienKhieu);
+    if (listCatTT) r.chung.info.push("✓ Cát sơn <strong>" + son + "</strong> thuộc Thông Thiên Khiếu (" + hitThongThien.join(", ") + ") → Nên dùng năm / tháng / ngày / giờ thuộc: <strong>" + listCatTT + "</strong>");
+  }
+  var hitTauMa = [];
+  for (k in (d.tauMaLucNham || {})) {
+    if (k.toLowerCase().indexOf("12 cát sơn") !== -1) continue;
+    if (matchSon(d.tauMaLucNham[k], son)) { r.chung.cat.push("[Tẩu Mã] " + k); hitTauMa.push(k); }
+  }
+  if (hitTauMa.length > 0) {
+    var listCatTM = get12CatSonGuide(d.tauMaLucNham);
+    if (listCatTM) r.chung.info.push("✓ Cát sơn <strong>" + son + "</strong> thuộc Tẩu Mã Lục Nhâm (" + hitTauMa.join(", ") + ") → Nên dùng năm / tháng / ngày / giờ thuộc: <strong>" + listCatTM + "</strong>");
+  }
+  for (k in (d.tuLoiTamNguyen || {})) if (matchSon(d.tuLoiTamNguyen[k], son)) r.chung.cat.push("[Tứ Lợi] " + k);
+  if (d.tamNguyenTuBach && d.tamNguyenTuBach[nguyen]) {
+    e = d.tamNguyenTuBach[nguyen];
+    for (k in e) if (matchSon(e[k], son)) r.chung.cat.push("[Tử Bạch " + nguyen + "] " + k);
+  }
+  var h = d.hung || {};
+  for (k in (h.chung || {})) if (matchSon(h.chung[k], son)) r.chung.hung.push(k);
+  for (k in (h.khaiSonHung || {})) {
+    var hungVal = h.khaiSonHung[k];
+    if (k === "Niên khắc sơn gia") {
+      var chk = checkHungWithTietKhi(hungVal, son, currentTietKhiName);
+      if (chk.applies) r.khaiSon.hung.push(k + (chk.reason ? " (" + chk.reason + ")" : ""));
+      else if (chk.reason && currentTietKhiName) r.chung.info.push("ℹ️ Niên khắc sơn gia: " + chk.reason);
+    } else {
+      if (matchSon(hungVal, son)) r.khaiSon.hung.push(k);
+    }
+  }
+  for (k in (h.lapHuongHung || {})) if (matchSon(h.lapHuongHung[k], son)) r.lapHuong.hung.push(k);
+  for (k in (h.tuPhuongHung || {})) if (matchSon(h.tuPhuongHung[k], son)) r.tuPhuong.hung.push(k);
+  if (thang >= 1 && thang <= 12) {
+    var idx = thang - 1;
+    var suffix = " (T. " + thangNames[thang] + ")";
+    if (d.thangCat) {
+      for (k in d.thangCat) {
+        var arr = d.thangCat[k];
+        if (Array.isArray(arr) && arr[idx] && matchSon(arr[idx], son)) r.chung.cat.push(k + suffix);
+      }
+    }
+    if (d.khaiSonHungThang) {
+      for (k in d.khaiSonHungThang) {
+        var a1 = d.khaiSonHungThang[k];
+        if (Array.isArray(a1) && a1[idx] && matchSon(a1[idx], son)) r.khaiSon.hung.push(k + suffix);
+      }
+    }
+    if (d.tuPhuongHungThang) {
+      for (k in d.tuPhuongHungThang) {
+        var a2 = d.tuPhuongHungThang[k];
+        if (Array.isArray(a2) && a2[idx] && matchSon(a2[idx], son)) r.tuPhuong.hung.push(k + suffix);
+      }
+    }
+  }
+  return r;
+}
+
+// ====================== TRA CỨU CHÍNH ======================
+function traCuu() {
+  var yearKey = document.getElementById("yearSelect").value;
+  var d = yearData[yearKey];
+  if (!d || d.status === "input here") {
+    alert("Năm " + (d ? d.name : "") + " chưa có dữ liệu!");
+    return;
+  }
+  var huong = document.getElementById("huongSelect").value;
+  var thang = parseInt(document.getElementById("thangSelect").value, 10) || 0;
+  var nguyen = document.getElementById("nguyenSelect").value;
+  if (!huong) { alert("Vui lòng chọn Phương hoặc Sơn!"); return; }
+  var sons = getSons(huong);
+  var thangNames = ["", "Giêng", "Hai", "Ba", "Tư", "Năm", "Sáu", "Bảy", "Tám", "Chín", "Mười", "Một", "Chạp"];
+  var dateInput = document.getElementById("dateInput").value;
+  var tkBox = document.getElementById("tietKhiBox");
+  tkBox.style.display = "none";
+  var currentTietKhiName = null;
+  var canChiInfo = null;
+  if (dateInput) {
+    if (typeof getTietKhi === "function") {
+      try {
+        var inputDate = new Date(dateInput);
+        var tk = getTietKhi(inputDate);
+        currentTietKhiName = typeof tk === "string" ? tk : (tk && (tk.name || tk.ten || tk.tietKhi)) || null;
+        canChiInfo = getCanChiInfo(inputDate);
+        var htmlTk = "<strong>Tiết Khí thời điểm nhập:</strong> " + (currentTietKhiName || "Không xác định");
+        if (tk && tk.start) htmlTk += " (bắt đầu từ " + tk.start + ")";
+        if (tk && tk.next) htmlTk += " &nbsp;|&nbsp; <strong>Tiết kế tiếp:</strong> " + (tk.next.name || tk.next);
+        if (canChiInfo) {
+          htmlTk += "<br><strong>Can Chi thời điểm nhập liệu:</strong> ";
+          htmlTk += "Năm <span class='tag tag-info'>" + canChiInfo.nam + "</span> ";
+          htmlTk += "Ngày <span class='tag tag-info'>" + canChiInfo.ngay + "</span> ";
+          htmlTk += "Giờ <span class='tag tag-info'>" + canChiInfo.gio + "</span> ";
+        }
+        tkBox.innerHTML = htmlTk;
+        tkBox.style.display = "block";
+      } catch (e) {
+        console.warn("Lỗi Tiết Khí / Can Chi:", e);
+      }
+    } else {
+      tkBox.innerHTML = "⚠️ Không tìm thấy hàm <code>getTietKhi()</code> — kiểm tra lại file <code>tietkhi_core.js</code> có nằm cùng thư mục với file HTML này không.";
+      tkBox.style.display = "block";
+    }
+  }
+  var tamKyInfo = resolveTamKyInfo(d, currentTietKhiName);
+  var html = "<p><strong>Năm:</strong> " + d.name +
+    " &nbsp;|&nbsp; <strong>Đối tượng:</strong> " + huong + " (" + sons.join(" - ") + ")" +
+    (thang > 0 ? " &nbsp;|&nbsp; <strong>Tháng:</strong> " + thangNames[thang] : "") +
+    " &nbsp;|&nbsp; <strong>Nguyên:</strong> " + nguyen + "</p>";
+  var nk = (d.hung && d.hung.khaiSonHung && d.hung.khaiSonHung["Niên khắc sơn gia"]) || "Không có dữ liệu";
+  html += '<div class="nien-khac-banner"><strong>📌 Niên Khắc Sơn Gia năm ' + d.name + ':</strong> ' + nk + '</div>';
+  if (tamKyInfo) {
+    var matchedTamKy = [];
+    for (var kyCan in tamKyInfo.map) {
+      var kyQuai = tamKyInfo.map[kyCan];
+      var isHitHuong = sons.some(function (s) { return matchSon(kyQuai, s); });
+      if (isHitHuong) matchedTamKy.push("<strong>Tam Kỳ " + kyCan + "</strong> đóng tại phương <strong>" + kyQuai + "</strong>");
+    }
+    var allKyStr = Object.keys(tamKyInfo.map).map(function (c) { return c + " Kỳ → " + tamKyInfo.map[c]; }).join(" | ");
+    if (matchedTamKy.length > 0) {
+      html += '<div class="tamky-banner"><strong>✨ ĐẮC TAM KỲ (Tiết ' + tamKyInfo.tietThucTe + ' — mốc ' + tamKyInfo.tietGoc + '):</strong> ' +
+        matchedTamKy.join("; ") + ' trùng với phương/sơn đang chọn! <br><span class="note">(Toàn cục tiết ' + tamKyInfo.tietGoc + ': ' + allKyStr + ')</span></div>';
+    } else {
+      html += '<div class="nien-khac-banner" style="background:#f8fafc;border-left-color:#64748b;color:#334155;"><strong>ℹ️ Tam Kỳ tiết ' + tamKyInfo.tietThucTe + ' (mốc ' + tamKyInfo.tietGoc + '):</strong> ' +
+        allKyStr + ' <em>(Không đóng tại phương/sơn đang chọn)</em></div>';
+    }
+  } else if (!dateInput) {
+    html += '<div class="nien-khac-banner" style="background:#f8fafc;border-left-color:#94a3b8;color:#475569;">ℹ️ Muốn xét <strong>Tam Kỳ</strong>, vui lòng nhập thêm <strong>Ngày giờ (mục 5)</strong> để đối chiếu Tiết Khí.</div>';
+  }
+  function analyzeSon(son) { return analyzeSonCore(d, son, thang, nguyen, tamKyInfo, currentTietKhiName); }
+  function block(cls, title, obj, hungLabel) {
+    return '<div class="section-box ' + cls + '"><h4>🔹 ' + title + '</h4>' +
+      '<div>' + (obj.cat.length ? tagsHtml(obj.cat, "tag-cat") : "<span class='note'>Không có cát đặc biệt</span>") + '</div>' +
+      '<div style="margin-top:6px">' + (obj.hung.length ? tagsHtml(obj.hung, "tag-hung", "⛔ ") : "<span class='good'>✓ Không phạm hung " + hungLabel + "</span>") + '</div></div>';
+  }
+  sons.forEach(function (son) {
+    var r = analyzeSon(son);
+    html += '<div class="section-box"><h3>Sơn / Phương: <strong>' + son + '</strong></h3>';
+    html += block("ks", "Khai Sơn", r.khaiSon, "Khai Sơn");
+    html += block("lh", "Lập Hướng", r.lapHuong, "Lập Hướng");
+    html += block("tp", "Tu Phương", r.tuPhuong, "Tu Phương");
+    html += '<div style="margin-top:10px"><strong>Cát chung / Tử Bạch / Hoàng Đạo / Thông Thiên / Tẩu Mã / Tam Kỳ / Tứ Lợi:</strong><br>' +
+      (r.chung.cat.length ? tagsHtml(r.chung.cat, "tag-cat") : "<span class='note'>Không có</span>") +
+      (r.chung.info.length ? "<br>" + tagsHtml(r.chung.info, "tag-info") : "") +
+      (r.chung.hung.length ? "<br><strong>Hung chung:</strong> " + tagsHtml(r.chung.hung, "tag-hung", "⛔ ") : "") +
+      '</div>' + mlBlock(son, r) + '</div>';
+  });
+  document.getElementById("analysisContent").innerHTML = html;
+  var box = document.getElementById("analysisResult");
+  box.style.display = "block";
+  box.scrollIntoView({ behavior: "smooth" });
+}
+
+// ====================== v4: MỘ LONG + CHẤM ĐIỂM + TÌM THỜI GIAN ======================
+var HUNG_NANG = ["Thái tuế", "Tuế phá", "Tam sát", "Niên khắc sơn gia", "Nguyệt phá", "Tuần sơn La hầu"];
+var MUC_DIEM = { DAC_BIET_CAT: 3, DAI_CAT: 2, CAT: 1, TIEU_HUNG: -1, DAI_HUNG: -3 };
+function laHungNang(t) { return HUNG_NANG.some(function (h) { return t.indexOf(h) !== -1; }); }
+function diemFeature1(r, loai) {
+  var ds = r.chung.hung.slice(), hung = 0, nang = [];
+  ["khaiSon", "lapHuong", "tuPhuong"].forEach(function (k) { if (loai === "all" || loai === k) ds = ds.concat(r[k].hung); });
+  ds.forEach(function (t) { if (laHungNang(t)) { hung += 3; nang.push(t); } else hung += 1; });
+  return { cat: r.chung.cat.length, hung: hung, nang: nang };
+}
+function diemMoLong(trus) {
+  var cat = 0, hung = 0, nang = [];
+  trus.forEach(function (t) {
+    var p = MUC_DIEM[t.muc];
+    if (p > 0) cat += p; else { hung -= p; if (t.muc === "DAI_HUNG") nang.push("Khắc Mộ vận (trụ " + t.tru + ")"); }
+  });
+  return { cat: cat, hung: hung, nang: nang };
+}
+function gop(a, b) { return { cat: a.cat + b.cat, hung: a.hung + b.hung, nang: a.nang.concat(b.nang) }; }
+function ketLuan(x, nguong) {
+  var t = x.cat + x.hung, p = t === 0 ? 100 : Math.round(100 * x.cat / t);
+  if (x.nang.length) return { good: false, cls: "warning", p: p, txt: "⛔ Có hung sát nặng – nên tránh nếu có thể" };
+  if (p >= nguong) return { good: true, cls: "good", p: p, txt: "✅ Ổn thỏa – bình hòa" };
+  return { good: false, cls: "warning", p: p, txt: "⚠️ Hung nhiều hơn mức bình hòa" };
+}
+function boxKetLuan(tieuDe, x, nguong) {
+  var k = ketLuan(x, nguong);
+  return '<div class="ratio"><strong>' + tieuDe + '</strong><br><span class="' + k.cls + '">' + k.txt + '</span> — Cát ≈ ' + k.p + '% / Hung ≈ ' + (100 - k.p) + '%' +
+    (x.nang.length ? '<br>' + tagsHtml(x.nang, "tag-hung", "⛔ ") : '') + '</div>';
+}
+function mlBlock(son, r) {
+  var loai = document.getElementById("loaiSelect").value;
+  var nguong = parseInt(document.getElementById("nguongInput").value, 10) || 60;
+  var A = diemFeature1(r, loai);
+  var h = '<div class="section-box ml"><h4>🏔️ Tổng hợp: dụng sự phía trên vs. động nền (Mộ – Long Biến Vận)</h4>';
+  h += boxKetLuan("(1) Chỉ dụng sự phía trên – không động khí mạch nền đất", A, nguong);
+  var v = document.getElementById("dateInput").value;
+  if (!v) return h + '<div class="note">Nhập <strong>Ngày giờ (mục 5)</strong> để xét Mộ Long (trường hợp động nền).</div></div>';
+  var dt = new Date(v), ml = TrachCat.danhGiaThoiDiem(son, dt, getHourChi(dt));
+  if (ml.loi) return h + '<div class="empty-notice">' + ml.loi + '</div></div>';
+  var mo = ml.moLong, trus = [ml.nien, ml.thang, ml.ngay, ml.gio];
+  h += '<p>Sơn <strong>' + ml.son + '</strong> (chính vận ' + ml.hanhSon + ') → Biến vận Mộ khố: <strong>' + mo.canChi + ' – ' + mo.napAm + ' (' + mo.hanh + ')</strong>' +
+    (mo.daTrungBien ? ' <span class="tag tag-warn">Sau Đông Chí: Kim sơn trùng biến → can ' + mo.canDungTinh + '</span>' : '') +
+    '<br><span class="warning">Kỵ dùng năm/tháng/ngày/giờ hành ' + mo.hanhKy + '</span></p>';
+  h += '<table><tr><th>Trụ</th><th>Can Chi</th><th>Nạp âm</th><th>Quan hệ với Mộ Long</th><th>Mức</th></tr>' +
+    trus.map(function (t) { return '<tr><td>' + t.tru + '</td><td>' + t.canChi + '</td><td>' + t.napAm + '</td><td>' + t.quanHe + '</td><td>' + t.nhanMuc + '</td></tr>'; }).join('') + '</table>';
+  h += '<p>Xếp loại Mộ Long (Niên + "3 chọi 1"): <strong>' + ml.nhanLoai + '</strong></p>';
+  h += boxKetLuan("(2) Dụng sự phía dưới – có động nền/khí mạch (gộp (1) + Mộ Long)", gop(A, diemMoLong(trus)), nguong);
+  return h + '</div>';
+}
+function fmtNgay(t) { return ("0" + t.getDate()).slice(-2) + "/" + ("0" + (t.getMonth() + 1)).slice(-2) + "/" + t.getFullYear(); }
+function quetThoiGian() {
+  var out = document.getElementById("quetResult");
+  var huong = document.getElementById("huongSelect").value;
+  if (!huong) { alert("Vui lòng chọn Phương hoặc Sơn ở mục 2!"); return; }
+  var sons = getSons(huong), nguyen = document.getElementById("nguyenSelect").value;
+  var loai = document.getElementById("loaiSelect").value;
+  var nguong = parseInt(document.getElementById("nguongInput").value, 10) || 60;
+  var y0 = parseInt(document.getElementById("namTu").value, 10), y1 = parseInt(document.getElementById("namDen").value, 10);
+  if (isNaN(y0) || isNaN(y1) || y1 < y0) { out.innerHTML = '<div class="empty-notice">Khoảng năm không hợp lệ.</div>'; return; }
+  var rows = [], nData = 0, thieuTK = false;
+  Object.keys(yearData).forEach(function (key) {
+    var d = yearData[key];
+    if (!d || d.status === "input here") return;
+    nData++;
+    for (var Y = y0; Y <= y1; Y++) {
+      if (getYearCanChi(Y) !== d.name) continue;
+      var changs = TrachCat.changCuaNam(Y);
+      if (!changs.length) { thieuTK = true; continue; }
+      changs.forEach(function (ch) {
+        var tk = resolveTamKyInfo(d, ch.ten);
+        sons.forEach(function (son) {
+          var A = diemFeature1(analyzeSonCore(d, son, ch.thang, nguyen, tk, ch.ten), loai);
+          var m = TrachCat.danhGiaNienThang(son, d.name, ch.thang, ch.ten);
+          if (!m) return;
+          var B = gop(A, diemMoLong([m.nien, m.thang])), kA = ketLuan(A, nguong), kB = ketLuan(B, nguong);
+          if (kA.good && kB.good) rows.push({ Y: Y, nam: d.name, thang: ch.thang, tiet: ch.ten, tu: ch.tu, den: ch.den, son: son, pA: kA.p, pB: kB.p, mo: m.moLong });
+        });
+      });
+    }
+  });
+  var h = '<p class="note">Đã quét ' + nData + ' niên biểu có dữ liệu, năm ' + y0 + '–' + y1 + ', ngưỡng ' + nguong + '%. Kết quả ở cấp chặng Tiết Khí (Niên + Tháng); chọn ngày giờ cụ thể bằng mục 5 và tránh hành kỵ của Mộ Long.</p>';
+  if (thieuTK) h += '<div class="empty-notice">Một số năm nằm ngoài phạm vi dữ liệu của tietkhi_core.js nên không quét được.</div>';
+  if (!nData) h += '<div class="empty-notice">Chưa có niên biểu nào được nạp dữ liệu.</div>';
+  else if (!rows.length) h += '<div class="empty-notice">Không có chặng nào thỏa mãn cả (1) và (2). Có thể mở rộng khoảng năm, đổi loại dụng sự hoặc hạ ngưỡng.</div>';
+  else h += '<table><tr><th>Năm DL</th><th>Năm</th><th>Tháng</th><th>Tiết Khí (từ – đến)</th><th>Sơn</th><th>(1) cát</th><th>(2) cát</th><th>Mộ Long / hành kỵ</th></tr>' +
+    rows.slice(0, 300).map(function (r) {
+      return '<tr><td>' + r.Y + '</td><td>' + r.nam + '</td><td>' + r.thang + '</td><td>' + r.tiet + ' (' + fmtNgay(r.tu) + ' – ' + fmtNgay(r.den) + ')</td><td><strong>' + r.son + '</strong></td><td>' + r.pA + '%</td><td>' + r.pB + '%</td><td>' + r.mo.canChi + ' ' + r.mo.napAm + ' – kỵ ' + r.mo.hanhKy + '</td></tr>';
+    }).join('') + '</table>';
+  out.innerHTML = h;
+}
+(function () { var y = new Date().getFullYear(); document.getElementById("namTu").value = y; document.getElementById("namDen").value = y + 59; })();
+
+// ====================== RENDER DATA GỐC ======================
+function renderYearData(yearKey) {
+  var d = yearData[yearKey];
+  if (!d) return;
+  document.getElementById("currentYearName").textContent = d.name;
+  if (d.status === "input here") {
+    document.getElementById("yearMeta").textContent = "";
+    document.getElementById("detailDataContainer").innerHTML =
+      '<div class="empty-notice">⏳ Năm <strong>' + d.name + '</strong> đang chờ nhập liệu.</div>';
+    return;
+  }
+  document.getElementById("yearMeta").textContent = d.meta || "";
+  document.getElementById("detailDataContainer").innerHTML =
+    "<p class='note'>Dữ liệu chi tiết đã được load. Sử dụng form phía trên để phân tích.</p>";
+}
+
+// ====================== KHỞI TẠO ======================
+function initYearDropdown() {
+  var select = document.getElementById("yearSelect");
+  select.innerHTML = "";
+  var keys = Object.keys(yearData);
+  keys.forEach(function (key) {
+    var val = yearData[key];
+    var opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = val.status === "input here" ? val.name + " (Chưa có data)" : val.name + " ✓";
+    select.appendChild(opt);
+  });
+  var firstReady = keys.find(function (k) { return yearData[k].status !== "input here"; }) || keys[0];
+  if (firstReady) {
+    select.value = firstReady;
+    renderYearData(firstReady);
+  }
+}
+
+// Cầu nối cho các module ngoài (module_*.js) dùng chung dữ liệu & hàm lõi
+Object.assign(TraCuuApp, {
+  getYearData: function () { return yearData; },
+  analyzeSonCore: analyzeSonCore, matchSon: matchSon, getSons: getSons,
+  resolveTamKyInfo: resolveTamKyInfo, getYearCanChi: getYearCanChi,
+  traCuu: traCuu, quetThoiGian: quetThoiGian
+});
+loadNienBieu();
+</script>
+
+<!-- ===== MODULE CHUYÊN TRÁCH (tượng trưng — tạo dần, cùng Repository) =====
+     File chưa tồn tại chỉ báo 404 trong Console, không làm hỏng trang.
+     Mỗi module lắng nghe sự kiện "nienbieu:ready" rồi dùng window.TraCuuApp. -->
+<script src="module_nutnoi.js" defer></script>      <!-- Module NÚT NỔI: gắn nút vào #floatingModuleRoot -->
+<script src="module_tamky.js" defer></script>
+<script src="module_thongthien.js" defer></script>
+<script src="module_taumalucnham.js" defer></script>
+<script src="module_molong.js" defer></script>
+<script src="module_xuat.js" defer></script>
+</body>
+</html>
