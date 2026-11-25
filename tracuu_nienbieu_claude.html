@@ -69,6 +69,44 @@ tr:nth-child(even) td{background:#faf8f2}
 .empty-notice{background:#fff3cd;color:#664d03;border:1px solid #ffecb5;padding:12px;border-radius:10px;font-weight:500;margin-top:8px}
 .tietkhi-info{background:#e9efff;border:1px solid #c3d3fb;padding:10px 14px;border-radius:10px;margin:10px 0;font-size:.92rem}
 #quetResult{overflow-x:auto}
+
+/* ===== MENU ON/OFF & TRÌNH BÀY DATA NIÊN BIỂU THUẦN (DẠNG SÁCH GIẤY) ===== */
+.nb-header-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.nb-header-bar h2{margin:0}
+.nb-toggle-wrap{display:inline-flex;align-items:center;gap:10px;background:#f4f2fc;border:1px solid var(--border);padding:6px 12px;border-radius:999px;cursor:pointer;user-select:none;font-size:.85rem;font-weight:600;color:var(--navy)}
+.nb-toggle-wrap input{display:none}
+.nb-switch{position:relative;width:44px;height:24px;background:#cbd5e1;border-radius:999px;transition:background .2s;flex-shrink:0}
+.nb-switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.nb-toggle-wrap input:checked + .nb-switch{background:var(--primary)}
+.nb-toggle-wrap input:checked + .nb-switch::after{transform:translateX(20px)}
+.nb-state-badge{font-size:.75rem;padding:2px 8px;border-radius:10px;background:#e2e8f0;color:#475569;font-weight:700}
+.nb-toggle-wrap input:checked ~ .nb-state-badge{background:#dcfce7;color:var(--cat)}
+
+.nb-book-sheet{margin-top:12px;border:1px solid #d5cfc0;border-radius:12px;background:#fffef9;padding:16px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)}
+.nb-sheet-title{text-align:center;border-bottom:2px solid var(--navy);padding-bottom:10px;margin-bottom:14px}
+.nb-sheet-title .tt-main{font-size:1.2rem;font-weight:800;letter-spacing:.5px;color:var(--navy);text-transform:uppercase}
+.nb-sheet-title .tt-sub{font-size:.95rem;font-weight:600;color:#4a4757;margin-top:3px}
+.nb-sec{margin-bottom:16px}
+.nb-sec-head{font-weight:700;font-size:.96rem;color:var(--navy);margin-bottom:6px;padding:4px 8px;background:#f3f0e6;border-left:4px solid var(--gold);border-radius:4px}
+.nb-sec-head.cat-head{border-left-color:var(--cat);background:#f0fdf4;color:#14532d}
+.nb-sec-head.hung-head{border-left-color:var(--hung);background:#fff1f2;color:#881337}
+.nb-grid-3{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #cfc9b8;border-radius:8px;overflow:hidden;background:#fff}
+.nb-grid-3 .nb-cell{padding:7px 10px;border-right:1px solid #e2ddd0;border-bottom:1px solid #e2ddd0;font-size:.88rem}
+.nb-grid-3 .nb-cell:nth-child(3n){border-right:none}
+.nb-grid-3 .nb-cell strong{color:var(--navy)}
+.nb-text-block{background:#fff;border:1px solid #e2ddd0;border-radius:8px;padding:10px 12px;font-size:.9rem;line-height:1.65}
+.nb-text-block p{margin-bottom:5px}
+.nb-text-block p:last-child{margin-bottom:0}
+.nb-table-wrap{overflow-x:auto;border:1px solid #cfc9b8;border-radius:8px;background:#fff}
+.nb-table{margin-top:0;border:none;border-radius:0;font-size:.82rem}
+.nb-table th,.nb-table td{border-right:1px solid #e2ddd0;border-bottom:1px solid #e2ddd0;padding:6px 7px;vertical-align:middle}
+.nb-table th:last-child,.nb-table td:last-child{border-right:none}
+.nb-table th{background:#efece2;color:var(--navy);font-weight:700;white-space:nowrap}
+.nb-table td.row-label{text-align:left;font-weight:700;background:#faf8f2;color:var(--navy);white-space:nowrap;position:sticky;left:0;z-index:1;border-right:2px solid #cfc9b8}
+.nb-table.cat-tbl th{background:#e6f4ea;color:#14532d}
+.nb-table.hung-tbl th{background:#ffe4e9;color:#881337}
+.nb-empty-cell{color:#a8a29e;font-style:italic;font-size:.75rem}
+
 /* Nút nổi: chỉnh cỡ chữ + gốc cho module nút nổi */
 .fab-dock{position:fixed;right:max(12px,env(safe-area-inset-right));bottom:max(14px,env(safe-area-inset-bottom));display:flex;flex-direction:column;align-items:flex-end;gap:10px;z-index:50}
 .fab-zoom{display:flex;gap:4px;background:var(--navy);padding:5px;border-radius:30px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
@@ -81,6 +119,8 @@ tr:nth-child(even) td{background:#faf8f2}
   .form-group{flex:1 1 100%}
   .row>button{width:100%}
   table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+  .nb-grid-3{grid-template-columns:1fr}
+  .nb-grid-3 .nb-cell{border-right:none}
 }
 @media (prefers-color-scheme:dark){
   :root{--bg:#14152a;--card:#1e2040;--border:#34376b;--ink:#ecebf5;--muted:#a9a8c4}
@@ -90,6 +130,20 @@ tr:nth-child(even) td{background:#faf8f2}
   select,input,.section-box,.pi-bar{background:#262950;color:var(--ink)}
   .section-box.ml,.ratio{background:#2a2b52}
   label{color:#c8c6e0}
+  .nb-toggle-wrap{background:#262950;color:#e7e5ff}
+  .nb-book-sheet{background:#191b36;border-color:#34376b}
+  .nb-sheet-title{border-bottom-color:#6d72d6}
+  .nb-sheet-title .tt-main{color:#fff}
+  .nb-sheet-title .tt-sub{color:#c8c6e0}
+  .nb-sec-head{background:#262950;color:#e7e5ff}
+  .nb-sec-head.cat-head{background:#173326;color:#86efac}
+  .nb-sec-head.hung-head{background:#3b1824;color:#fda4af}
+  .nb-grid-3,.nb-text-block,.nb-table-wrap{background:#202344;border-color:#34376b}
+  .nb-grid-3 .nb-cell,.nb-table th,.nb-table td{border-color:#34376b}
+  .nb-grid-3 .nb-cell strong,.nb-table td.row-label{color:#e7e5ff}
+  .nb-table td.row-label{background:#262950;border-right-color:#4b4f8f}
+  .nb-table.cat-tbl th{background:#183a2b;color:#86efac}
+  .nb-table.hung-tbl th{background:#421927;color:#fda4af}
 }
 </style>
 </head>
@@ -188,9 +242,17 @@ tr:nth-child(even) td{background:#faf8f2}
 </div>
 
 <div class="card">
-<h2>Dữ Liệu Gốc Năm: <span id="currentYearName">—</span></h2>
-<p class="note" id="yearMeta"></p>
-<div id="detailDataContainer"></div>
+  <div class="nb-header-bar">
+    <h2>Dữ Liệu Gốc Năm: <span id="currentYearName">—</span></h2>
+    <label class="nb-toggle-wrap" title="Bật/Tắt hiển thị toàn bộ bảng Niên biểu thuần dạng sách giấy để đối chiếu dữ liệu">
+      <span>📖 Xem Data Niên Biểu</span>
+      <input type="checkbox" id="toggleRawNienBieu" onchange="toggleRawView(this.checked)">
+      <span class="nb-switch"></span>
+      <span class="nb-state-badge" id="rawToggleStateText">OFF</span>
+    </label>
+  </div>
+  <p class="note" id="yearMeta"></p>
+  <div id="detailDataContainer"></div>
 </div>
 
 <!-- NÚT NỔI: chỉnh cỡ chữ (có sẵn) + vùng gắn module nút nổi -->
@@ -291,7 +353,10 @@ function signOutPi() {
   piVerifiedUser = null;
   updatePiAuthUi("Pi Network: Đã đăng xuất phiên hiện tại.", false);
 }
-window.addEventListener("DOMContentLoaded", function () { signInWithPi(); });
+window.addEventListener("DOMContentLoaded", function () {
+  initRawToggleState();
+  signInWithPi();
+});
 
 // ====================== BẢNG QUY ĐỔI ======================
 const phuongToSon = {
@@ -316,7 +381,6 @@ const tietKhiToTamKyKey = {
 };
 
 // ====================== DỮ LIỆU NĂM: nạp từ nienbieu.html ======================
-// nienbieu.html định nghĩa window.NIENBIEU = { BinhThan: {...}, ... } (cấu trúc y hệt trước đây)
 var yearData = {};
 
 async function loadNienBieu() {
@@ -695,20 +759,240 @@ function quetThoiGian() {
 }
 (function () { var y = new Date().getFullYear(); document.getElementById("namTu").value = y; document.getElementById("namDen").value = y + 59; })();
 
+// ====================== MENU ON/OFF & RENDER DATA NIÊN BIỂU THUẦN (DẠNG SÁCH GIẤY) ======================
+var isRawNienBieuOn = false;
+
+function initRawToggleState() {
+  try {
+    var saved = localStorage.getItem("tc_show_raw_nb");
+    if (saved === "1") isRawNienBieuOn = true;
+  } catch (e) {}
+  var cb = document.getElementById("toggleRawNienBieu");
+  var badge = document.getElementById("rawToggleStateText");
+  if (cb) cb.checked = isRawNienBieuOn;
+  if (badge) badge.textContent = isRawNienBieuOn ? "ON" : "OFF";
+}
+
+function toggleRawView(checked) {
+  isRawNienBieuOn = !!checked;
+  var badge = document.getElementById("rawToggleStateText");
+  if (badge) badge.textContent = isRawNienBieuOn ? "ON" : "OFF";
+  try { localStorage.setItem("tc_show_raw_nb", isRawNienBieuOn ? "1" : "0"); } catch (e) {}
+  var currentKey = document.getElementById("yearSelect").value;
+  if (currentKey) renderYearData(currentKey);
+}
+
+function escHtml(str) {
+  if (str === null || str === undefined) return "";
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+function formatKeyValPairs(obj, excludeSubstr) {
+  if (!obj) return "";
+  return Object.keys(obj).filter(function (k) {
+    return !excludeSubstr || k.toLowerCase().indexOf(excludeSubstr.toLowerCase()) === -1;
+  }).map(function (k) {
+    return "<strong>" + escHtml(k) + ":</strong> " + escHtml(obj[k]);
+  }).join(" &nbsp;–&nbsp; ");
+}
+
+function renderMonthMatrixTable(obj, tableClass) {
+  if (!obj) return '<div class="note">Không có dữ liệu bảng tháng.</div>';
+  var thangHeaders = ["Giêng","Hai","Ba","Tư","Năm","Sáu","Bảy","Tám","Chín","Mười","Một","Chạp"];
+  var html = '<div class="nb-table-wrap"><table class="nb-table ' + (tableClass || '') + '"><thead><tr><th>Tháng</th>';
+  thangHeaders.forEach(function (th) { html += '<th>' + th + '</th>'; });
+  html += '</tr></thead><tbody>';
+
+  Object.keys(obj).forEach(function (rowKey) {
+    var val = obj[rowKey];
+    if (!Array.isArray(val)) return;
+    html += '<tr><td class="row-label">' + escHtml(rowKey) + '</td>';
+    for (var i = 0; i < 12; i++) {
+      var cellVal = (val[i] !== undefined && val[i] !== null) ? String(val[i]).trim() : "";
+      if (cellVal === "") {
+        html += '<td><span class="nb-empty-cell">—</span></td>';
+      } else {
+        html += '<td>' + escHtml(cellVal) + '</td>';
+      }
+    }
+    html += '</tr>';
+  });
+  html += '</tbody></table></div>';
+  return html;
+}
+
+function buildBookStyleNienBieuHtml(d) {
+  var h = '<div class="nb-book-sheet">';
+  // Tiêu đề đầu trang giống trang 1 sách
+  h += '<div class="nb-sheet-title">';
+  h += '<div class="tt-main">THÁI TUẾ ' + escHtml((d.name || "").toUpperCase()) + '</div>';
+  h += '<div class="tt-sub">' + escHtml(d.meta || "") + '</div>';
+  h += '</div>';
+
+  // 1. Khai sơn, lập hướng, tu phương cát (Lưới 3 cột như sách)
+  h += '<div class="nb-sec"><div class="nb-sec-head cat-head">* Khai sơn, lập hướng, tu phương cát</div>';
+  h += '<div class="nb-grid-3">';
+  var catOrder = ["Tuế đức","Tuế đức hợp","Tuế chi đức","Dương quý nhân","Âm quý nhân","Tuế Lộc","Tuế Mã","Tấu thư","Bác sĩ"];
+  var catObj = d.cat || {};
+  var catKeys = catOrder.concat(Object.keys(catObj).filter(function (k) { return catOrder.indexOf(k) === -1; }));
+  catKeys.forEach(function (k) {
+    if (catObj[k] !== undefined) {
+      h += '<div class="nb-cell"><strong>' + escHtml(k) + ':</strong> ' + escHtml(catObj[k]) + '</div>';
+    }
+  });
+  h += '</div></div>';
+
+  // 2. Tam nguyên Tử bạch (Bảng ngang Thượng / Trung / Hạ)
+  if (d.tamNguyenTuBach) {
+    h += '<div class="nb-sec"><div class="nb-sec-head cat-head">* Tam nguyên Tử bạch</div>';
+    h += '<div class="nb-table-wrap"><table class="nb-table cat-tbl"><tbody>';
+    ["Thượng","Trung","Hạ"].forEach(function (ng) {
+      var row = d.tamNguyenTuBach[ng] || {};
+      h += '<tr><td class="row-label">' + ng + ' nguyên:</td>';
+      ["1 bạch","6 bạch","8 bạch","9 tử"].forEach(function (sao) {
+        h += '<td><strong>' + sao + ':</strong> ' + escHtml(row[sao] || "—") + '</td>';
+      });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div></div>';
+  }
+
+  // 3. Cai sơn Hoàng đạo
+  if (d.caiSonHoangDao) {
+    h += '<div class="nb-sec"><div class="nb-sec-head cat-head">* Cai sơn Hoàng đạo</div>';
+    h += '<div class="nb-text-block">';
+    h += '<p><strong>Tham lang:</strong> ' + escHtml(d.caiSonHoangDao["Tham lang"] || "") + ' &nbsp;–&nbsp; <strong>Cự Môn:</strong> ' + escHtml(d.caiSonHoangDao["Cự Môn"] || "") + '</p>';
+    h += '<p><strong>Vũ khúc:</strong> ' + escHtml(d.caiSonHoangDao["Vũ khúc"] || "") + ' &nbsp;–&nbsp; <strong>Văn khúc:</strong> ' + escHtml(d.caiSonHoangDao["Văn khúc"] || "") + '</p>';
+    h += '</div></div>';
+  }
+
+  // 4. Thông thiên khiếu
+  if (d.thongThienKhieu) {
+    var tt12 = get12CatSonGuide(d.thongThienKhieu);
+    h += '<div class="nb-sec"><div class="nb-sec-head cat-head">* Thông thiên khiếu</div>';
+    h += '<div class="nb-text-block">';
+    h += '<p><strong>Trước phương tam hợp:</strong> ' + escHtml(d.thongThienKhieu["Trước phương tam hợp"] || "") + '</p>';
+    h += '<p><strong>Sau phương tam hợp:</strong> ' + escHtml(d.thongThienKhieu["Sau phương tam hợp"] || "") + '</p>';
+    if (tt12) h += '<p>• <strong>12 cát sơn nên dùng năm, tháng, ngày, giờ:</strong> ' + escHtml(tt12) + '</p>';
+    h += '</div></div>';
+  }
+
+  // 5. Tấu mã lục Nhâm
+  if (d.tauMaLucNham) {
+    var tm = d.tauMaLucNham;
+    var tm12 = get12CatSonGuide(tm);
+    h += '<div class="nb-sec"><div class="nb-sec-head cat-head">* Tấu mã lục Nhâm</div>';
+    h += '<div class="nb-grid-3">';
+    ["Thần hậu","Công tào","Thiên cương","Thắng quang","Truyền tổng","Hà khôi"].forEach(function (k) {
+      if (tm[k] !== undefined) {
+        h += '<div class="nb-cell"><strong>' + escHtml(k) + ':</strong> ' + escHtml(tm[k]) + '</div>';
+      }
+    });
+    h += '</div>';
+    if (tm12) {
+      h += '<div class="nb-text-block" style="margin-top:6px;"><p>• <strong>12 cát sơn nên dùng năm, tháng, ngày, giờ:</strong> ' + escHtml(tm12) + '</p></div>';
+    }
+    h += '</div>';
+  }
+
+  // 6. Tứ lợi tam nguyên
+  if (d.tuLoiTamNguyen) {
+    h += '<div class="nb-sec"><div class="nb-sec-head cat-head">* Tứ lợi tam nguyên</div>';
+    h += '<div class="nb-text-block"><p>' + formatKeyValPairs(d.tuLoiTamNguyen) + '</p></div></div>';
+  }
+
+  // 7. Hung thần của năm (Chung, Khai sơn hung, Lập hướng hung, Tu phương hung)
+  if (d.hung) {
+    var hg = d.hung;
+    if (hg.chung) {
+      h += '<div class="nb-sec"><div class="nb-sec-head hung-head">* Khai sơn, lập hướng, tu phương hung</div>';
+      h += '<div class="nb-text-block"><p>' + formatKeyValPairs(hg.chung) + '</p></div></div>';
+    }
+    if (hg.khaiSonHung) {
+      h += '<div class="nb-sec"><div class="nb-sec-head hung-head">* Khai sơn hung</div>';
+      h += '<div class="nb-text-block">';
+      if (hg.khaiSonHung["Niên khắc sơn gia"] !== undefined) {
+        h += '<p><strong>Niên khắc sơn gia:</strong> ' + escHtml(hg.khaiSonHung["Niên khắc sơn gia"]) + '</p>';
+      }
+      if (hg.khaiSonHung["Âm phủ Thái tuế"] !== undefined) {
+        h += '<p><strong>* Âm phủ Thái tuế:</strong> ' + escHtml(hg.khaiSonHung["Âm phủ Thái tuế"]) + '</p>';
+      }
+      var otherKs = formatKeyValPairs(hg.khaiSonHung, "thái tuế").replace(/<strong>Niên khắc sơn gia:<\/strong>[^–]*(&nbsp;–&nbsp;)?/, "");
+      var ksRemain = ["Lục hại","Tử phù","Cứu thoái"].filter(function (k) { return hg.khaiSonHung[k] !== undefined; })
+        .map(function (k) { return "<strong>" + k + ":</strong> " + escHtml(hg.khaiSonHung[k]); }).join(" &nbsp;–&nbsp; ");
+      if (ksRemain) h += '<p>' + ksRemain + '</p>';
+      h += '</div></div>';
+    }
+    if (hg.lapHuongHung) {
+      h += '<div class="nb-sec"><div class="nb-sec-head hung-head">* Lập hướng hung</div>';
+      h += '<div class="nb-text-block"><p>' + formatKeyValPairs(hg.lapHuongHung) + '</p></div></div>';
+    }
+    if (hg.tuPhuongHung) {
+      h += '<div class="nb-sec"><div class="nb-sec-head hung-head">* Tu phương hung</div>';
+      h += '<div class="nb-text-block"><p>' + formatKeyValPairs(hg.tuPhuongHung) + '</p></div></div>';
+    }
+  }
+
+  // 8. Bảng KHAI SƠN, LẬP HƯỚNG, TU PHƯƠNG CÁT THEO THÁNG & TAM KỲ (Trang 3)
+  if (d.thangCat) {
+    h += '<div class="nb-sec"><div class="nb-sec-head cat-head">KHAI SƠN, LẬP HƯỚNG, TU PHƯƠNG CÁT (12 THÁNG)</div>';
+    h += renderMonthMatrixTable(d.thangCat, "cat-tbl");
+    if (d.thangCat["Tam Kỳ"]) {
+      var tkObj = d.thangCat["Tam Kỳ"];
+      var tiets = ["Lập Xuân","Xuân Phân","Lập Hạ","Hạ Chí","Lập Thu","Thu Phân","Lập Đông","Đông Chí"];
+      h += '<div class="nb-table-wrap" style="margin-top:8px;"><table class="nb-table cat-tbl"><thead><tr><th>Tam Kỳ</th>';
+      tiets.forEach(function (t) { h += '<th>' + t + '</th>'; });
+      h += '</tr></thead><tbody>';
+      ["Ất","Bính","Đinh"].forEach(function (ky) {
+        h += '<tr><td class="row-label">' + ky + '</td>';
+        tiets.forEach(function (t) {
+          var v = (tkObj[t] && tkObj[t][ky]) ? tkObj[t][ky] : "";
+          h += '<td>' + (v ? escHtml(v) : '<span class="nb-empty-cell">—</span>') + '</td>';
+        });
+        h += '</tr>';
+      });
+      h += '</tbody></table></div>';
+    }
+    h += '</div>';
+  }
+
+  // 9. Bảng KHAI SƠN HUNG THEO THÁNG (Trang 4)
+  if (d.khaiSonHungThang) {
+    h += '<div class="nb-sec"><div class="nb-sec-head hung-head">KHAI SƠN HUNG (12 THÁNG)</div>';
+    h += renderMonthMatrixTable(d.khaiSonHungThang, "hung-tbl");
+    h += '</div>';
+  }
+
+  // 10. Bảng TU PHƯƠNG HUNG THEO THÁNG (Trang 5)
+  if (d.tuPhuongHungThang) {
+    h += '<div class="nb-sec"><div class="nb-sec-head hung-head">TU PHƯƠNG HUNG (12 THÁNG)</div>';
+    h += renderMonthMatrixTable(d.tuPhuongHungThang, "hung-tbl");
+    h += '</div>';
+  }
+
+  h += '</div>';
+  return h;
+}
+
 // ====================== RENDER DATA GỐC ======================
 function renderYearData(yearKey) {
   var d = yearData[yearKey];
   if (!d) return;
   document.getElementById("currentYearName").textContent = d.name;
+  var container = document.getElementById("detailDataContainer");
   if (d.status === "input here") {
     document.getElementById("yearMeta").textContent = "";
-    document.getElementById("detailDataContainer").innerHTML =
+    container.innerHTML =
       '<div class="empty-notice">⏳ Năm <strong>' + d.name + '</strong> đang chờ nhập liệu.</div>';
     return;
   }
   document.getElementById("yearMeta").textContent = d.meta || "";
-  document.getElementById("detailDataContainer").innerHTML =
-    "<p class='note'>Dữ liệu chi tiết đã được load. Sử dụng form phía trên để phân tích.</p>";
+  if (isRawNienBieuOn) {
+    container.innerHTML = buildBookStyleNienBieuHtml(d);
+  } else {
+    container.innerHTML =
+      "<p class='note'>Dữ liệu chi tiết đã được load. Sử dụng form phía trên để phân tích, hoặc bật công tắc <strong>Xem Data Niên Biểu (ON)</strong> ở góc phải để đối chiếu toàn bộ bảng dữ liệu gốc với sách giấy.</p>";
+  }
 }
 
 // ====================== KHỞI TẠO ======================
