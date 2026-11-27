@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kính Lúp Soi Mã QR - Kiểm Tra An Toàn</title>
-  <!-- Thư viện giải mã QR thuần JavaScript chạy trực tiếp trên trình duyệt -->
+  <title>Kính Lúp Soi Mã QR v2 - Giải Mã Chuyên Sâu</title>
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
   <style>
     :root {
@@ -40,6 +39,7 @@
       cursor: pointer;
       transition: 0.2s;
       margin-bottom: 16px;
+      display: block;
     }
     .upload-box:hover { border-color: var(--accent); background: #f8fafc; }
     .upload-btn {
@@ -56,7 +56,7 @@
     input[type="file"] { display: none; }
 
     #preview-container { display: none; text-align: center; margin-bottom: 16px; }
-    #preview-img { max-width: 100%; max-height: 220px; border-radius: 8px; border: 1px solid var(--border); }
+    #preview-img { max-width: 100%; max-height: 240px; border-radius: 8px; border: 1px solid var(--border); }
 
     .card {
       background: var(--card);
@@ -132,20 +132,20 @@
       color: var(--primary);
     }
     .copy-btn:active { background: #cbd5e1; }
+    .engine-tag { font-size: 0.75rem; color: var(--muted); float: right; margin-top: 4px; }
   </style>
 </head>
 <body>
 
 <div class="container">
   <div class="header">
-    <h1>🔍 Kính Lúp Soi Dữ Liệu Mã QR</h1>
-    <p>Giải mã an toàn trên trình duyệt — Không tự mở link, không tự chuyển tiền</p>
+    <h1>🔍 Kính Lúp Soi Dữ Liệu Mã QR (v2)</h1>
+    <p>Hỗ trợ mã QR mật độ cao (MoMo, Ngân hàng) & Mã vạch — Xử lý 100% nội bộ</p>
   </div>
 
-  <!-- Khu vực chọn ảnh từ bộ nhớ hoặc chụp trực tiếp -->
   <label class="upload-box" for="file-input">
     <div class="upload-btn">📂 Chọn ảnh QR từ bộ nhớ / Chụp ảnh</div>
-    <div class="upload-hint">Hỗ trợ ảnh chụp màn hình, ảnh từ thư viện hoặc camera</div>
+    <div class="upload-hint">Hỗ trợ ảnh chụp màn hình sắc nét, QR mật độ cao & Barcode</div>
     <input type="file" id="file-input" accept="image/*">
   </label>
 
@@ -153,51 +153,24 @@
     <img id="preview-img" alt="Ảnh mã QR đang kiểm tra">
   </div>
 
-  <!-- Canvas ẩn để đọc điểm ảnh -->
   <canvas id="qr-canvas" style="display:none;"></canvas>
-
-  <!-- Khu vực hiển thị kết quả phân tích -->
   <div id="result-card" class="card"></div>
 </div>
 
 <script>
-  // Danh sách mã BIN ngân hàng Việt Nam phổ biến (chuẩn NAPAS)
   const BANK_BINS = {
-    "970436": "Vietcombank (VCB)",
-    "970415": "VietinBank",
-    "970418": "BIDV",
-    "970405": "Agribank",
-    "970407": "Techcombank",
-    "970422": "MB Bank (Quân Đội)",
-    "970432": "VPBank",
-    "970416": "ACB (Á Châu)",
-    "970423": "TPBank",
-    "970403": "Sacombank",
-    "970441": "VIB (Quốc Tế)",
-    "970437": "HDBank",
-    "970443": "SHB",
-    "970426": "MSB (Hàng Hải)",
-    "970448": "OCB (Phương Đông)",
-    "970431": "Eximbank",
-    "970428": "Nam A Bank",
-    "970454": "VietCapital Bank (BVBank)",
-    "970429": "SCB",
-    "970449": "LPBank (Lộc Phát)",
-    "970414": "OceanBank",
-    "970439": "Public Bank",
-    "970424": "Shinhan Bank",
-    "970452": "KienlongBank",
-    "970438": "BaoViet Bank",
-    "970446": "Co-opBank",
-    "970458": "UOB Vietnam",
-    "422589": "CIMB Bank",
-    "970462": "Kookmin Bank",
-    "970467": "KEB Hana Bank",
-    "971005": "Viettel Money",
-    "971011": "VNPT Money",
-    "546034": "CAKE by VPBank",
-    "546035": "Ubank by VPBank",
-    "963388": "Timo by Ban Viet Bank"
+    "970436": "Vietcombank (VCB)", "970415": "VietinBank", "970418": "BIDV",
+    "970405": "Agribank", "970407": "Techcombank", "970422": "MB Bank (Quân Đội)",
+    "970432": "VPBank", "970416": "ACB (Á Châu)", "970423": "TPBank",
+    "970403": "Sacombank", "970441": "VIB (Quốc Tế)", "970437": "HDBank",
+    "970443": "SHB", "970426": "MSB (Hàng Hải)", "970448": "OCB (Phương Đông)",
+    "970431": "Eximbank", "970428": "Nam A Bank", "970454": "VietCapital Bank (BVBank)",
+    "970429": "SCB", "970449": "LPBank (Lộc Phát)", "970414": "OceanBank",
+    "970439": "Public Bank", "970424": "Shinhan Bank", "970452": "KienlongBank",
+    "970438": "BaoViet Bank", "970446": "Co-opBank", "970458": "UOB Vietnam",
+    "422589": "CIMB Bank", "970462": "Kookmin Bank", "970467": "KEB Hana Bank",
+    "971005": "Viettel Money", "971011": "VNPT Money", "546034": "CAKE by VPBank",
+    "546035": "Ubank by VPBank", "963388": "Timo by Ban Viet Bank"
   };
 
   const fileInput = document.getElementById('file-input');
@@ -207,6 +180,53 @@
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
   const resultCard = document.getElementById('result-card');
 
+  // Hàm quét bằng jsQR ở nhiều tỷ lệ khác nhau để bắt được cả QR siêu dày đặc lẫn QR quá to
+  function scanWithJsQR(img) {
+    const scales = [1.0, 0.75, 0.5, 1.5]; // Quét nguyên bản 100% trước để không mất chi tiết ô vuông nhỏ
+    for (let scale of scales) {
+      const w = Math.round(img.width * scale);
+      const h = Math.round(img.height * scale);
+      if (w < 50 || h < 50 || w > 3500 || h > 3500) continue;
+
+      canvas.width = w;
+      canvas.height = h;
+      ctx.imageSmoothingEnabled = false; // Giữ sắc nét từng pixel đen trắng
+      ctx.drawImage(img, 0, 0, w, h);
+
+      const imageData = ctx.getImageData(0, 0, w, h);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: "attemptBoth"
+      });
+      if (code && code.data) {
+        return { data: code.data, format: "QR_CODE", engine: `jsQR (${Math.round(scale*100)}%)` };
+      }
+    }
+    return null;
+  }
+
+  // Hàm tổng hợp: ưu tiên bộ giải mã phần cứng Native của trình duyệt, sau đó fallback sang jsQR đa tỷ lệ
+  async function decodeImage(img) {
+    // 1. Thử BarcodeDetector API gốc của hệ điều hành (đọc cực tốt cả QR mật độ cao & Barcode 1D)
+    if ('BarcodeDetector' in window) {
+      try {
+        const detector = new BarcodeDetector();
+        const barcodes = await detector.detect(img);
+        if (barcodes && barcodes.length > 0) {
+          return {
+            data: barcodes[0].rawValue,
+            format: barcodes[0].format,
+            engine: "Native OS Engine"
+          };
+        }
+      } catch (err) {
+        console.warn("Native BarcodeDetector bỏ qua, chuyển sang jsQR:", err);
+      }
+    }
+
+    // 2. Fallback sang jsQR đa tỷ lệ
+    return scanWithJsQR(img);
+  }
+
   fileInput.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -214,42 +234,18 @@
     const reader = new FileReader();
     reader.onload = function(event) {
       const img = new Image();
-      img.onload = function() {
-        // Hiển thị ảnh xem trước
+      img.onload = async function() {
         previewImg.src = event.target.result;
         previewContainer.style.display = 'block';
 
-        // Giới hạn kích thước tối đa để giải mã mượt mà trên điện thoại
-        const maxDim = 1200;
-        let width = img.width;
-        let height = img.height;
-        if (width > maxDim || height > maxDim) {
-          if (width > height) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        ctx.drawImage(img, 0, 0, width, height);
-
-        const imageData = ctx.getImageData(0, 0, width, height);
-        const qrCode = jsQR(imageData.data, imageData.width, imageData.height, {
-          inversionAttempts: "attemptBoth"
-        });
-
-        renderAnalysis(qrCode ? qrCode.data : null);
+        const decoded = await decodeImage(img);
+        renderAnalysis(decoded);
       };
       img.src = event.target.result;
     };
     reader.readAsDataURL(file);
   });
 
-  // Hàm phân tích chuỗi TLV chuẩn EMVCo / VietQR
   function parseTLV(str) {
     const result = {};
     let i = 0;
@@ -265,7 +261,6 @@
     return result;
   }
 
-  // Hàm bóc tách chi tiết VietQR
   function analyzeVietQR(raw) {
     const root = parseTLV(raw);
     const info = {
@@ -274,70 +269,53 @@
       bankName: "Không xác định (Mã lạ)",
       accountNumber: "Không tìm thấy",
       amount: null,
-      currency: root["53"] || "",
-      country: root["58"] || "",
       merchantName: root["59"] || "",
       purpose: ""
     };
 
-    // Tag 38 chứa thông tin thụ hưởng NAPAS / VietQR
     if (root["38"]) {
       const tag38 = parseTLV(root["38"]);
       if (tag38["01"]) {
         const sub01 = parseTLV(tag38["01"]);
         info.bankBin = sub01["00"] || "";
         info.accountNumber = sub01["01"] || "";
-        if (BANK_BINS[info.bankBin]) {
-          info.bankName = BANK_BINS[info.bankBin];
-        } else if (info.bankBin) {
-          info.bankName = `Mã BIN: ${info.bankBin}`;
-        }
+        info.bankName = BANK_BINS[info.bankBin] || (info.bankBin ? `Mã BIN: ${info.bankBin}` : "Không xác định");
       }
     }
-
-    // Tag 54 là số tiền giao dịch
-    if (root["54"]) {
-      info.amount = parseFloat(root["54"]);
-    }
-
-    // Tag 62 chứa thông tin bổ sung (nội dung chuyển khoản ở sub-tag 08)
+    if (root["54"]) info.amount = parseFloat(root["54"]);
     if (root["62"]) {
       const tag62 = parseTLV(root["62"]);
-      if (tag62["08"]) {
-        info.purpose = tag62["08"];
-      }
+      if (tag62["08"]) info.purpose = tag62["08"];
     }
-
     return info;
   }
 
-  // Hàm format tiền tệ VNĐ
   function formatMoney(num) {
     return num.toLocaleString('vi-VN') + " VND";
   }
 
-  // Hàm escape HTML để chống XSS khi hiển thị text thô
   function escapeHTML(str) {
     return str.replace(/[&<>'"]/g, tag => ({
       '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
     }[tag]));
   }
 
-  function renderAnalysis(raw) {
+  function renderAnalysis(decoded) {
     resultCard.style.display = 'block';
 
-    if (!raw) {
+    if (!decoded || !decoded.data) {
       resultCard.innerHTML = `
         <div class="alert alert-danger">
-          <strong>❌ Không tìm thấy mã QR hợp lệ trong ảnh!</strong><br>
-          Vui lòng chọn ảnh rõ nét hơn, không bị lóa sáng hoặc cắt mất góc vuông định vị.
+          <strong>❌ Không giải mã được dữ liệu trong ảnh!</strong><br>
+          Mẹo: Nếu ảnh chụp màn hình quá dài (chứa nhiều nút bấm xung quanh), hãy <strong>cắt (crop) gọn vùng vuông quanh mã QR</strong> rồi chọn lại ảnh đó.
         </div>
       `;
       return;
     }
 
+    const raw = decoded.data;
     const safeRaw = escapeHTML(raw);
-    let html = "";
+    let html = `<span class="engine-tag">Bộ giải mã: ${escapeHTML(decoded.engine)} (${escapeHTML(decoded.format)})</span>`;
 
     // TRƯỜNG HỢP 1: MÃ CHUYỂN KHOẢN NGÂN HÀNG (VIETQR / EMVCO)
     if (raw.startsWith("000201")) {
@@ -345,44 +323,25 @@
       html += `<span class="badge badge-bank">🏦 Mã Chuyển Khoản Ngân Hàng (VietQR)</span>`;
 
       if (qr.amount !== null) {
-        html += `
-          <div class="alert alert-warn">
-            <strong>⚠️ CẢNH BÁO SỐ TIỀN CỐ ĐỊNH (MÃ ĐỘNG):</strong><br>
-            Mã này đã cài sẵn số tiền bên dưới. Hãy đếm kỹ từng số 0 trước khi quét bằng app ngân hàng!
-          </div>
-        `;
+        html += `<div class="alert alert-warn"><strong>⚠️ CẢNH BÁO SỐ TIỀN CỐ ĐỊNH (MÃ ĐỘNG):</strong><br>Mã này đã cài sẵn số tiền bên dưới. Hãy đếm kỹ từng số 0 trước khi quét bằng app ngân hàng!</div>`;
       } else {
-        html += `
-          <div class="alert alert-safe">
-            <strong>ℹ️ Mã QR Tĩnh:</strong> Mã này không cài sẵn số tiền (bạn sẽ tự nhập số tiền trên app ngân hàng).
-          </div>
-        `;
+        html += `<div class="alert alert-safe"><strong>ℹ️ Mã QR Tĩnh:</strong> Mã này không cài sẵn số tiền (bạn sẽ tự nhập số tiền trên app ngân hàng).</div>`;
       }
 
       html += `<table class="info-table">`;
       html += `<tr><td>Ngân hàng nhận</td><td>${escapeHTML(qr.bankName)}</td></tr>`;
       html += `<tr><td>Số tài khoản</td><td style="color:#0f172a; font-size:1.05rem;">${escapeHTML(qr.accountNumber)}</td></tr>`;
-      
-      if (qr.amount !== null) {
-        html += `<tr><td>Số tiền cài sẵn</td><td><span class="money-highlight">${formatMoney(qr.amount)}</span></td></tr>`;
-      } else {
-        html += `<tr><td>Số tiền cài sẵn</td><td>Không có (Tự nhập)</td></tr>`;
-      }
-
-      if (qr.purpose) {
-        html += `<tr><td>Nội dung CK</td><td>${escapeHTML(qr.purpose)}</td></tr>`;
-      }
-      if (qr.merchantName) {
-        html += `<tr><td>Tên định danh</td><td>${escapeHTML(qr.merchantName)}</td></tr>`;
-      }
+      html += qr.amount !== null
+        ? `<tr><td>Số tiền cài sẵn</td><td><span class="money-highlight">${formatMoney(qr.amount)}</span></td></tr>`
+        : `<tr><td>Số tiền cài sẵn</td><td>Không có (Tự nhập)</td></tr>`;
+      if (qr.purpose) html += `<tr><td>Nội dung CK</td><td>${escapeHTML(qr.purpose)}</td></tr>`;
+      if (qr.merchantName) html += `<tr><td>Tên định danh</td><td>${escapeHTML(qr.merchantName)}</td></tr>`;
       html += `</table>`;
     }
     // TRƯỜNG HỢP 2: ĐƯỜNG LINK (URL)
     else if (/^https?:\/\//i.test(raw) || /^www\./i.test(raw)) {
       let urlObj = null;
-      try {
-        urlObj = new URL(raw.startsWith("http") ? raw : "http://" + raw);
-      } catch (e) {}
+      try { urlObj = new URL(raw.startsWith("http") ? raw : "http://" + raw); } catch (e) {}
 
       const hostname = urlObj ? urlObj.hostname.toLowerCase() : "Không xác định";
       const shorteners = ["bit.ly", "tinyurl.com", "goo.gl", "t.co", "bom.so", "s.net.vn", "is.gd", "rb.gy", "cutt.ly"];
@@ -394,15 +353,15 @@
       html += `<span class="badge badge-url">🌐 Đường Dẫn Website (URL)</span>`;
 
       if (isDangerousFile) {
-        html += `<div class="alert alert-danger"><strong>🚨 NGUY HIỂM CỰC ĐỘ:</strong> Link dẫn trực tiếp tới file cài đặt phần mềm (<code>.apk/.exe</code>). Tuyệt đối không tải về để tránh mất quyền kiểm soát điện thoại!</div>`;
+        html += `<div class="alert alert-danger"><strong>🚨 NGUY HIỂM CỰC ĐỘ:</strong> Link dẫn trực tiếp tới file cài đặt phần mềm (<code>.apk/.exe</code>). Tuyệt đối không tải về!</div>`;
       } else if (isShortened) {
-        html += `<div class="alert alert-warn"><strong>⚠️ CẢNH BÁO LINK RÚT GỌN:</strong> Kẻ gian thường dùng link rút gọn (<code>${escapeHTML(hostname)}</code>) để che giấu địa chỉ trang web lừa đảo thực sự.</div>`;
+        html += `<div class="alert alert-warn"><strong>⚠️ CẢNH BÁO LINK RÚT GỌN:</strong> Kẻ gian thường dùng link rút gọn (<code>${escapeHTML(hostname)}</code>) để che giấu trang web lừa đảo.</div>`;
       } else if (isPunycode) {
-        html += `<div class="alert alert-danger"><strong>🚨 CẢNH BÁO TÊN MIỀN GIẢ MẠO:</strong> Tên miền chứa ký tự mã hóa quốc tế (Punycode) giả dạng thương hiệu uy tín.</div>`;
+        html += `<div class="alert alert-danger"><strong>🚨 CẢNH BÁO TÊN MIỀN GIẢ MẠO:</strong> Tên miền chứa ký tự mã hóa quốc tế (Punycode) giả dạng thương hiệu.</div>`;
       } else if (isHttpOnly) {
         html += `<div class="alert alert-warn"><strong>⚠️ KẾT NỐI KHÔNG BẢO MẬT (HTTP):</strong> Trang web này không có chứng chỉ mã hóa HTTPS.</div>`;
       } else {
-        html += `<div class="alert alert-safe"><strong>🛡️ Đã vô hiệu hóa tự động mở:</strong> Hãy kiểm tra kỹ tên miền gốc bên dưới xem có đúng trang web chính chủ không.</div>`;
+        html += `<div class="alert alert-safe"><strong>🛡️ Đã vô hiệu hóa tự động mở:</strong> Hãy kiểm tra kỹ tên miền gốc bên dưới.</div>`;
       }
 
       html += `
@@ -413,30 +372,45 @@
         </table>
       `;
     }
-    // TRƯỜNG HỢP 3: CÁC LOẠI LỆNH KHÁC (WIFI, SMS, TEL, DEEP LINK APP, VĂN BẢN)
+    // TRƯỜNG HỢP 3: MÃ PHIÊN THANH TOÁN VÍ ĐIỆN TỬ (MOMO / VNPAY / ZALOPAY TOKEN)
+    else if (/^(28|29|30|99)\d{14,}/.test(raw) || (raw.length >= 24 && !raw.includes(" ") && !raw.includes(":"))) {
+      html += `<span class="badge badge-danger">💳 Mã Phiên Thanh Toán / Token Rút Tiền Tự Động</span>`;
+      html += `
+        <div class="alert alert-danger">
+          <strong>🚨 CẢNH BÁO BẢO MẬT CẤP ĐỘ CAO:</strong><br>
+          Đây là chuỗi <strong>Mã định danh thanh toán một lần (Payment Token)</strong> của ví điện tử (như MoMo, ZaloPay, VNPAY) hoặc mã thẻ thanh toán tại quầy thu ngân.<br>
+          • <strong>Tuyệt đối KHÔNG gửi ảnh này cho người lạ</strong> khi mã còn hiệu lực (thường 60 giây), vì họ có thể dùng máy quét để trừ tiền trực tiếp từ ví của bạn mà không cần mật khẩu!
+        </div>
+      `;
+      html += `
+        <table class="info-table">
+          <tr><td>Định dạng mã</td><td>${escapeHTML(decoded.format)} (Độ dài: ${raw.length} ký tự)</td></tr>
+          <tr><td>Loại dữ liệu</td><td>Chuỗi Token xác thực phiên giao dịch ví điện tử</td></tr>
+        </table>
+      `;
+    }
+    // TRƯỜNG HỢP 4: CÁC ĐỊNH DẠNG KHÁC
     else {
       let typeLabel = "📄 Văn Bản Thuần / Dữ Liệu Khác";
       let warningHtml = "";
 
       if (/^WIFI:/i.test(raw)) {
         typeLabel = "📶 Cấu Hình Kết Nối Wi-Fi";
-        warningHtml = `<div class="alert alert-warn"><strong>⚠️ Lưu ý:</strong> Mã này yêu cầu điện thoại kết nối vào mạng Wi-Fi. Tránh nhập mật khẩu ngân hàng khi dùng Wi-Fi công cộng lạ.</div>`;
+        warningHtml = `<div class="alert alert-warn"><strong>⚠️ Lưu ý:</strong> Mã này yêu cầu điện thoại kết nối vào mạng Wi-Fi.</div>`;
       } else if (/^(SMSTO|SMS):/i.test(raw)) {
         typeLabel = "💬 Lệnh Tự Động Soạn Tin Nhắn SMS";
-        warningHtml = `<div class="alert alert-danger"><strong>🚨 CẢNH BÁO:</strong> Mã này kích hoạt gửi tin nhắn SMS (có thể gửi tới đầu số dịch vụ trừ tiền tự động).</div>`;
+        warningHtml = `<div class="alert alert-danger"><strong>🚨 CẢNH BÁO:</strong> Mã này kích hoạt gửi tin nhắn SMS (có thể gửi tới đầu số dịch vụ trừ tiền).</div>`;
       } else if (/^[a-zA-Z0-9+-]+:\/\//.test(raw)) {
         typeLabel = "📱 Lệnh Mở Ứng Dụng (Deep Link)";
         warningHtml = `<div class="alert alert-warn"><strong>⚠️ Lưu ý:</strong> Mã này gọi mở trực tiếp một ứng dụng cài trên máy.</div>`;
       }
 
-      html += `<span class="badge badge-text">${typeLabel}</span>`;
-      html += warningHtml;
+      html += `<span class="badge badge-text">${typeLabel}</span>` + warningHtml;
     }
 
-    // LUÔN HIỂN THỊ DỮ LIỆU GỐC (RAW STRING) Ở CUỐI
     html += `
       <div style="margin-top: 12px;">
-        <strong style="font-size: 0.85rem; color: var(--muted);">Chuỗi dữ liệu thô nguyên bản bên trong mã QR:</strong>
+        <strong style="font-size: 0.85rem; color: var(--muted);">Chuỗi dữ liệu thô nguyên bản bên trong mã:</strong>
         <div class="raw-box" id="raw-text-box">${safeRaw}</div>
         <button class="copy-btn" onclick="copyRawText()">📋 Copy chuỗi dữ liệu gốc</button>
       </div>
@@ -447,9 +421,7 @@
 
   function copyRawText() {
     const text = document.getElementById('raw-text-box').innerText;
-    navigator.clipboard.writeText(text).then(() => {
-      alert("Đã copy chuỗi dữ liệu gốc!");
-    });
+    navigator.clipboard.writeText(text).then(() => alert("Đã copy chuỗi dữ liệu gốc!"));
   }
 </script>
 
