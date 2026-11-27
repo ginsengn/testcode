@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tính Cung Phi Tứ Trụ — Huyền Không & Bát Trạch</title>
+<style>
+  :root{
+    --ink:#161a22;
+    --ink-soft:#232838;
+    --paper:#eee7d8;
+    --paper-dim:#d9cfb8;
+    --gold:#b8923f;
+    --gold-bright:#d9ad55;
+    --cinnabar:#a3402f;
+    --warn-bg:rgba(217,173,85,0.12);
+    --line: rgba(238,231,216,0.14);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(184,146,63,0.09), transparent 40%),
+      radial-gradient(circle at 88% 92%, rgba(163,64,47,0.08), transparent 45%),
+      var(--ink);
+    color:var(--paper);
+    font-family: "Noto Sans", "Be Vietnam Pro", -apple-system, Segoe UI, sans-serif;
+    line-height:1.5;
+    padding:0 0 60px;
+  }
+  h1,h2,h3{
+    font-family: "Noto Serif", Georgia, "Times New Roman", serif;
+    font-weight:600;
+    margin:0;
+  }
+  header{
+    padding:36px 20px 24px;
+    text-align:center;
+    border-bottom:1px solid var(--line);
+  }
+  header .glyph{
+    font-size:13px;
+    letter-spacing:.35em;
+    color:var(--gold);
+    margin-bottom:10px;
+  }
+  header h1{
+    font-size:clamp(24px,5vw,34px);
+    color:var(--paper);
+  }
+  header p{
+    max-width:580px;
+    margin:12px auto 0;
+    color:#b8b2a4;
+    font-size:14px;
+    padding:0 8px;
+  }
+  main{
+    max-width:650px;
+    margin:0 auto;
+    padding:24px 18px 0;
+  }
+  .card{
+    background:var(--ink-soft);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:22px 20px;
+    margin-bottom:18px;
+  }
+  .card h2{
+    font-size:17px;
+    color:var(--gold-bright);
+    margin-bottom:4px;
+  }
+  .card .hint{
+    font-size:13px;
+    color:#9b95a3;
+    margin-bottom:16px;
+  }
+  .row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .field{
+    flex:1 1 220px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  label{
+    font-size:13px;
+    color:#cbc4b3;
+  }
+  label .req{color:var(--cinnabar);}
+  input, select{
+    background:#11141c;
+    border:1px solid rgba(238,231,216,0.2);
+    color:var(--paper);
+    border-radius:3px;
+    padding:10px 11px;
+    font-size:14.5px;
+    font-family:inherit;
+    width:100%;
+  }
+  input:focus, select:focus{
+    outline:none;
+    border-color:var(--gold);
+  }
+  .toggle-group{
+    display:flex;
+    gap:8px;
+  }
+  .toggle-group label{
+    flex:1;
+    border:1px solid rgba(238,231,216,0.2);
+    border-radius:3px;
+    padding:9px 10px;
+    text-align:center;
+    cursor:pointer;
+    font-size:13.5px;
+    color:var(--paper);
+    transition:border-color .15s, background .15s;
+  }
+  .toggle-group input{display:none;}
+  .toggle-group label:has(input:checked){
+    background:var(--gold-bright);
+    border-color:var(--gold-bright);
+  }
+  .toggle-group label:has(input:checked) span{
+    color:var(--ink);
+    font-weight:600;
+  }
+  .dt-pair{
+    display:flex;
+    gap:8px;
+  }
+  .dt-pair input.date-in{
+    flex:1.4 1 0;
+    font-variant-numeric: tabular-nums;
+    letter-spacing:.02em;
+  }
+  .dt-pair input.time-in{
+    flex:1 1 0;
+    font-variant-numeric: tabular-nums;
+    letter-spacing:.02em;
+    text-align:center;
+  }
+  .field .format-hint{
+    font-size:11.5px;
+    color:#857f73;
+    margin-top:-2px;
+  }
+  button.calc{
+    width:100%;
+    background:var(--cinnabar);
+    color:var(--paper);
+    border:none;
+    padding:14px;
+    font-size:15.5px;
+    font-weight:600;
+    border-radius:3px;
+    cursor:pointer;
+    letter-spacing:.02em;
+    margin-top:4px;
+  }
+  button.calc:hover{background:#b5493a;}
+  #error{
+    color:#e06350;
+    background:rgba(163,64,47,0.14);
+    border:1px solid rgba(163,64,47,0.4);
+    border-radius:3px;
+    padding:10px 12px;
+    font-size:13.5px;
+    margin-top:12px;
+    display:none;
+  }
+  #result{display:none;}
+  .result-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:6px;
+  }
+  .result-head h2{color:var(--gold-bright);}
+  .result-head span{font-size:13px;color:#9b95a3;}
+  table.pillars{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:12px;
+    font-size:14px;
+  }
+  table.pillars th, table.pillars td{
+    padding:10px 8px;
+    border-bottom:1px solid var(--line);
+    text-align:left;
+  }
+  table.pillars th{
+    color:#9b95a3;
+    font-weight:500;
+    font-size:12.5px;
+    letter-spacing:.03em;
+  }
+  table.pillars td.star{
+    font-family:"Noto Serif",serif;
+    font-size:21px;
+    font-weight:700;
+    color:var(--gold-bright);
+    width:64px;
+  }
+  table.pillars td.star-name{
+    font-size:13px;
+    color:#cbc4b3;
+  }
+  table.pillars td.canchi{
+    white-space:nowrap;
+  }
+  .ty-warning{
+    background:rgba(163,64,47,0.16);
+    border:1px solid rgba(224,99,80,0.45);
+    border-radius:3px;
+    padding:12px 14px;
+    font-size:13px;
+    color:#f2c6be;
+    margin-top:14px;
+    line-height:1.6;
+    display:none;
+  }
+  .ty-warning strong{color:#ff8f7d;}
+  .note-box{
+    background:rgba(184,146,63,0.08);
+    border:1px solid rgba(184,146,63,0.25);
+    border-radius:3px;
+    padding:12px 14px;
+    font-size:13px;
+    color:#cbc4b3;
+    margin-top:14px;
+    line-height:1.6;
+  }
+  .auto-info{
+    background:rgba(184,146,63,0.05);
+    border:1px solid rgba(184,146,63,0.18);
+    border-radius:3px;
+    padding:12px 14px;
+    font-size:12.5px;
+    color:#a8a294;
+    margin-top:12px;
+    line-height:1.65;
+  }
+  .auto-info strong{color:var(--gold-bright);}
+  footer{
+    text-align:center;
+    color:#6b6862;
+    font-size:12px;
+    margin-top:28px;
+    padding:0 20px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="glyph">乾 · 坤 · 坎 · 離</div>
+  <h1>Tính Cung Phi Tứ Trụ</h1>
+  <p>Xác định Phi Tinh nhập Trung cung theo Năm, Tháng, Ngày, Giờ — chuẩn hóa theo Huyền Không Phi Tinh &amp; Bát Trạch Mệnh Quái (Dữ liệu Tiết Khí 1950–2050).</p>
+</header>
+
+<main>
+
+  <div class="card">
+    <h2>Thông số thời gian &amp; Hệ quy chiếu</h2>
+    <div class="hint">Hệ thống tự động tra Lập Xuân, Nguyệt Lệnh và 6 mốc Tiết Khí thực tế từ tietkhi_core.js.</div>
+
+    <div class="row">
+      <div class="field">
+        <label>Hệ tính Trụ Năm</label>
+        <div class="toggle-group">
+          <label><input type="radio" name="calc_mode" value="menh" checked onchange="toggleGenderRow()"><span>Mệnh Chủ (Bát Trạch)</span></label>
+          <label><input type="radio" name="calc_mode" value="trach" onchange="toggleGenderRow()"><span>Trạch Nhật (Thẩm Thị)</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" id="genderRow">
+      <div class="field">
+        <label>Giới tính (Dùng tính Mệnh Quái Năm)</label>
+        <div class="toggle-group">
+          <label><input type="radio" name="gender" value="nam" checked><span>Nam</span></label>
+          <label><input type="radio" name="gender" value="nu"><span>Nữ</span></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Ngày giờ dương lịch <span class="req">*</span></label>
+        <div class="dt-pair">
+          <input type="text" class="date-in" id="birth_date" placeholder="dd.mm.yyyy" inputmode="numeric" maxlength="10" required>
+          <input type="text" class="time-in" id="birth_time" placeholder="hh:mm" inputmode="numeric" maxlength="5" required>
+        </div>
+        <div class="format-hint">Ví dụ: 01.03.2009 · 07:01 (Giờ 24h) · Khuyến nghị chọn giờ Sửu–Hợi (01:00–22:59) để tránh tạp khí giờ Tý</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="calc" id="btnCalc" onclick="tinhCungPhi()">Tính Cung Phi Tứ Trụ</button>
+  <div id="error"></div>
+
+  <div class="card" id="result">
+    <div class="result-head">
+      <h2>Kết quả Phi Cung</h2>
+      <span id="resultMeta"></span>
+    </div>
+    <table class="pillars">
+      <thead>
+        <tr><th>Trụ</th><th>Can Chi</th><th>Số</th><th>Cửu Tinh / Quái</th></tr>
+      </thead>
+      <tbody id="resultBody"></tbody>
+    </table>
+
+    <div class="ty-warning" id="tyWarning"></div>
+    <div class="note-box" id="resultNote"></div>
+    <div class="auto-info" id="autoInfo"></div>
+  </div>
+
+</main>
+
+<footer>Thuật toán chuẩn hóa theo Thẩm Thị Huyền Không Học &amp; Bát Trạch Minh Cảnh<br>
+Dữ liệu tiết khí 1950–2050 · Liên kết tietkhi_core.js</footer>
+
+<script type="module">
+import { TIETKHI_RAW } from './tietkhi_core.js';
+
+// ====================== HẰNG SỐ CHUẨN ======================
+const CAN = ["Giáp","Ất","Bính","Đinh","Mậu","Kỷ","Canh","Tân","Nhâm","Quý"];
+const CHI = ["Tý","Sửu","Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi"];
+
+const STAR_NAMES = {
+  1: "Nhất Bạch (Thủy)",
+  2: "Nhị Hắc (Thổ)",
+  3: "Tam Bích (Mộc)",
+  4: "Tứ Lục (Mộc)",
+  5: "Ngũ Hoàng (Thổ)",
+  6: "Lục Bạch (Kim)",
+  7: "Thất Xích (Kim)",
+  8: "Bát Bạch (Thổ)",
+  9: "Cửu Tử (Hỏa)"
+};
+
+const QUAI_NAMES = {
+  1: "Nhất Khảm (Thủy)",
+  2: "Nhị Khôn (Thổ)",
+  3: "Tam Chấn (Mộc)",
+  4: "Tứ Tốn (Mộc)",
+  6: "Lục Càn (Kim)",
+  7: "Thất Đoài (Kim)",
+  8: "Bát Cấn (Thổ)",
+  9: "Cửu Ly (Hỏa)"
+};
+
+const GROUP1 = [0,6,3,9];   // Tý Ngọ Mão Dậu (Tứ Chính)
+const GROUP2 = [2,8,5,11];  // Dần Thân Tỵ Hợi (Tứ Sinh)
+const GROUP3 = [4,10,1,7];  // Thìn Tuất Sửu Mùi (Tứ Mộ)
+
+const WINDOWS = {
+  dongchi:    { base:1, dir:'tang', name:'Đông Chí → Vũ Thủy' },
+  vuthuy:     { base:7, dir:'tang', name:'Vũ Thủy → Cốc Vũ' },
+  cocvu:      { base:4, dir:'tang', name:'Cốc Vũ → Hạ Chí' },
+  hachi:      { base:9, dir:'giam', name:'Hạ Chí → Xử Thử' },
+  xuthu:      { base:3, dir:'giam', name:'Xử Thử → Sương Giáng' },
+  suonggiang: { base:6, dir:'giam', name:'Sương Giáng → Đông Chí' }
+};
+
+const HOUR_BASE = {
+  tang: {1:1, 2:7, 3:4},
+  giam: {1:9, 2:3, 3:6}
+};
+
+// ====================== TIỆN ÍCH CƠ BẢN ======================
+function mod(n, m){ return ((n % m) + m) % m; }
+
+function jdFromDate(dd, mm, yy){
+  const a = Math.floor((14 - mm) / 12);
+  const y = yy + 4800 - a;
+  const m = mm + 12 * a - 3;
+  return dd + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+}
+
+function dayCanChiIndex(date){
+  const jd = jdFromDate(date.getDate(), date.getMonth() + 1, date.getFullYear());
+  return mod(jd + 49, 60);
+}
+
+function flyStar(base, i, direction){
+  if(direction === 'tang'){
+    return mod(base - 1 + i, 9) + 1;
+  } else {
+    return mod(base - 1 - i, 9) + 1;
+  }
+}
+
+function fmt2(n){ return n.toString().padStart(2, '0'); }
+
+function fmtDate(d){
+  if(!d) return '—';
+  return `${fmt2(d.getDate())}.${fmt2(d.getMonth() + 1)}.${d.getFullYear()} ${fmt2(d.getHours())}:${fmt2(d.getMinutes())}`;
+}
+
+function parseDateTime(dateStr, timeStr){
+  if(!dateStr || !timeStr) return null;
+  const dm = dateStr.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  const tm = timeStr.trim().match(/^(\d{1,2}):(\d{2})$/);
+  if(!dm || !tm) return null;
+  const day = parseInt(dm[1], 10), month = parseInt(dm[2], 10), year = parseInt(dm[3], 10);
+  const hour = parseInt(tm[1], 10), minute = parseInt(tm[2], 10);
+  if(month < 1 || month > 12) return null;
+  if(hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+  const d = new Date(year, month - 1, day, hour, minute, 0, 0);
+  if(d.getFullYear() !== year || d.getMonth() !== month - 1 || d.getDate() !== day) return null;
+  return d;
+}
+
+function canChiOfYear(year){
+  const canIdx = mod(year - 4, 10);
+  const chiIdx = mod(year - 4, 12);
+  return {canIdx, chiIdx, text: CAN[canIdx] + " " + CHI[chiIdx]};
+}
+
+function yearGroupOf(chiIdx){
+  if(GROUP1.includes(chiIdx)) return 1;
+  if(GROUP2.includes(chiIdx)) return 2;
+  return 3;
+}
+
+function reduceDigits(n){
+  while(n > 9){
+    n = String(n).split('').reduce((s, d) => s + parseInt(d, 10), 0);
+  }
+  return n;
+}
+
+// 1. Cung Phi Mệnh Quái Bát Trạch (Có quy đổi 5 -> 2/8)
+function yearMenhQuai(year, gender){
+  const last2 = mod(year, 100);
+  let S = reduceDigits(last2);
+  if(S === 0) S = 9;
+  let val;
+  if(year >= 2000){
+    if(gender === 'nam'){ val = 9 - S; if(val <= 0) val += 9; if(val === 5) val = 2; }
+    else { val = 6 + S; if(val > 9) val -= 9; if(val === 5) val = 8; }
+  } else {
+    if(gender === 'nam'){ val = 10 - S; if(val <= 0) val += 9; if(val === 5) val = 2; }
+    else { val = 5 + S; if(val > 9) val -= 9; if(val === 5) val = 8; }
+  }
+  return val;
+}
+
+// 2. Niên Phi Tinh Thuận/Nghịch Chung Theo Thẩm Thị Huyền Không Học (Giữ nguyên số 5)
+// Quy luật: Giáp Tý (1984) = 7 Xích, mỗi năm lùi 1 số (1985 = 6, ..., 2024 = 3, 2025 = 2, 2026 = 1)
+function yearHuyenKhongStar(tuTruYear){
+  return mod(7 - (tuTruYear - 1984), 9) || 9;
+}
+
+function monthCungPhi(monthNum, yearChiIdx){
+  const g = yearGroupOf(yearChiIdx);
+  const base = g === 1 ? 8 : (g === 2 ? 5 : 2);
+  return mod(base - 1 - (monthNum - 1), 9) + 1;
+}
+
+// ====================== TRA TIẾT KHÍ THỰC TẾ TỪ MODULE ======================
+function normalizeVn(str){
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+}
+
+function findTietKhi(year, name){
+  const target = normalizeVn(name);
+  const item = TIETKHI_RAW.find(t => t[0] === year && normalizeVn(t[3]) === target);
+  if(!item) return null;
+  const [y, m, d, h, mi, s] = item[4].match(/\d+/g).map(Number);
+  return new Date(y, m - 1, d, h, mi, s || 0);
+}
+
+function getLapXuan(year){
+  return findTietKhi(year, "Lập xuân");
+}
+
+// Quét chính xác 6 mốc tiết khí thật từ (y - 1) đến (y + 1), KHÔNG dùng setFullYear giả định
+function findWindowExact(birthDate){
+  const y = birthDate.getFullYear();
+  const keyMap = {
+    "Đông chí": "dongchi",
+    "Vũ thủy": "vuthuy",
+    "Cốc vũ": "cocvu",
+    "Hạ chí": "hachi",
+    "Xử thử": "xuthu",
+    "Sương giáng": "suonggiang"
+  };
+
+  let candidates = [];
+  let displayTerms = {};
+
+  for(let yr = y - 1; yr <= y + 1; yr++){
+    Object.entries(keyMap).forEach(([vnName, key]) => {
+      const d = findTietKhi(yr, vnName);
+      if(d){
+        candidates.push({ label: key, vnName, date: d });
+        if(yr === y) displayTerms[key] = d;
+      }
+    });
+  }
+
+  candidates.sort((a, b) => a.date - b.date);
+
+  let chosen = null;
+  for(const c of candidates){
+    if(c.date <= birthDate) chosen = c;
+    else break;
+  }
+
+  if(!chosen || !WINDOWS[chosen.label]) return null;
+  return {
+    ...WINDOWS[chosen.label],
+    key: chosen.label,
+    matchedTermDate: chosen.date,
+    displayTerms
+  };
+}
+
+function getTuTruMonth(birthDate){
+  const y = birthDate.getFullYear();
+  const starters = [
+    "Lập xuân", "Kinh trập", "Thanh minh", "Lập hạ",
+    "Mang chủng", "Tiểu thử", "Lập thu", "Bạch lộ",
+    "Hàn lộ", "Lập đông", "Đại tuyết", "Tiểu hàn"
+  ];
+
+  const terms = [];
+  for(let yr = y - 1; yr <= y + 1; yr++){
+    starters.forEach((name, idx) => {
+      const d = findTietKhi(yr, name);
+      if(d) terms.push({ date: d, monthNum: idx + 1 });
+    });
+  }
+  terms.sort((a, b) => a.date - b.date);
+
+  let current = terms[0];
+  for(const t of terms){
+    if(t.date <= birthDate) current = t;
+    else break;
+  }
+  return current ? current.monthNum : 1;
+}
+
+// ====================== UI HELPERS ======================
+window.toggleGenderRow = function(){
+  const mode = document.querySelector('input[name="calc_mode"]:checked').value;
+  document.getElementById('genderRow').style.display = (mode === 'menh') ? 'flex' : 'none';
+};
+
+// Tự động format khi nhập ngày & giờ
+document.getElementById('birth_date').addEventListener('input', function(e){
+  let v = e.target.value.replace(/\D/g, '').slice(0, 8);
+  if(v.length >= 5) v = v.slice(0,2) + '.' + v.slice(2,4) + '.' + v.slice(4);
+  else if(v.length >= 3) v = v.slice(0,2) + '.' + v.slice(2);
+  e.target.value = v;
+});
+
+document.getElementById('birth_time').addEventListener('input', function(e){
+  let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+  if(v.length >= 3) v = v.slice(0,2) + ':' + v.slice(2);
+  e.target.value = v;
+});
+
+function showError(msg){
+  const el = document.getElementById('error');
+  el.textContent = msg;
+  el.style.display = 'block';
+  document.getElementById('result').style.display = 'none';
+}
+
+// ====================== HÀM TÍNH CHÍNH ======================
+window.tinhCungPhi = function(){
+  document.getElementById('error').style.display = 'none';
+  document.getElementById('result').style.display = 'none';
+
+  const mode = document.querySelector('input[name="calc_mode"]:checked').value;
+  const genderEl = document.querySelector('input[name="gender"]:checked');
+  const gender = genderEl ? genderEl.value : 'nam';
+
+  const birth = parseDateTime(
+    document.getElementById('birth_date').value,
+    document.getElementById('birth_time').value
+  );
+  if(!birth){
+    showError('Ngày giờ chưa hợp lệ. Nhập ngày dạng dd.mm.yyyy (vd. 26.12.1997), giờ dạng hh:mm 24h (vd. 14:32).');
+    return;
+  }
+
+  const y = birth.getFullYear();
+  if(y < 1950 || y > 2050){
+    showError('Thời gian nằm ngoài phạm vi dữ liệu tiết khí (1950–2050).');
+    return;
+  }
+
+  const lapXuan = getLapXuan(y);
+  if(!lapXuan){
+    showError('Không tìm thấy dữ liệu tiết Lập Xuân năm ' + y);
+    return;
+  }
+
+  // 1. Trụ Năm Tứ Trụ (Đổi năm tại thời điểm Lập Xuân chính xác từng phút)
+  let tuTruYear = y;
+  if(birth < lapXuan) tuTruYear -= 1;
+
+  // 2. Trụ Tháng Tứ Trụ (Đổi tháng tại 12 tiết khí chính xác từng phút)
+  const monthNum = getTuTruMonth(birth);
+
+  // 3. Chặng 6 Tiết Khí cho Ngày / Giờ (Dữ liệu thật từ TIETKHI_RAW)
+  const win = findWindowExact(birth);
+  if(!win){
+    showError('Thiếu dữ liệu tiết khí quanh năm ' + y + ' trong tietkhi_core.js.');
+    return;
+  }
+
+  // 4. Xử lý Logic Giờ Tý Giao Ngày (23:00 - 00:59)
+  const hour = birth.getHours();
+  const isDaTy = (hour === 23);       // 23:00 - 23:59: Dạ Tý (cuối ngày A, khởi giờ Tý ngày B)
+  const isChinhTy = (hour === 0);     // 00:00 - 00:59: Chính Tý (đầu ngày B, còn dư khí ngày A)
+  const isTyHour = isDaTy || isChinhTy;
+
+  // Theo luật Huyền Không & Tứ Trụ: từ 23:00 đã sang giờ Tý của ngày kế tiếp
+  const effectiveDate = new Date(birth.getTime());
+  if(isDaTy){
+    effectiveDate.setDate(effectiveDate.getDate() + 1);
+  }
+
+  const dIdx = dayCanChiIndex(effectiveDate);
+  const dayCan = dIdx % 10, dayChi = dIdx % 12;
+  const dayPillarText = CAN[dayCan] + " " + CHI[dayChi];
+  const dayStar = flyStar(win.base, dIdx, win.dir);
+
+  const dayGroup = yearGroupOf(dayChi);
+  const hourIdx = mod(Math.floor((hour + 1) / 2), 12);
+  const hourChiText = CHI[hourIdx];
+  const hourBase = HOUR_BASE[win.dir][dayGroup];
+  const hourStar = flyStar(hourBase, hourIdx, win.dir);
+
+  // Tính dự phòng cho Ngày Cũ (để tham chiếu nếu xét trường phái Dạ Tý giữ nguyên ngày cũ)
+  const oldDayDate = new Date(birth.getTime());
+  if(isChinhTy) oldDayDate.setDate(oldDayDate.getDate() - 1);
+  const oldDIdx = dayCanChiIndex(oldDayDate);
+  const oldDayStar = flyStar(win.base, oldDIdx, win.dir);
+  const oldHourBase = HOUR_BASE[win.dir][yearGroupOf(oldDIdx % 12)];
+  const oldHourStar = flyStar(oldHourBase, 0, win.dir);
+
+  // 5. Tính Trụ Năm & Trụ Tháng
+  const yearPillar = canChiOfYear(tuTruYear);
+  const yearStar  = (mode === 'menh') ? yearMenhQuai(tuTruYear, gender) : yearHuyenKhongStar(tuTruYear);
+  const yearLabel = (mode === 'menh') ? QUAI_NAMES[yearStar] : STAR_NAMES[yearStar];
+  const monthStar = monthCungPhi(monthNum, yearPillar.chiIdx);
+
+  // ===== HIỂN THỊ KẾT QUẢ =====
+  document.getElementById('resultMeta').textContent =
+    (mode === 'menh' ? (gender === 'nam' ? 'Nam mệnh (Bát Trạch)' : 'Nữ mệnh (Bát Trạch)') : 'Trạch Nhật Huyền Không') +
+    ' · Năm ' + tuTruYear;
+
+  const monthChiName = ["Dần","Mão","Thìn","Tỵ","Ngọ","Mùi","Thân","Dậu","Tuất","Hợi","Tý","Sửu"][monthNum - 1];
+
+  const body = document.getElementById('resultBody');
+  body.innerHTML = '';
+  const rows = [
+    { pillar:'Năm',   canchi: yearPillar.text,                                star: yearStar,  desc: yearLabel },
+    { pillar:'Tháng', canchi: 'Tháng ' + monthNum + ' (' + monthChiName + ')', star: monthStar, desc: STAR_NAMES[monthStar] },
+    { pillar:'Ngày',  canchi: dayPillarText + (isDaTy ? ' (Sang ngày mới)' : ''), star: dayStar, desc: STAR_NAMES[dayStar] },
+    { pillar:'Giờ',   canchi: 'Giờ ' + hourChiText + (isDaTy ? ' (Dạ Tý)' : (isChinhTy ? ' (Chính Tý)' : '')), star: hourStar, desc: STAR_NAMES[hourStar] }
+  ];
+
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      `<td>${r.pillar}</td>` +
+      `<td class="canchi">${r.canchi}</td>` +
+      `<td class="star">${r.star}</td>` +
+      `<td class="star-name">${r.desc}</td>`;
+    body.appendChild(tr);
+  });
+
+  // Cảnh báo đặc thù Giờ Tý (23:00 - 00:59)
+  const tyWarnEl = document.getElementById('tyWarning');
+  if(isTyHour){
+    tyWarnEl.style.display = 'block';
+    tyWarnEl.innerHTML =
+      `<strong>⚠️ CẢNH BÁO GIỜ TÝ (HỖN KHÍ GIAO HAI NGÀY):</strong><br>` +
+      `Thời điểm <strong>${fmt2(hour)}:${fmt2(birth.getMinutes())}</strong> rơi vào ${isDaTy ? '<strong>Dạ Tý (23h–24h)</strong>' : '<strong>Chính Tý (00h–01h)</strong>'} — ranh giới giao thoa giữa ngày <strong>${CAN[oldDIdx%10]} ${CHI[oldDIdx%12]}</strong> và ngày <strong>${dayPillarText}</strong>.<br>` +
+      `• Chuẩn Huyền Không hiện tại đang lấy theo ngày mới (<strong>Ngày ${dayStar} – Giờ ${hourStar}</strong>).<br>` +
+      `• Dư khí ngày cũ mang bộ số (<strong>Ngày ${oldDayStar} – Giờ ${oldHourStar}</strong>).<br>` +
+      `<em>Lời khuyên Trạch Nhật: Giờ Tý mang tạp khí giao thời, nếu chọn giờ dụng sự nên ưu tiên các khung giờ thuần khí từ <strong>Sửu đến Hợi (01:00–22:59)</strong>.</em>`;
+  } else {
+    tyWarnEl.style.display = 'none';
+  }
+
+  document.getElementById('resultNote').innerHTML =
+    `Thời điểm thuộc chặng <strong>${win.name}</strong> (Mốc kích hoạt: ${fmtDate(win.matchedTermDate)} — ` +
+    `${win.dir === 'tang' ? 'Dương độn sau Đông Chí, phi thuận' : 'Âm độn sau Hạ Chí, phi nghịch'}). ` +
+    `Chi ngày <strong>${CHI[dayChi]}</strong> thuộc nhóm ` +
+    `${dayGroup === 1 ? 'Tý–Ngọ–Mão–Dậu (Tứ Chính)' : dayGroup === 2 ? 'Dần–Thân–Tỵ–Hợi (Tứ Sinh)' : 'Thìn–Tuất–Sửu–Mùi (Tứ Mộ)'}.`;
+
+  const dt = win.displayTerms;
+  document.getElementById('autoInfo').innerHTML =
+    `<strong>Dữ liệu Tiết Khí năm ${y} (tietkhi_core.js):</strong><br>` +
+    `Lập Xuân: ${fmtDate(lapXuan)}<br>` +
+    `Đông Chí: ${fmtDate(dt.dongchi)} · Vũ Thủy: ${fmtDate(dt.vuthuy)} · Cốc Vũ: ${fmtDate(dt.cocvu)}<br>` +
+    `Hạ Chí: ${fmtDate(dt.hachi)} · Xử Thử: ${fmtDate(dt.xuthu)} · Sương Giáng: ${fmtDate(dt.suonggiang)}`;
+
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'start'});
+};
+</script>
+
+</body>
+</html>
